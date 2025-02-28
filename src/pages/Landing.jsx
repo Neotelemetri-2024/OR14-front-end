@@ -8,6 +8,7 @@ import { FaFacebook, FaInstagram, FaTiktok, FaTwitter } from "react-icons/fa";
 const Landing = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [activeSection, setActiveSection] = useState("home");
+    const [isScrolled, setIsScrolled] = useState(false);
 
     useEffect(() => {
         const handleResize = () => {
@@ -20,11 +21,17 @@ const Landing = () => {
             const sections = ["home", "division", "projects", "achievements", "about"];
             let currentSection = "home";
 
+            if (window.scrollY > 50) {
+                setIsScrolled(true);
+            } else {
+                setIsScrolled(false);
+            }
+
             sections.forEach((section) => {
                 const element = document.getElementById(section);
                 if (element) {
                     const rect = element.getBoundingClientRect();
-                    if (rect.top <= 150 && rect.bottom >= 150) {
+                    if (rect.top <= 500 && rect.bottom >= 500) {
                         currentSection = section;
                     }
                 }
@@ -53,7 +60,7 @@ const Landing = () => {
     return (
         <div className="pt-4 relative" id="home">
             {/* Navbar */}
-            <nav className="sticky top-0 flex flex-row justify-between items-center px-4 md:px-8 mb-12 lg:mb-20 bg-white w-full drop-shadow-md z-10">
+            <nav className={`sticky top-0 flex flex-row justify-between items-center px-4 md:px-8 mb-12 lg:mb-20 bg-white w-full ${isScrolled ? "drop-shadow-md" : ""} z-10`}>
                 <img src="/images/or14.svg" className="w-40 lg:w-56" />
 
                 {/* Desktop Navigation */}
@@ -107,7 +114,7 @@ const Landing = () => {
             {/* Home */}
             <section className="flex flex-col md:flex-row items-center mb-20 pb-24">
                 {/* Landing Page Card */}
-                <div className="border-2 rounded-r-3xl px-6 md:px-12 pt-12 pb-24 md:pb-40 bg-gradient-to-b from-black to-[#3533cc] w-full md:w-1/2">
+                <div className="rounded-r-3xl px-6 md:px-12 pt-12 pb-24 md:pb-40 bg-gradient-to-b from-black to-[#3533cc] w-full md:w-1/2">
                     <h1 className="text-white text-3xl md:text-4xl mb-6 font-bold">Apa itu OR UKM Neo Telemetri?</h1>
                     <p className="text-white text-lg md:text-xl font-light text-justify">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eu massa arcu. Aliquam a odio sodales, iaculis neque eget, commodo tellus. Fusce varius commodo lorem, vitae vulputate mi ullamcorper in. Donec viverra neque tempor turpis molestie malesuada. Nam dapibus sapien ac ligula consectetur ultrices. Vestibulum ut ante elementum dolor molestie vestibulum.</p>
                 </div>
@@ -165,7 +172,7 @@ const Landing = () => {
             </section>
 
             {/* Jumbotron */}
-            <section className="bg-[url('/assets/bg.svg')] bg-cover bg-center bg-no-repeat py-40 flex flex-col items-center justify-center gap-16">
+            <section id="jumbotron" className="bg-[url('/assets/bg.svg')] bg-cover bg-center bg-no-repeat py-40 flex flex-col items-center justify-center gap-16">
                 <h1 className="text-white text-4xl font-bold text-center">
                     Tertarik untuk menjadi bagian dari UKM Neo Telemetri?
                 </h1>
@@ -219,6 +226,49 @@ const Landing = () => {
                     </div>
                 </div>
             </section>
+
+            {/* Background Decoration */}
+            {/* Home */}
+            <img
+                src="/assets/bg/Ellipse19.svg"
+                alt="Decor 2"
+                className="absolute top-[0%] right-[0%]"
+            />
+            <img
+                src="/assets/bg/Ellipse23.svg"
+                alt="Decor 2"
+                className="absolute top-[8%] right-[0%] -z-10"
+            />
+            <img
+                src="/assets/bg/Ellipse24.svg"
+                alt="Decor 2"
+                className="absolute left-[30%] top-[8%] -z-10"
+            />
+
+            {/* Projects */}
+            <img
+                src="/assets/bg/Ellipse19.svg"
+                alt="Decor 2"
+                className="absolute top-[45%] right-[0%]"
+            />
+            <img
+                src="/assets/bg/Ellipse25.svg"
+                alt="Decor 2"
+                className="absolute top-[52%] left-[0%]"
+            />
+
+            {/* Achievements */}
+            <img
+                src="/assets/bg/Ellipse26.svg"
+                alt="Decor 2"
+                className="absolute top-[60%] left-[0%] -z-10"
+            />
+            <img
+                src="/assets/bg/Ellipse27.svg"
+                alt="Decor 2"
+                className="absolute top-[62%] right-[0%]"
+            />
+
 
         </div>
     )
