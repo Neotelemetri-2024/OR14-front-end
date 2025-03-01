@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import Landing from "./pages/Landing";
 import Auth from "./pages/Auth/Auth";
+import Dashboard from "./pages/Dashboard";
 
 const AuthWrapper = () => {
   const location = useLocation();
@@ -16,6 +17,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/auth" element={<AuthWrapper />} />
+        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </Router>
   )
