@@ -1,5 +1,4 @@
 import { AnimatePresence, motion } from "framer-motion";
-import PropTypes from "prop-types";
 import { useState } from "react";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
 
@@ -124,11 +123,6 @@ const DivisionComponent = () => {
             </div>
         </div>
     )
-}
-
-DivisionComponent.propTypes = {
-    division: PropTypes.string.isRequired,
-    logo: PropTypes.string
 }
 
 export default DivisionComponent;
