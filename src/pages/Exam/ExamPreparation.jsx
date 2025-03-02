@@ -1,7 +1,8 @@
-import { FaUser } from "react-icons/fa";
+import { useState } from "react";
 import { IoMenu } from "react-icons/io5"; // Added burger menu icon
 import SidebarComponent from "../../Components/SidebarComponent";
-import { useState } from "react";
+import ProfileComponent from "../../Components/ProfileComponent";
+import { Link } from "react-router-dom";
 
 const ExamPreparation = () => {
     // State untuk menyimpan divisi yang dipilih
@@ -36,25 +37,22 @@ const ExamPreparation = () => {
             {/* Main Content */}
             <section className="flex-1 p-4 md:p-8 md:pl-12 flex flex-col gap-4 md:gap-8">
                 {/* User Profile Button */}
-                <button className="self-end flex flex-row gap-2 md:gap-4 items-center">
-                    <h2 className="text-[#2E1461] text-lg md:text-2xl font-bold">Berka Aldizar</h2>
-                    <div className="border p-3 md:p-6 bg-[#372088]">
-                        <FaUser className="text-white text-xl md:text-2xl" />
-                    </div>
-                </button>
+                <div className="self-end">
+                    <ProfileComponent />
+                </div>
 
                 <div>
                     <h2 className="text-secondary text-xl md:text-3xl font-semibold">Ujian Online OR Neo Telemetri XIV</h2>
                 </div>
 
-                <div className="mt-4 md:mt-8">
+                <div>
                     <p className="text-base md:text-xl">
                         Silahkan pilih sesuai divisimu!
                     </p>
                 </div>
 
                 {/* Divisions Grid */}
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 grid-cols-1 gap-4 md:gap-8 py-4 md:py-8 px-2 md:px-12">
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 grid-cols-1 gap-4 md:gap-8 py-4 px-2 md:px-12">
                     {/* Divisi Programming */}
                     <div className="flex flex-col justify-center">
                         <div
@@ -120,7 +118,7 @@ const ExamPreparation = () => {
                 </div>
 
                 {/* Peraturan Ujian */}
-                <div className="mt-8 md:mt-16">
+                <div className="mt-4">
                     <h2 className="text-xl md:text-3xl font-bold text-secondary mb-4 md:mb-10">
                         Peraturan Ujian
                     </h2>
@@ -134,16 +132,18 @@ const ExamPreparation = () => {
                 </div>
 
                 {/* Start Exam Button */}
-                <div className="flex justify-center md:justify-start mt-8 md:mt-20">
-                    <button
-                        className={`border-2 border-[#1E0771] ${selectedDivision ? 'bg-[#1E0771] text-white' : 'bg-gray-300 text-gray-600 cursor-not-allowed'
-                            } py-3 md:py-4 text-base md:text-xl font-semibold rounded-xl ${selectedDivision ? 'hover:bg-white hover:text-[#1E0771] hover:cursor-pointer' : ''
-                            } w-full md:w-2/3 lg:w-1/4`}
-                        disabled={!selectedDivision}
-                    >
-                        Mulai Ujian
-                    </button>
-                </div>
+                <Link to="/exam">
+                    <div className="flex justify-center md:justify-start mt-8 md:mt-20">
+                        <button
+                            className={`border-2 border-[#1E0771] ${selectedDivision ? 'bg-[#1E0771] text-white' : 'bg-gray-300 text-gray-600 cursor-not-allowed'
+                                } py-3 md:py-4 text-base md:text-xl font-semibold rounded-xl ${selectedDivision ? 'hover:bg-white hover:text-[#1E0771] hover:cursor-pointer' : ''
+                                } w-full md:w-2/3 lg:w-1/4`}
+                            disabled={!selectedDivision}
+                        >
+                            Mulai Ujian
+                        </button>
+                    </div>
+                </Link>
             </section>
         </div>
     );

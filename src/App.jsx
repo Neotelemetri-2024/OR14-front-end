@@ -5,7 +5,8 @@ import Dashboard from "./pages/Dashboard";
 import Verification from "./pages/Auth/Verification";
 import ExamPreparation from "./pages/Exam/ExamPreparation";
 import Exam from "./pages/Exam/Exam";
-import Result from "./pages/Exam/Result";
+import ExamResult from "./pages/Exam/ExamResult";
+import Profile from "./pages/Profile/Profile";
 
 const AuthWrapper = () => {
   const location = useLocation();
@@ -25,7 +26,8 @@ const App = () => {
         <Route path="/verification" element={<Verification />} />
         <Route path="/preparation" element={<ExamPreparation />} />
         <Route path="/exam" element={<Exam />} />
-        <Route path="/result" element={<Result />} />
+        <Route path="/result" element={<ExamResult />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </Router>
   )

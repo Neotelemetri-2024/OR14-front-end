@@ -1,9 +1,9 @@
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
-const Result = () => {
+const ExamResult = () => {
     return (
-        <div className="h-full bg-[#1E0771] py-20 px-16">
+        <div className="min-h-screen h-full bg-[#1E0771] py-20 px-16">
             <div className="h-full bg-white p-12 rounded-xl">
                 <h1 className="text-3xl font-bold text-[#1E0771] ">Hasil akhir ujian</h1>
                 <div className="border-2 mt-8 p-6 rounded-xl border-secondary">
@@ -11,7 +11,7 @@ const Result = () => {
                         Ujian divisi
                     </h2>
 
-                    {/* Result */}
+                    {/* ExamResult */}
                     <div className="flex flex-col justify-between px-4 gap-8 mt-8">
 
                         {/* Benar */}
@@ -56,19 +56,19 @@ const Result = () => {
 
                     </div>
                 </div>
-                <div className="w-full flex flex-col mt-12">
-                    <Link to="/dashboard">
-                        <button className="border-2 lg:w-1/4 w-full self-end py-4 rounded-lg bg-secondary text-white font-semibold hover:cursor-pointer hover:bg-white hover:text-[#2E1461]">
+                <Link to="/dashboard">
+                    <div className="w-full flex flex-col mt-12">
+                        <button className="border-2 lg:w-1/4 w-full self-end py-4 rounded-lg bg-secondary text-white font-semibold hover:cursor-pointer hover:bg-white hover:text-[#2E1461] ">
 
                             Kembali ke Dashboard
 
                         </button>
-                    </Link>
-                </div>
+                    </div>
+                </Link>
 
             </div>
-        </div>
+        </div >
     )
 }
 
-export default Result;
+export default ExamResult;

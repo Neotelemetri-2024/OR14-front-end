@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { FaUser, FaFileAlt, FaFilePdf, FaFileImage } from "react-icons/fa";
+import { FaFileAlt, FaFilePdf, FaFileImage } from "react-icons/fa";
 import { MdVerifiedUser } from "react-icons/md";
 import { IoMenu } from "react-icons/io5";
 import SidebarComponent from "../../Components/SidebarComponent";
+import ProfileComponent from "../../Components/ProfileComponent";
 
 const Verification = () => {
     const [krsFile, setKrsFile] = useState(null);
@@ -115,12 +116,10 @@ const Verification = () => {
             {/* Main Content */}
             <main className="flex-1 p-4 md:p-8 md:pl-12 flex flex-col gap-4 md:gap-8 relative">
                 {/* User Profile Button */}
-                <button className="self-end flex flex-row gap-2 md:gap-4 items-center">
-                    <h2 className="text-[#2E1461] text-lg md:text-2xl font-bold">Berka Aldizar</h2>
-                    <div className="border p-3 md:p-6 bg-[#372088]">
-                        <FaUser className="text-white text-xl md:text-2xl" />
-                    </div>
-                </button>
+                <div className="self-end">
+
+                    <ProfileComponent />
+                </div>
 
                 <div>
                     <h2 className="text-secondary text-xl md:text-3xl font-bold mt-2 md:mt-4">
@@ -199,7 +198,7 @@ const Verification = () => {
                 <img
                     src="/assets/bg/Ellipse31.svg"
                     alt="Decor 1"
-                    className="absolute top-0 right-0 hidden lg:block"
+                    className="absolute top-0 right-0 hidden lg:block -z-10"
                 />
 
                 <img

@@ -4,6 +4,7 @@ import { IoMenu } from "react-icons/io5"; // Added burger menu icon
 import SidebarComponent from "../Components/SidebarComponent";
 import PropTypes from "prop-types";
 import { useState } from "react";
+import ProfileComponent from "../Components/ProfileComponent";
 
 const TimelineItem = ({ title, date, isActive, isLast }) => {
     return (
@@ -61,12 +62,10 @@ const Dashboard = () => {
             {/* Main Content */}
             <section className="flex-1 p-4 md:p-8 md:pl-12 flex flex-col gap-4 md:gap-8">
                 {/* Edit Profile */}
-                <button className="self-end flex flex-row gap-2 md:gap-4 items-center">
-                    <h2 className="text-[#2E1461] text-lg md:text-2xl font-bold">Berka Aldizar</h2>
-                    <div className="border p-3 md:p-6 bg-[#372088]">
-                        <FaUser className="text-white text-xl md:text-2xl" />
-                    </div>
-                </button>
+                <div className="self-end">
+                    <ProfileComponent />
+                </div>
+
 
                 <div>
                     <h2 className="text-secondary text-xl md:text-3xl font-semibold">Hello Berka Aldizar Ganteng!</h2>
