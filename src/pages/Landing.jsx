@@ -120,7 +120,7 @@ const Landing = () => {
             {/* Home */}
             <section className="flex flex-col md:flex-row items-center mb-12 md:mb-20 pb-12 md:pb-24 lg:px-0 px-8">
                 {/* Landing Page Card */}
-                <div className="rounded-r-3xl px-4 sm:px-6 md:px-12 pt-8 md:pt-12 pb-12 md:pb-24 lg:pb-40 bg-gradient-to-b from-black to-[#3533cc] w-full md:w-1/2">
+                <div className="rounded-r-3xl px-4 sm:px-6 md:px-12 pt-8 md:pt-12 pb-12 md:pb-24 lg:pb-40 bg-gradient-to-b from-black to-[#3533cc] w-full md:w-1/2 hidden md:block">
                     <h1 className="text-white text-2xl sm:text-3xl md:text-4xl mb-4 md:mb-6 font-bold">Apa itu OR UKM Neo Telemetri?</h1>
                     <p className="text-white text-base sm:text-lg md:text-xl font-light text-justify">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eu massa arcu. Aliquam a odio sodales, iaculis neque eget, commodo tellus. Fusce varius commodo lorem, vitae vulputate mi ullamcorper in. Donec viverra neque tempor turpis molestie malesuada. Nam dapibus sapien ac ligula consectetur ultrices. Vestibulum ut ante elementum dolor molestie vestibulum.</p>
                 </div>
