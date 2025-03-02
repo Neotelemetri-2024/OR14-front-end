@@ -15,9 +15,9 @@ const SidebarComponent = () => {
     const inactiveClass = "text-white hover:bg-white hover:text-[#2d2460] hover:font-semibold";
 
     return (
-        <div className="lg:h-screen h-full bg-[url('/assets/sidebar/sidebar.svg')] bg-cover bg-no-repeat flex flex-col justify-between">
+        <div className="h-full bg-[url('/assets/sidebar/sidebar.svg')] bg-cover bg-no-repeat flex flex-col justify-start">
             <img src="/assets/sidebar/or14white.svg" className="p-2" alt="Logo" />
-            <div className="w-full flex flex-col gap-8">
+            <div className="w-full flex flex-col gap-8 mt-24">
                 <Link to="/dashboard" className={`${baseButtonClass} ${isActive('/dashboard') && !isActive('/verification') && !isActive('/exam') ? activeClass : inactiveClass}`}>
                     <MdHome className="text-4xl" />
                     <h2>
@@ -37,7 +37,7 @@ const SidebarComponent = () => {
                     </h2>
                 </Link>
             </div>
-            <button className="flex flex-row items-center justify-start w-full px-20 gap-10 text-white text-2xl hover:bg-white hover:text-[#2d2460] hover:font-semibold py-4 font-bold hover:cursor-pointer mb-10">
+            <button className="flex flex-row items-center justify-start w-full px-20 gap-10 text-white text-2xl hover:bg-white hover:text-[#2d2460] hover:font-semibold py-4 font-bold hover:cursor-pointer mb-10 mt-auto">
                 <MdArrowCircleLeft className="text-4xl" />
                 <h2>
                     Keluar

@@ -3,6 +3,7 @@ import Landing from "./pages/Landing";
 import Auth from "./pages/Auth/Auth";
 import Dashboard from "./pages/Dashboard";
 import Verification from "./pages/Auth/Verification";
+import ExamPreparation from "./pages/Exam/ExamPreparation";
 import Exam from "./pages/Exam/Exam";
 
 const AuthWrapper = () => {
@@ -21,6 +22,7 @@ const App = () => {
         <Route path="/auth" element={<AuthWrapper />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/verification" element={<Verification />} />
+        <Route path="/rules" element={<ExamPreparation />} />
         <Route path="/exam" element={<Exam />} />
       </Routes>
     </Router>

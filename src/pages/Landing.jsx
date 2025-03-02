@@ -58,7 +58,6 @@ const Landing = () => {
 
     const scrollToSection = (section) => {
         document.getElementById(section)?.scrollIntoView({ behavior: "smooth" });
-        // Close mobile menu after clicking a section
         if (isMenuOpen) {
             setIsMenuOpen(false);
         }
