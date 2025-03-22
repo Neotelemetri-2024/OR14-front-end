@@ -7,6 +7,8 @@ import ExamPreparation from "./pages/Exam/ExamPreparation";
 import Exam from "./pages/Exam/Exam";
 import ExamResult from "./pages/Exam/ExamResult";
 import Profile from "./pages/Profile/Profile";
+import ResetPassword from "./pages/Auth/ResetPassword";
+import ForgotPassword from "./pages/Auth/ForgetPassword";
 
 const AuthWrapper = () => {
   const location = useLocation();
@@ -28,6 +30,8 @@ const App = () => {
         <Route path="/exam" element={<Exam />} />
         <Route path="/result" element={<ExamResult />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
       </Routes>
     </Router>
   )

@@ -9,7 +9,31 @@ const Auth = ({ isLogin }) => {
     }
 
     return (
-        <div className="flex flex-row w-full h-screen ">
+        <div className="flex flex-row w-full h-screen overflow-hidden">
+            {/* CSS untuk animasi langsung di komponen */}
+            <style jsx>{`
+                @keyframes pulse {
+                    0% { opacity: 0.2; transform: scale(0.95); }
+                    50% { opacity: 0.7; transform: scale(1.05); }
+                    100% { opacity: 0.2; transform: scale(0.95); }
+                }
+                
+                @keyframes float {
+                    0% { transform: translateY(0px); }
+                    50% { transform: translateY(-15px); }
+                    100% { transform: translateY(0px); }
+                }
+                
+                .decoration-1 {
+                    animation: pulse 7s ease-in-out infinite, float 15s ease-in-out infinite;
+                }
+                
+                .decoration-2 {
+                    animation: pulse 5s ease-in-out infinite, float 10s ease-in-out infinite;
+                    animation-delay: 1s;
+                }
+            `}</style>
+
             <section id="forms" className="flex flex-col justify-evenly w-full md:w-1/2 py-4 px-12 pb-16">
                 <div>
                     <img src="/images/or14.svg" />
@@ -64,14 +88,17 @@ const Auth = ({ isLogin }) => {
             <section className="bg-gradient-to-b from-[#1B054E] to-[#7449B6] md:w-1/2 relative">
                 <img src="/assets/auth/Group184.png" className="w-full h-full object-cover" />
             </section>
-            {/* Background Decoration */}
+
+            {/* Background Decoration dengan Animasi yang Lebih Terlihat */}
             <img
                 src="/assets/bg/Ellipse28.svg"
-                className="absolute bottom-[55%] left-[20%] -z-10 hidden lg:block"
+                className="decoration-1 absolute bottom-[55%] left-[20%] -z-10 hidden lg:block"
+                style={{ opacity: 0.5 }}
             />
             <img
                 src="/assets/bg/Ellipse29.svg"
-                className="absolute top-[33%] right-[75%] -z-10 hidden lg:block"
+                className="decoration-2 absolute top-[33%] right-[75%] -z-10 hidden lg:block"
+                style={{ opacity: 0.5 }}
             />
         </div>
     )
