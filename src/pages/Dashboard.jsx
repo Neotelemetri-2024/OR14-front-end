@@ -11,7 +11,7 @@ const TimelineItem = ({ title, date, isActive, isLast }) => {
         <div className="flex items-start">
             {/* Circle and Line */}
             <div className="flex flex-col items-center mr-4 md:mr-6">
-                <div className={`w-6 h-6 md:w-8 md:h-8 rounded-full ${isActive ? 'bg-[#1E0771]' : 'bg-[#7872B6]'} flex items-center justify-center z-10`}>
+                <div className={`w-5 h-5  rounded-full ${isActive ? 'bg-[#1E0771]' : 'bg-[#7872B6]'} flex items-center justify-center z-10`}>
                 </div>
                 {!isLast && (
                     <div className="w-1 h-16 md:h-24 bg-[#7872B6]"></div>
@@ -21,7 +21,7 @@ const TimelineItem = ({ title, date, isActive, isLast }) => {
             {/* Content */}
             <div className="flex-1">
                 <div className="flex justify-between items-start flex-col md:flex-row">
-                    <h3 className={`text-lg md:text-2xl font-medium ${isActive ? 'text-[#1E0771]' : 'text-[#7872B6]'}`}>
+                    <h3 className={`text-lg md:text-xl font-medium ${isActive ? 'text-[#1E0771]' : 'text-[#7872B6]'}`}>
                         {title}
                     </h3>
                     <span className={`${isActive ? 'text-[#1E0771]' : 'text-[#7872B6]'} md:ml-4 font-bold text-base md:text-xl`}>{date}</span>
@@ -68,11 +68,11 @@ const Dashboard = () => {
 
 
                 <div>
-                    <h2 className="text-secondary text-xl md:text-3xl font-semibold">Hello Berka Aldizar Ganteng!</h2>
+                    <h2 className="text-secondary text-xl md:text-2xl font-semibold">Hello Berka Aldizar Ganteng!</h2>
                 </div>
 
                 <div className="flex flex-row items-center gap-3 md:gap-6 px-4 md:px-10 border-2 py-3 md:py-4 bg-[#1f1e78] rounded-xl text-white">
-                    <MdVerifiedUser className="text-2xl md:text-3xl" />
+                    <MdVerifiedUser className="text-lg md:text-xl" />
                     <h2 className="text-base md:text-xl">Waduh, Kamu Belum Verifikasi!</h2>
                 </div>
 
@@ -89,7 +89,7 @@ const Dashboard = () => {
 
                     {/* Timeline */}
                     <div className="w-full md:flex-2 py-6 md:py-12 px-4 md:px-16">
-                        <h2 className="text-2xl md:text-3xl font-bold text-secondary">
+                        <h2 className="text-xl md:text-2xl font-bold text-secondary">
                             Alur Kegiatan
                         </h2>
                         <div className="space-y-0 py-8 md:py-16">

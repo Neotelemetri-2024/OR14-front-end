@@ -5,6 +5,7 @@ import DivisionComponent from "../Components/DivisionComponent";
 import ProjectComponent from "../Components/ProjectComponent";
 import AchievementComponent from "../Components/AchievementComponent";
 import { useNavigate } from "react-router-dom";
+import OrganisasiComponent from "../Components/OrganisasiComponent";
 
 const Landing = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -66,7 +67,7 @@ const Landing = () => {
     return (
         <div className="pt-4 relative w-full overflow-x-hidden" id="home">
             {/* Navbar */}
-            <nav className={`sticky top-0 flex flex-row justify-between items-center px-4 md:px-8 mb-8 md:mb-12 lg:mb-20 bg-white w-full ${isScrolled ? "drop-shadow-md" : ""} z-10 py-2`}>
+            <nav className={`sticky top-0 flex flex-row justify-between items-center px-4 md:px-8 mb-8 md:mb-12 lg:mb-0 bg-white w-full ${isScrolled ? "drop-shadow-md" : ""} z-10`}>
                 <img src="/images/or14.svg" className="w-32 md:w-40 lg:w-56" alt="Logo" />
 
                 {/* Desktop Navigation */}
@@ -118,18 +119,11 @@ const Landing = () => {
             </nav>
 
             {/* Home */}
-            <section className="flex flex-col md:flex-row items-center mb-12 md:mb-20 pb-12 md:pb-24 lg:px-0 px-8">
-                {/* Landing Page Card */}
-                <div className="rounded-r-3xl px-4 sm:px-6 md:px-12 pt-8 md:pt-12 pb-12 md:pb-24 lg:pb-40 bg-gradient-to-b from-black to-[#3533cc] w-full md:w-1/2 hidden md:block">
-                    <h1 className="text-white text-2xl sm:text-3xl md:text-4xl mb-4 md:mb-6 font-bold">Apa itu OR UKM Neo Telemetri?</h1>
-                    <p className="text-white text-base sm:text-lg md:text-xl font-light text-justify">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eu massa arcu. Aliquam a odio sodales, iaculis neque eget, commodo tellus. Fusce varius commodo lorem, vitae vulputate mi ullamcorper in. Donec viverra neque tempor turpis molestie malesuada. Nam dapibus sapien ac ligula consectetur ultrices. Vestibulum ut ante elementum dolor molestie vestibulum.</p>
-                </div>
-
-                {/* Landing Page Title */}
+            <section className="flex flex-col md:flex-row items-center lg:px-0 px-8">
                 <div className="w-full lg:w-1/2 flex flex-col justify-start mt-8 md:mt-0 md:ml-4 lg:ml-16 px-4 md:px-0">
-                    <h1 className="text-secondary text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6 lg:mb-12">Open Recruitment XIV</h1>
+                    <h1 className="text-secondary text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6 lg:mb-4">Open Recruitment 14</h1>
                     <h1 className="text-secondary text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6 lg:mb-12">UKM Neo Telemetri</h1>
-                    <p className="text-tertiary text-base sm:text-lg md:text-xl font-regular text-justify mb-6 md:mb-10 lg:mb-16 lg:max-w-1/2">
+                    <p className="text-tertiary text-base sm:text-lg md:text-xl font-regular text-justify mb-6 md:mb-10 lg:mb-16 pr-34">
                         Ayo! menjadi bagian dari Unit Kegiatan Mahasiswa berbasis IT terbesar di Universitas Andalas.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 lg:justify-between justify-evenly items-center lg:max-w-1/2">
@@ -141,22 +135,57 @@ const Landing = () => {
                         </button>
                     </div>
                 </div>
+
+                <div className="w-full md:w-1/2 hidden md:flex justify-center items-center pb-24 relative">
+                    {/* Card di atas foto */}
+                    <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 -translate-y-1/4 bg-secondary text-white rounded-3xl px-24 py-1 text-center shadow-lg z-10">
+                        <p className="text-sm font-medium mb-1">Ketua Neo Telemetri</p>
+                        <h3 className="text-xl font-bold">Abdalul Fikri</h3>
+                    </div>
+
+                    <img src="/assets/landing/Group170.png" className="absolute right-128 bottom-36 md:block hidden" />
+                    <img src="/assets/landing/Group171.png" className="absolute right-0 top-30 md:block hidden" />
+                    <img src="/assets/programming.svg" className="absolute left-50 top-40 md:block hidden h-12 -rotate-30" />
+                    <img src="/assets/mmd.svg" className="absolute right-40 top-40 md:block hidden h-16 " />
+                    <img src="/assets/skj.svg" className="absolute right-30 bottom-40 md:block hidden h-16 " />
+
+                    <img src="/assets/fikri.png" className="max-w-full h-auto relative z-0 md:block hidden" />
+                </div>
+            </section>
+
+            <section className="flex flex-col md:flex-row items-center lg:px-0 px-8 mb-8">
+                <div className="w-full md:w-1/2 hidden md:flex justify-center items-center pb-24">
+                    <img src="/images/or14.svg" className=" right-128 bottom-36 md:block hidden w-3/4" />
+                </div>
+                <div className="px-4 sm:px-6 md:px-12 pt-8 md:pt-12 pb-12 md:pb-24 lg:pb-28 bg-gradient-to-b from-[#1B054E] to-[#7449B6] w-full md:w-1/2 hidden md:block">
+                    <h1 className="text-white text-2xl sm:text-2xl mb-4 md:mb-12 font-bold">Apa itu Open Recruitment UKM Neo Telemetri?</h1>
+                    <p className="text-white text-base sm:text-lg md:text-xl font-light text-justify">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eu massa arcu. Aliquam a odio sodales, iaculis neque eget, commodo tellus. Fusce varius commodo lorem, vitae vulputate mi ullamcorper in. Donec viverra neque tempor turpis molestie malesuada. Nam dapibus sapien ac ligula consectetur ultrices. Vestibulum ut ante elementum dolor molestie vestibulum.</p>
+                </div>
             </section>
 
             {/* Division Section */}
-            <section className="w-full bg-[url('/assets/bg.svg')] bg-cover bg-center bg-no-repeat py-8 pb-20 md:pb-40" id="division">
+            <section className="w-full bg-gradient-to-b from-[#1B054E] to-[#7449B6] pb-20 md:pb-40" id="division">
                 <div className="flex flex-col items-center w-full bg-white py-4 md:py-6 rounded-sm">
-                    <h1 className="text-[#1E0771] text-3xl sm:text-4xl md:text-5xl font-bold">
-                        Our Division
+                    <h1 className="text-[#1E0771] text-3xl sm:text-4xl font-bold">
+                        Operasional
                     </h1>
                 </div>
                 <DivisionComponent />
             </section>
 
+            <section className="w-full bg-gradient-to-b from-[#1B054E] to-[#7449B6]" id="division">
+                <div className="flex flex-col items-center w-full bg-white py-4 md:py-6 rounded-sm">
+                    <h1 className="text-[#1E0771] text-3xl sm:text-4xl font-bold">
+                        Organisasi
+                    </h1>
+                </div>
+                <OrganisasiComponent />
+            </section>
+
             {/* Projects Section */}
-            <section className="w-full bg-white py-8" id="projects">
-                <div className="flex flex-col items-center w-full bg-[#1e1d75] py-4 md:py-6 mb-8">
-                    <h1 className="text-white text-3xl sm:text-4xl md:text-5xl font-bold">
+            <section className="w-full bg-white" id="projects">
+                <div className="flex flex-col items-center w-full py-4 md:py-6">
+                    <h1 className="text-[#301D54] text-3xl sm:text-4xl  font-bold ">
                         Our Latest Projects
                     </h1>
                 </div>
@@ -167,8 +196,8 @@ const Landing = () => {
 
             {/* Achievements Section */}
             <section id="achievements" className="w-full mb-16 md:mb-32">
-                <div className="flex flex-col items-center w-full bg-[#1e1d75] py-4 md:py-6 my-8 md:my-12">
-                    <h1 className="text-white text-3xl sm:text-4xl md:text-5xl font-bold">
+                <div className="flex flex-col items-center w-full py-4 md:py-6 md:my-12">
+                    <h1 className="text-[#301D54] text-3xl sm:text-4xl font-bold">
                         Our Achievements
                     </h1>
                 </div>
@@ -178,17 +207,21 @@ const Landing = () => {
             </section>
 
             {/* Jumbotron */}
-            <section id="jumbotron" className="bg-[url('/assets/bg.svg')] bg-cover bg-center bg-no-repeat py-20 md:py-40 flex flex-col items-center justify-center gap-8 md:gap-16 px-4 md:px-0">
-                <h1 className="text-white text-2xl sm:text-3xl md:text-4xl font-bold text-center px-4">
+            <section id="jumbotron" className="bg-gradient-to-b from-[#1B054E] to-[#7449B6] py-20 md:py-40 flex flex-col items-center justify-center gap-8 md:gap-16 px-4 md:px-0 relative">
+
+                <img src="/assets/landing/Group172.png" className="absolute left-0 md:block hidden" />
+                <img src="/assets/landing/Group173.png" className="absolute right-0 top-28 md:block hidden" />
+
+                <h1 className="text-white text-2xl sm:text-3xl font-bold text-center px-4 z-10">
                     Tertarik untuk menjadi bagian dari UKM Neo Telemetri?
                 </h1>
-                <button className="border-2 border-white px-8 sm:px-12 md:px-16 py-3 sm:py-4 md:py-6 text-xl sm:text-2xl md:text-3xl bg-white rounded-2xl font-bold hover:cursor-pointer hover:bg-gray-300 hover:scale-105 transition duration-300">
-                    Daftar Sekarang!
+                <button className="border-2 border-white px-8 sm:px-12 md:px-16 py-3 sm:py-4 md:py-6 text-xl sm:text-2xl md:text-3xl bg-white rounded-2xl font-bold hover:cursor-pointer hover:bg-gray-300 hover:scale-105 transition duration-300 text-[#170033]">
+                    Ayo Daftar!
                 </button>
             </section>
 
             {/* Footer */}
-            <section id="about" className="bg-quarterary flex flex-col-reverse lg:grid lg:grid-cols-2 py-24 md:py-48 px-6 md:px-12 lg:px-48 gap-8">
+            <section id="about" className="bg-[#8471AB] flex flex-col-reverse lg:grid lg:grid-cols-2 py-24 md:py-48 px-6 md:px-12 lg:px-48 gap-8">
                 {/* Kiri - Logo & Alamat */}
                 <div className="flex flex-col gap-8 text-center lg:text-left w-full max-w-lg mx-auto">
                     <img src="/images/neowhite.svg" className="w-40 md:w-56 mx-auto lg:mx-0" alt="Neo Logo" />
@@ -223,6 +256,9 @@ const Landing = () => {
                     {/* Relate */}
                     <div className="flex flex-col gap-3">
                         <h4 className="font-bold">Relate</h4>
+                        <a href="#" className="font-light hover:underline cursor-pointer">
+                            Profile Neo Telemetri
+                        </a>
                         <a href="#" className="font-light hover:underline cursor-pointer">
                             Marketing Neo Telemetri
                         </a>

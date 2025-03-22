@@ -34,7 +34,7 @@ const projects = [
 const ProjectComponent = () => {
 
     return (
-        <div className="flex grid lg:grid-cols-3 grid-cols-1 gap-12 justify-center place-items-center px-48 pt-16 lg:px-32">
+        <div className="flex grid lg:grid-cols-3 grid-cols-1 gap-12 justify-center place-items-center px-48 pt-8 lg:px-32">
             {
                 projects.map((project, index) => (
                     <div key={index} className="hover:translate-2 transition duration-300 flex flex-col gap-2">

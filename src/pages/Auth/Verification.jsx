@@ -30,7 +30,7 @@ const Verification = () => {
 
     const handleSubmit = () => {
         if (krsFile && paymentFile) {
-            // Disini Anda akan mengirim file ke server
+            // Di sini Anda akan mengirim file ke server
             // Untuk contoh ini, kita hanya menampilkan pesan sukses
         }
     };
@@ -123,7 +123,7 @@ const Verification = () => {
 
                 <div>
                     <h2 className="text-secondary text-xl md:text-3xl font-bold mt-2 md:mt-4">
-                        Upload berkas yang diperlukan disini
+                        Upload berkas yang diperlukan di sini
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12 mt-6 p-2 md:p-4">
                         <div>

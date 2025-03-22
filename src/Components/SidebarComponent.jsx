@@ -35,7 +35,7 @@ const SidebarComponent = ({ closeSidebar }) => {
                 }
             </div >
 
-            <div className="w-full flex flex-col gap-4 md:gap-8 mt-12 md:mt-24">
+            <div className="w-full flex flex-col gap-4 mt-12 md:mt-24">
                 <Link
                     to="/dashboard"
                     onClick={handleLinkClick}
