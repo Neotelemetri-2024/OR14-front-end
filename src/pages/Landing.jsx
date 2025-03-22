@@ -157,7 +157,7 @@ const Landing = () => {
                 <div className="w-full md:w-1/2 hidden md:flex justify-center items-center pb-24">
                     <img src="/images/or14.svg" className=" right-128 bottom-36 md:block hidden w-3/4" />
                 </div>
-                <div className="px-4 sm:px-6 md:px-12 pt-8 md:pt-12 pb-12 md:pb-24 lg:pb-28 bg-gradient-to-b from-[#1B054E] to-[#7449B6] w-full md:w-1/2 hidden md:block">
+                <div className="px-4 sm:px-6 md:px-12 pt-8 md:pt-12 pb-12 md:pb-24 lg:pb-28 bg-gradient-to-b from-[#1B054E] to-[#7449B6] w-full md:w-1/2 hidden md:block mr-10">
                     <h1 className="text-white text-2xl sm:text-2xl mb-4 md:mb-12 font-bold">Apa itu Open Recruitment UKM Neo Telemetri?</h1>
                     <p className="text-white text-base sm:text-lg md:text-xl font-light text-justify">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eu massa arcu. Aliquam a odio sodales, iaculis neque eget, commodo tellus. Fusce varius commodo lorem, vitae vulputate mi ullamcorper in. Donec viverra neque tempor turpis molestie malesuada. Nam dapibus sapien ac ligula consectetur ultrices. Vestibulum ut ante elementum dolor molestie vestibulum.</p>
                 </div>

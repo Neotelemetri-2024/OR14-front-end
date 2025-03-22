@@ -61,8 +61,9 @@ const Auth = ({ isLogin }) => {
                     }
                 </div>
             </section>
-            <section className="w-0 bg-[url('/assets/bg.svg')] bg-cover bg-no-repeat md:w-1/2" />
-
+            <section className="bg-gradient-to-b from-[#1B054E] to-[#7449B6] md:w-1/2 relative">
+                <img src="/assets/auth/Group184.png" className="w-full h-full object-cover" />
+            </section>
             {/* Background Decoration */}
             <img
                 src="/assets/bg/Ellipse28.svg"
