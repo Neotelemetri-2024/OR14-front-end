@@ -91,7 +91,7 @@ const DivisionComponent = () => {
     const data = div[currentIndex];
 
     return (
-        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Division Header */}
             <div className="flex flex-row justify-start py-5 sm:py-8 md:py-10 items-center">
                 <motion.img
@@ -132,12 +132,16 @@ const DivisionComponent = () => {
                             animate={{ x: 0, opacity: 1 }}
                             exit={{ x: -direction * 100, opacity: 0 }}
                             transition={{ duration: 0.5, ease: "easeInOut" }}
-                            className="flex flex-col lg:flex-row justify-between px-2 sm:px-4 md:px-6 lg:px-8 gap-4 md:gap-6 lg:gap-8 w-full"
+                            className="flex flex-col lg:flex-row justify-between gap-4 md:gap-6 lg:gap-8 w-full"
                         >
                             {data.subdivision?.map((subdiv, index) => (
                                 <div
                                     key={index}
-                                    className="bg-white rounded-xl pt-4 sm:pt-6 md:pt-8 px-4 sm:px-6 md:px-8 pb-16 sm:pb-24 md:pb-32 lg:pb-48 hover:bg-gray-300 hover:shadow-lg transition-all duration-300 mb-4 lg:mb-0 w-full"
+                                    className="bg-white rounded-xl pt-4 sm:pt-6 md:pt-8 
+                                    px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12
+                                    pb-16 sm:pb-24 md:pb-32 lg:pb-48
+                                    hover:bg-gray-300 hover:shadow-lg transition-all duration-300 
+                                    mb-4 lg:mb-0 w-full max-w-full lg:max-w-lg xl:max-w-2xl"
                                 >
                                     <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-secondary font-bold">{subdiv.name}</h2>
                                     <p className="text-[#170033] mt-2 sm:mt-4 md:mt-6 lg:mt-8 text-justify text-sm sm:text-base md:text-xl lg:text-2xl">
