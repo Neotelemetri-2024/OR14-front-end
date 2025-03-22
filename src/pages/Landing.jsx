@@ -184,7 +184,7 @@ const Landing = () => {
 
             {/* Projects Section */}
             <section className="w-full bg-white" id="projects">
-                <div className="flex flex-col items-center w-full py-4 md:py-6">
+                <div className="flex flex-col items-center w-full py-4 md:py-6 md:mt-0 mt-10">
                     <h1 className="text-[#301D54] text-3xl sm:text-4xl  font-bold ">
                         Our Latest Projects
                     </h1>
@@ -195,9 +195,9 @@ const Landing = () => {
             </section>
 
             {/* Achievements Section */}
-            <section id="achievements" className="w-full mb-16 md:mb-32">
+            <section id="achievements" className="w-full mb-16 md:mb-32 md:mt-0 mt-10">
                 <div className="flex flex-col items-center w-full py-4 md:py-6 md:my-12">
-                    <h1 className="text-[#301D54] text-3xl sm:text-4xl font-bold">
+                    <h1 className="text-[#301D54] text-3xl sm:text-4xl font-bold mb-6">
                         Our Achievements
                     </h1>
                 </div>

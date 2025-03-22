@@ -119,110 +119,114 @@ const Verification = () => {
                 <button onClick={toggleSidebar} className="text-white text-3xl">
                     <IoMenu />
                 </button>
-                <img src="/assets/sidebar/or14white.svg" alt="Logo" className="h-8" />
                 <div className="w-8"></div> {/* Empty div for balanced spacing */}
             </div>
 
-            {/* Sidebar - different display for mobile vs desktop */}
-            {isMobile ? (
-                <div className={`fixed inset-0 z-40 transition-transform duration-300 transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-                    <div className="relative h-full">
+            {/* Mobile Sidebar with Blur Effect */}
+            {isMobile && (
+                <>
+                    {/* Mobile Sidebar */}
+                    <div className={`fixed top-0 left-0 h-full z-50 transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                         <SidebarComponent closeSidebar={() => setSidebarOpen(false)} />
-                        {/* Semi-transparent overlay */}
-                        <div
-                            className={`fixed inset-0 bg-black bg-opacity-50 z-30 ${sidebarOpen ? 'block' : 'hidden'}`}
-                            onClick={() => setSidebarOpen(false)}
-                        ></div>
                     </div>
-                </div>
-            ) : (
-                <div className="md:block sticky top-0 h-screen overflow-y-auto">
-                    <SidebarComponent />
-                </div>
+
+                    {/* Invisible overlay to close sidebar when clicked */}
+                    <div
+                        className={`fixed inset-0 z-40 transition-opacity duration-300 ${sidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                        onClick={() => setSidebarOpen(false)}
+                    ></div>
+                </>
             )}
 
-            {/* Main Content */}
-            <section className="flex-1 p-4 p-4 px-6 md:p-8 md:px-16 flex flex-col gap-4 md:gap-6 overflow-y-auto">
-                {/* Edit Profile */}
-                <div className="self-end">
-                    <ProfileComponent />
-                </div>
+            {/* Desktop Sidebar (Original Implementation) */}
+            <div className="hidden md:block sticky top-0 h-screen overflow-y-auto">
+                <SidebarComponent />
+            </div>
 
-                <div>
-                    <h2 className="text-secondary text-lg md:text-xl font-bold mt-2">
-                        Upload berkas yang diperlukan di sini
-                    </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 mt-4 p-2">
-                        <div>
-                            <h3 className="text-lg font-semibold mb-3">Scan KRS</h3>
-                            <div className="w-full bg-[#EBF2FF] p-3 h-40 md:h-52 rounded-xl flex flex-col justify-center items-center relative">
-                                {renderFilePreview(krsFile, "KRS")}
-                                {krsFile && (
-                                    <div className="absolute bottom-2 left-0 right-0 bg-white bg-opacity-80 p-1 text-center">
-                                        <p className="truncate text-xs md:text-sm font-medium">{krsFile.name}</p>
-                                    </div>
-                                )}
-                            </div>
-                            <input
-                                type="file"
-                                id="krsFileInput"
-                                className="hidden"
-                                onChange={handleKrsFileChange}
-                                accept=".pdf"
-                            />
-                            <label
-                                htmlFor="krsFileInput"
-                                className="w-full md:w-3/4 border-2 py-2 md:py-3 rounded-lg mt-3 text-secondary border-secondary text-sm md:text-base font-bold hover:bg-secondary hover:text-white hover:cursor-pointer block text-center"
-                            >
-                                Ganti File
-                            </label>
-                        </div>
-                        <div>
-                            <h3 className="text-lg font-semibold mb-3">Bukti Pembayaran</h3>
-                            <div className="w-full bg-[#EBF2FF] p-3 h-40 md:h-52 rounded-xl flex flex-col justify-center items-center relative">
-                                {renderFilePreview(paymentFile, "Payment")}
-                                {paymentFile && (
-                                    <div className="absolute bottom-2 left-0 right-0 bg-white bg-opacity-80 p-1 text-center">
-                                        <p className="truncate text-xs md:text-sm font-medium">{paymentFile.name}</p>
-                                    </div>
-                                )}
-                            </div>
-                            <input
-                                type="file"
-                                id="paymentFileInput"
-                                className="hidden"
-                                onChange={handlePaymentFileChange}
-                                accept=".pdf,.jpg,.jpeg"
-                            />
-                            <label
-                                htmlFor="paymentFileInput"
-                                className="w-full md:w-3/4 border-2 py-2 md:py-3 rounded-lg mt-3 text-secondary border-secondary text-sm md:text-base font-bold hover:bg-secondary hover:text-white hover:cursor-pointer block text-center"
-                            >
-                                Ganti File
-                            </label>
-                        </div>
+            {/* Main Content - Apply blur only on mobile */}
+            <div className={`flex-1 ${isMobile && sidebarOpen ? 'blur-sm' : ''} transition-all duration-300`}
+                style={{ pointerEvents: isMobile && sidebarOpen ? 'none' : 'auto' }}>
+
+                <section className="flex-1 p-4 px-6 md:p-8 md:px-16 flex flex-col gap-4 md:gap-6 overflow-y-auto">
+                    {/* Edit Profile */}
+                    <div className="self-end">
+                        <ProfileComponent />
                     </div>
 
-                    <div className="flex justify-center md:justify-start mt-4 md:mt-6">
-                        <button
-                            onClick={handleSubmit}
-                            className={`w-full md:w-1/2 border-2 py-2 md:py-3 rounded-lg text-white bg-[#1E0771] text-sm md:text-base font-bold hover:bg-secondary hover:cursor-pointer ${!krsFile || !paymentFile ? 'opacity-50 cursor-not-allowed' : ''}`}
-                            disabled={!krsFile || !paymentFile}
-                        >
-                            Kirim
-                        </button>
-                    </div>
-
-                    <div className="flex flex-row text-white place-items-center w-full bg-[#1E0771] py-2 md:py-3 px-3 md:px-5 text-sm md:text-base gap-2 md:gap-4 mt-4 md:mt-6 rounded-lg">
-                        <MdVerifiedUser className="text-xl md:text-2xl" />
-                        <h2>
-                            Verifikasi Berhasil!
+                    <div>
+                        <h2 className="text-secondary text-lg md:text-xl font-bold mt-2">
+                            Upload berkas yang diperlukan di sini
                         </h2>
-                    </div>
-                </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 mt-4 p-2">
+                            <div>
+                                <h3 className="text-lg font-semibold mb-3">Scan KRS</h3>
+                                <div className="w-full bg-[#EBF2FF] p-3 h-40 md:h-52 rounded-xl flex flex-col justify-center items-center relative">
+                                    {renderFilePreview(krsFile, "KRS")}
+                                    {krsFile && (
+                                        <div className="absolute bottom-2 left-0 right-0 bg-white bg-opacity-80 p-1 text-center">
+                                            <p className="truncate text-xs md:text-sm font-medium">{krsFile.name}</p>
+                                        </div>
+                                    )}
+                                </div>
+                                <input
+                                    type="file"
+                                    id="krsFileInput"
+                                    className="hidden"
+                                    onChange={handleKrsFileChange}
+                                    accept=".pdf"
+                                />
+                                <label
+                                    htmlFor="krsFileInput"
+                                    className="w-full md:w-3/4 border-2 py-2 md:py-3 rounded-lg mt-3 text-secondary border-secondary text-sm md:text-base font-bold hover:bg-secondary hover:text-white hover:cursor-pointer block text-center"
+                                >
+                                    Ganti File
+                                </label>
+                            </div>
+                            <div>
+                                <h3 className="text-lg font-semibold mb-3">Bukti Pembayaran</h3>
+                                <div className="w-full bg-[#EBF2FF] p-3 h-40 md:h-52 rounded-xl flex flex-col justify-center items-center relative">
+                                    {renderFilePreview(paymentFile, "Payment")}
+                                    {paymentFile && (
+                                        <div className="absolute bottom-2 left-0 right-0 bg-white bg-opacity-80 p-1 text-center">
+                                            <p className="truncate text-xs md:text-sm font-medium">{paymentFile.name}</p>
+                                        </div>
+                                    )}
+                                </div>
+                                <input
+                                    type="file"
+                                    id="paymentFileInput"
+                                    className="hidden"
+                                    onChange={handlePaymentFileChange}
+                                    accept=".pdf,.jpg,.jpeg"
+                                />
+                                <label
+                                    htmlFor="paymentFileInput"
+                                    className="w-full md:w-3/4 border-2 py-2 md:py-3 rounded-lg mt-3 text-secondary border-secondary text-sm md:text-base font-bold hover:bg-secondary hover:text-white hover:cursor-pointer block text-center"
+                                >
+                                    Ganti File
+                                </label>
+                            </div>
+                        </div>
 
-                {/* Background images - only visible on larger screens */}
-            </section>
+                        <div className="flex justify-center md:justify-start mt-4 md:mt-6">
+                            <button
+                                onClick={handleSubmit}
+                                className={`w-full md:w-1/2 border-2 py-2 md:py-3 rounded-lg text-white bg-[#1E0771] text-sm md:text-base font-bold hover:bg-secondary hover:cursor-pointer ${!krsFile || !paymentFile ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                disabled={!krsFile || !paymentFile}
+                            >
+                                Kirim
+                            </button>
+                        </div>
+
+                        <div className="flex flex-row text-white place-items-center w-full bg-[#1E0771] py-2 md:py-3 px-3 md:px-5 text-sm md:text-base gap-2 md:gap-4 mt-4 md:mt-6 rounded-lg">
+                            <MdVerifiedUser className="text-xl md:text-2xl" />
+                            <h2>
+                                Verifikasi Berhasil!
+                            </h2>
+                        </div>
+                    </div>
+                </section>
+            </div>
         </div>
     );
 };

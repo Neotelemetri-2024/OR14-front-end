@@ -71,90 +71,80 @@ const Dashboard = () => {
                 <div className="w-8"></div> {/* Empty div for balanced spacing */}
             </div>
 
-            {/* Sidebar - different display for mobile vs desktop */}
-            {isMobile ? (
-                <div className={`fixed inset-0 z-40 transition-transform duration-300 transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-                    <div className="relative h-full">
+            {/* Mobile Sidebar with Blur Effect */}
+            {isMobile && (
+                <>
+                    {/* Mobile Sidebar */}
+                    <div className={`fixed top-0 left-0 h-full z-50 transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                         <SidebarComponent closeSidebar={() => setSidebarOpen(false)} />
-                        {/* Semi-transparent overlay */}
-                        <div
-                            className={`fixed inset-0 bg-black bg-opacity-50 z-30 ${sidebarOpen ? 'block' : 'hidden'}`}
-                            onClick={() => setSidebarOpen(false)}
-                        ></div>
                     </div>
-                </div>
-            ) : (
-                <div className="md:block sticky top-0 h-screen overflow-y-auto">
-                    <SidebarComponent />
-                </div>
+
+                    {/* Invisible overlay to close sidebar when clicked */}
+                    <div
+                        className={`fixed inset-0 z-40 transition-opacity duration-300 ${sidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                        onClick={() => setSidebarOpen(false)}
+                    ></div>
+                </>
             )}
 
-            {/* Main Content */}
-            <section className="flex-1 p-4 p-4 px-6 md:p-8 md:px-16 flex flex-col gap-4 md:gap-6 overflow-y-auto">
-                {/* Edit Profile */}
-                <div className="self-end">
-                    <ProfileComponent />
-                </div>
+            {/* Desktop Sidebar (Original Implementation) */}
+            <div className="hidden md:block sticky top-0 h-screen overflow-y-auto">
+                <SidebarComponent />
+            </div>
 
-                <div>
-                    <h2 className="text-secondary text-xl md:text-2xl font-semibold">Hello Berka Aldizar Ganteng!</h2>
-                </div>
-
-                <div className="flex flex-row items-center gap-3 md:gap-4 px-4 md:px-6 border-2 py-3 md:py-4 bg-[#AD87B5] rounded-xl text-white">
-                    <MdVerifiedUser className="text-lg md:text-xl" />
-                    <h2 className="text-base md:text-xl">Waduh, Kamu Belum Verifikasi!</h2>
-                </div>
-
-                <button className="flex justify-center items-center bg-gradient-to-b from-[#1B054E] to-[#7449B6] text-white font-bold py-3 px-8 rounded-lg transition-all duration-300 ease-in-out hover:cursor-pointer hover:shadow-lg hover:shadow-purple-400/50 hover:scale-105 hover:from-[#2A0775] hover:to-[#8A5BD0]">
-                    Verifikasi Sekarang
-                </button>
-
-
-
-                {/* Profile and Timeline - Stack on mobile, side by side on larger screens */}
-                <div className="flex flex-col md:flex-row gap-4 md:gap-6">
-
-                    <div className="w-full md:w-2/5 bg-[#E8D9FF] py-6 md:py-8 flex flex-col place-items-center gap-3 md:gap-4 rounded-xl text-secondary h-fit">
-                        <div className="text-4xl md:text-6xl p-4 md:p-5 bg-[#1E0771] text-white rounded-full">
-                            <FaUser />
-                        </div>
-                        <h3 className="text-xl md:text-2xl font-bold">Berka Aldizar</h3>
-                        <h4 className="text-lg md:text-xl">Programming</h4>
-                        <h4 className="text-lg md:text-xl">Web Programming</h4>
+            {/* Main Content - Apply blur only on mobile */}
+            <div className={`flex-1 ${isMobile && sidebarOpen ? 'blur-sm' : ''} transition-all duration-300`}
+                style={{ pointerEvents: isMobile && sidebarOpen ? 'none' : 'auto' }}>
+                <section className="flex-1 p-4 px-6 md:p-8 md:px-16 flex flex-col gap-4 md:gap-6 overflow-y-auto">
+                    {/* Edit Profile */}
+                    <div className="self-end">
+                        <ProfileComponent />
                     </div>
 
-                    {/* Timeline */}
-                    <div className="w-full md:w-3/5 py-4 md:py-8 px-4 md:px-8">
-                        <h2 className="text-xl md:text-2xl font-bold text-secondary">
-                            Alur Kegiatan
-                        </h2>
-                        <div className="space-y-0 py-4 md:py-6">
-                            {timelineItems.map((item, index) => (
-                                <TimelineItem
-                                    key={index}
-                                    title={item.title}
-                                    date={item.date}
-                                    isActive={item.isActive}
-                                    isLast={index === timelineItems.length - 1}
-                                />
-                            ))}
+                    <div>
+                        <h2 className="text-secondary text-xl md:text-2xl font-semibold">Hello Berka Aldizar Ganteng!</h2>
+                    </div>
+
+                    <div className="flex flex-row items-center gap-3 md:gap-4 px-4 md:px-6 border-2 py-3 md:py-4 bg-[#AD87B5] rounded-xl text-white">
+                        <MdVerifiedUser className="text-lg md:text-xl" />
+                        <h2 className="text-base md:text-xl">Waduh, Kamu Belum Verifikasi!</h2>
+                    </div>
+
+                    <button className="flex justify-center items-center bg-gradient-to-b from-[#1B054E] to-[#7449B6] text-white font-bold py-3 px-8 rounded-lg transition-all duration-300 ease-in-out hover:cursor-pointer hover:shadow-lg hover:shadow-purple-400/50 hover:scale-105 hover:from-[#2A0775] hover:to-[#8A5BD0]">
+                        Verifikasi Sekarang
+                    </button>
+
+                    {/* Profile and Timeline - Stack on mobile, side by side on larger screens */}
+                    <div className="flex flex-col md:flex-row gap-4 md:gap-6">
+                        <div className="w-full md:w-2/5 bg-[#E8D9FF] py-6 md:py-8 flex flex-col place-items-center gap-3 md:gap-4 rounded-xl text-secondary h-fit">
+                            <div className="text-4xl md:text-6xl p-4 md:p-5 bg-[#1E0771] text-white rounded-full">
+                                <FaUser />
+                            </div>
+                            <h3 className="text-xl md:text-2xl font-bold">Berka Aldizar</h3>
+                            <h4 className="text-lg md:text-xl">Programming</h4>
+                            <h4 className="text-lg md:text-xl">Web Programming</h4>
+                        </div>
+
+                        {/* Timeline */}
+                        <div className="w-full md:w-3/5 py-4 md:py-8 px-4 md:px-8">
+                            <h2 className="text-xl md:text-2xl font-bold text-secondary">
+                                Alur Kegiatan
+                            </h2>
+                            <div className="space-y-0 py-4 md:py-6">
+                                {timelineItems.map((item, index) => (
+                                    <TimelineItem
+                                        key={index}
+                                        title={item.title}
+                                        date={item.date}
+                                        isActive={item.isActive}
+                                        isLast={index === timelineItems.length - 1}
+                                    />
+                                ))}
+                            </div>
                         </div>
                     </div>
-                </div>
-
-                {/* Background images - only visible on larger screens */}
-                {/* <img
-                    src="/assets/bg/Ellipse31.svg"
-                    alt="Decor 1"
-                    className="absolute top-0 right-0 hidden lg:block -z-10"
-                />
-
-                <img
-                    src="/assets/bg/Ellipse32.svg"
-                    alt="Decor 2"
-                    className="absolute top-[55%] right-[55%] hidden lg:block -z-10"
-                /> */}
-            </section>
+                </section>
+            </div>
         </div>
     )
 }

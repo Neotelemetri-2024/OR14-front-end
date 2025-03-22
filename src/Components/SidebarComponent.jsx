@@ -7,6 +7,7 @@ const SidebarComponent = ({ closeSidebar }) => {
     const location = useLocation();
     const currentPath = location.pathname;
     const [isCollapsed, setIsCollapsed] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
 
     // Helper function to determine if a path is active
     const isActive = (path) => {
@@ -24,8 +25,31 @@ const SidebarComponent = ({ closeSidebar }) => {
     };
 
     const toggleCollapse = () => {
-        setIsCollapsed(!isCollapsed);
+        if (!isMobile) {
+            setIsCollapsed(!isCollapsed);
+        }
     };
+
+    // Add window resize event listener to check if mobile
+    useEffect(() => {
+        const checkIfMobile = () => {
+            setIsMobile(window.innerWidth < 768);
+            if (window.innerWidth < 768) {
+                setIsCollapsed(false); // Always expanded on mobile
+            }
+        };
+
+        // Check initially
+        checkIfMobile();
+
+        // Add event listener
+        window.addEventListener('resize', checkIfMobile);
+
+        // Cleanup
+        return () => {
+            window.removeEventListener('resize', checkIfMobile);
+        };
+    }, []);
 
     // Add scroll event listener to track page scroll
     useEffect(() => {
@@ -40,24 +64,26 @@ const SidebarComponent = ({ closeSidebar }) => {
     }, []);
 
     return (
-        <div className={`h-full sticky top-0 transition-all duration-300 overflow-auto bg-gradient-to-b from-[#1B054E] to-[#7449B6] flex flex-col justify-start ${isCollapsed ? 'w-16 md:w-20' : 'w-64 md:w-72'}`}>
-            {/* Toggle collapse button */}
-            <button
-                onClick={toggleCollapse}
-                className="absolute top-4 right-4 text-white text-xl hover:bg-white/20 p-1 rounded-full z-10"
-            >
-                {isCollapsed ? <MdMenu /> : <MdClose />}
-            </button>
+        <div className={`h-full sticky top-0 transition-all duration-300 overflow-auto bg-gradient-to-b from-[#1B054E] to-[#7449B6] flex flex-col justify-start ${isCollapsed && !isMobile ? 'w-16 md:w-20' : 'w-64 md:w-72'}`}>
+            {/* Toggle collapse button - only visible on desktop */}
+            {!isMobile && (
+                <button
+                    onClick={toggleCollapse}
+                    className="absolute top-4 right-4 text-white text-xl hover:bg-white/20 p-1 rounded-full z-10"
+                >
+                    {isCollapsed ? <MdMenu /> : <MdClose />}
+                </button>
+            )}
 
             {/* Logo container - only visible when not collapsed */}
-            {!isCollapsed && (
+            {(!isCollapsed || isMobile) && (
                 <div className="flex justify-center items-center py-6 px-6">
                     <img src="/assets/sidebar/or14white.svg" alt="Logo" />
                 </div>
             )}
 
             {/* Add spacing when collapsed to maintain layout */}
-            {isCollapsed && <div className="py-6"></div>}
+            {isCollapsed && !isMobile && <div className="py-6"></div>}
 
             <div className="w-full flex flex-col gap-2 mt-6">
                 <Link
@@ -68,7 +94,7 @@ const SidebarComponent = ({ closeSidebar }) => {
                     <div className="w-8 flex justify-center ml-6 md:ml-10">
                         <MdHome className="text-xl md:text-2xl" />
                     </div>
-                    {!isCollapsed && <h2>Dashboard</h2>}
+                    {(!isCollapsed || isMobile) && <h2>Dashboard</h2>}
                 </Link>
                 <Link
                     to="/verification"
@@ -78,7 +104,7 @@ const SidebarComponent = ({ closeSidebar }) => {
                     <div className="w-8 flex justify-center ml-6 md:ml-10">
                         <MdVerifiedUser className="text-xl md:text-2xl" />
                     </div>
-                    {!isCollapsed && <h2>Verifikasi</h2>}
+                    {(!isCollapsed || isMobile) && <h2>Verifikasi</h2>}
                 </Link>
                 <Link
                     to="/preparation"
@@ -88,7 +114,7 @@ const SidebarComponent = ({ closeSidebar }) => {
                     <div className="w-8 flex justify-center ml-6 md:ml-10">
                         <MdInsertDriveFile className="text-xl md:text-2xl" />
                     </div>
-                    {!isCollapsed && <h2>Ujian</h2>}
+                    {(!isCollapsed || isMobile) && <h2>Ujian</h2>}
                 </Link>
             </div>
 
@@ -99,7 +125,7 @@ const SidebarComponent = ({ closeSidebar }) => {
                 <div className="w-8 flex justify-center ml-6 md:ml-10">
                     <MdArrowCircleLeft className="text-xl md:text-2xl" />
                 </div>
-                {!isCollapsed && <h2>Keluar</h2>}
+                {(!isCollapsed || isMobile) && <h2>Keluar</h2>}
             </button>
         </div>
     );

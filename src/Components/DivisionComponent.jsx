@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
 
 const div = [
@@ -58,6 +58,25 @@ const div = [
 const DivisionComponent = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [direction, setDirection] = useState(1);
+    const [isMobile, setIsMobile] = useState(false);
+    const [isTablet, setIsTablet] = useState(false);
+
+    // Handle responsive behavior based on screen size
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 768);
+            setIsTablet(window.innerWidth >= 768 && window.innerWidth < 1024);
+        };
+
+        // Set initial values
+        handleResize();
+
+        // Add event listener for window resize
+        window.addEventListener('resize', handleResize);
+
+        // Clean up
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const handleNext = () => {
         setDirection(1);
@@ -70,13 +89,15 @@ const DivisionComponent = () => {
     }
 
     const data = div[currentIndex];
+
     return (
-        <div>
-            <div className="flex flex-row justify-start py-10 items-center">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {/* Division Header */}
+            <div className="flex flex-row justify-start py-5 sm:py-8 md:py-10 items-center">
                 <motion.img
                     key={data.logo}
                     src={`/assets/${data.logo}.svg`}
-                    className={`w-36 ml-28 ${data.logo === "mmd" ? 'rotate-20' : ''}`}
+                    className={`w-16 sm:w-24 md:w-32 lg:w-36 ml-4 sm:ml-8 md:ml-16 lg:ml-28 ${data.logo === "mmd" ? 'rotate-20' : ''}`}
                     initial={{ opacity: 0, x: -50 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: 50 }}
@@ -85,7 +106,7 @@ const DivisionComponent = () => {
                 <AnimatePresence mode="wait">
                     <motion.h1
                         key={data.division}
-                        className="ml-12 text-5xl text-white font-semibold"
+                        className="ml-4 sm:ml-8 md:ml-12 text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-white font-semibold"
                         initial={{ opacity: 0, x: -30 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: 30 }}
@@ -95,9 +116,14 @@ const DivisionComponent = () => {
                     </motion.h1>
                 </AnimatePresence>
             </div>
+
             {/* Cards Subdivision */}
-            <div className="flex flex-row justify-between relative px-12 items-center">
-                <FaAngleLeft className="text-white hover:cursor-pointer hover:text-gray-300" size={100} onClick={handlePrev} />
+            <div className="flex flex-row justify-between relative px-2 sm:px-6 md:px-8 lg:px-12 items-center">
+                <FaAngleLeft
+                    className="text-white hover:cursor-pointer hover:text-gray-300 z-10"
+                    size={isMobile ? 40 : isTablet ? 60 : 100}
+                    onClick={handlePrev}
+                />
                 <div className="overflow-hidden w-full flex justify-center">
                     <AnimatePresence mode="wait">
                         <motion.div
@@ -106,12 +132,15 @@ const DivisionComponent = () => {
                             animate={{ x: 0, opacity: 1 }}
                             exit={{ x: -direction * 100, opacity: 0 }}
                             transition={{ duration: 0.5, ease: "easeInOut" }}
-                            className="flex flex-col lg:flex-row justify-between px-8 gap-8"
+                            className="flex flex-col lg:flex-row justify-between px-2 sm:px-4 md:px-6 lg:px-8 gap-4 md:gap-6 lg:gap-8 w-full"
                         >
                             {data.subdivision?.map((subdiv, index) => (
-                                <div key={index} className="bg-white rounded-xl pt-8 px-8 pb-48 hover:bg-gray-300 hover:shadow-lg transition-all duration-300">
-                                    <h2 className="text-4xl text-secondary font-bold">{subdiv.name}</h2>
-                                    <p className="text-[#170033] mt-8 text-justify text-2xl">
+                                <div
+                                    key={index}
+                                    className="bg-white rounded-xl pt-4 sm:pt-6 md:pt-8 px-4 sm:px-6 md:px-8 pb-16 sm:pb-24 md:pb-32 lg:pb-48 hover:bg-gray-300 hover:shadow-lg transition-all duration-300 mb-4 lg:mb-0 w-full"
+                                >
+                                    <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-secondary font-bold">{subdiv.name}</h2>
+                                    <p className="text-[#170033] mt-2 sm:mt-4 md:mt-6 lg:mt-8 text-justify text-sm sm:text-base md:text-xl lg:text-2xl">
                                         {subdiv.desc}
                                     </p>
                                 </div>
@@ -119,7 +148,11 @@ const DivisionComponent = () => {
                         </motion.div>
                     </AnimatePresence>
                 </div>
-                <FaAngleRight className="text-white hover:cursor-pointer hover:text-gray-300" size={100} onClick={handleNext} />
+                <FaAngleRight
+                    className="text-white hover:cursor-pointer hover:text-gray-300 z-10"
+                    size={isMobile ? 40 : isTablet ? 60 : 100}
+                    onClick={handleNext}
+                />
             </div>
         </div>
     )
