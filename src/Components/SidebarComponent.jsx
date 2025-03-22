@@ -1,17 +1,19 @@
-import { MdArrowCircleLeft, MdHome, MdInsertDriveFile, MdVerifiedUser, MdClose } from "react-icons/md";
+import { MdArrowCircleLeft, MdHome, MdInsertDriveFile, MdVerifiedUser, MdClose, MdMenu } from "react-icons/md";
 import { useLocation, Link } from "react-router-dom";
 import PropTypes from "prop-types";
+import { useState, useEffect } from "react";
 
 const SidebarComponent = ({ closeSidebar }) => {
     const location = useLocation();
     const currentPath = location.pathname;
+    const [isCollapsed, setIsCollapsed] = useState(false);
 
     // Helper function to determine if a path is active
     const isActive = (path) => {
         return currentPath.includes(path);
     };
 
-    const baseButtonClass = "flex flex-row gap-4 md:gap-10 text-xl md:text-2xl items-center px-6 md:px-20 py-4 font-bold hover:cursor-pointer";
+    const baseButtonClass = "flex flex-row items-center py-3 font-bold hover:cursor-pointer transition-colors duration-200 text-lg w-full";
     const activeClass = "bg-white text-[#2d2460] font-semibold";
     const inactiveClass = "text-white hover:bg-white hover:text-[#2d2460]";
 
@@ -21,62 +23,85 @@ const SidebarComponent = ({ closeSidebar }) => {
         }
     };
 
-    return (
-        <div className="h-full min-h-screen bg-[url('/assets/sidebar/sidebar.svg')] bg-cover bg-no-repeat flex flex-col justify-start relative ">
-            <div className="flex justify-between items-center px-16 py-8 md:p-2" >
-                <img src="/assets/sidebar/or14white.svg" alt="Logo" />
-                {/* Close button for mobile */}
-                {
-                    closeSidebar && (
-                        <button onClick={closeSidebar} className="md:hidden text-white text-3xl p-2">
-                            <MdClose />
-                        </button>
-                    )
-                }
-            </div >
+    const toggleCollapse = () => {
+        setIsCollapsed(!isCollapsed);
+    };
 
-            <div className="w-full flex flex-col gap-4 mt-12 md:mt-24">
+    // Add scroll event listener to track page scroll
+    useEffect(() => {
+        const handleScroll = () => {
+            // Logic to handle scroll if needed
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
+
+    return (
+        <div className={`h-full sticky top-0 transition-all duration-300 overflow-auto bg-gradient-to-b from-[#1B054E] to-[#7449B6] flex flex-col justify-start ${isCollapsed ? 'w-16 md:w-20' : 'w-64 md:w-72'}`}>
+            {/* Toggle collapse button */}
+            <button
+                onClick={toggleCollapse}
+                className="absolute top-4 right-4 text-white text-xl hover:bg-white/20 p-1 rounded-full z-10"
+            >
+                {isCollapsed ? <MdMenu /> : <MdClose />}
+            </button>
+
+            {/* Logo container - only visible when not collapsed */}
+            {!isCollapsed && (
+                <div className="flex justify-center items-center py-6 px-6">
+                    <img src="/assets/sidebar/or14white.svg" alt="Logo" />
+                </div>
+            )}
+
+            {/* Add spacing when collapsed to maintain layout */}
+            {isCollapsed && <div className="py-6"></div>}
+
+            <div className="w-full flex flex-col gap-2 mt-6">
                 <Link
                     to="/dashboard"
                     onClick={handleLinkClick}
                     className={`${baseButtonClass} ${isActive('/dashboard') && !isActive('/verification') && !isActive('/preparation') ? activeClass : inactiveClass}`}
                 >
-                    <MdHome className="text-2xl md:text-3xl" />
-                    <h2>
-                        Dashboard
-                    </h2>
+                    <div className="w-8 flex justify-center ml-6 md:ml-10">
+                        <MdHome className="text-xl md:text-2xl" />
+                    </div>
+                    {!isCollapsed && <h2>Dashboard</h2>}
                 </Link>
                 <Link
                     to="/verification"
                     onClick={handleLinkClick}
                     className={`${baseButtonClass} ${isActive('/verification') ? activeClass : inactiveClass}`}
                 >
-                    <MdVerifiedUser className="text-2xl md:text-3xl" />
-                    <h2>
-                        Verifikasi
-                    </h2>
+                    <div className="w-8 flex justify-center ml-6 md:ml-10">
+                        <MdVerifiedUser className="text-xl md:text-2xl" />
+                    </div>
+                    {!isCollapsed && <h2>Verifikasi</h2>}
                 </Link>
                 <Link
                     to="/preparation"
                     onClick={handleLinkClick}
                     className={`${baseButtonClass} ${isActive('/preparation') ? activeClass : inactiveClass}`}
                 >
-                    <MdInsertDriveFile className="text-2xl md:text-3xl" />
-                    <h2>
-                        Ujian
-                    </h2>
+                    <div className="w-8 flex justify-center ml-6 md:ml-10">
+                        <MdInsertDriveFile className="text-xl md:text-2xl" />
+                    </div>
+                    {!isCollapsed && <h2>Ujian</h2>}
                 </Link>
             </div>
+
             <button
                 onClick={handleLinkClick}
-                className="flex flex-row items-center justify-start w-full px-6 md:px-20 gap-4 md:gap-10 text-white text-xl md:text-2xl hover:bg-white hover:text-[#2d2460] hover:font-semibold py-4 font-bold hover:cursor-pointer mb-10 mt-auto"
+                className={`${baseButtonClass} ${inactiveClass} mt-auto mb-8`}
             >
-                <MdArrowCircleLeft className="text-3xl md:text-4xl" />
-                <h2>
-                    Keluar
-                </h2>
+                <div className="w-8 flex justify-center ml-6 md:ml-10">
+                    <MdArrowCircleLeft className="text-xl md:text-2xl" />
+                </div>
+                {!isCollapsed && <h2>Keluar</h2>}
             </button>
-        </div >
+        </div>
     );
 };
 

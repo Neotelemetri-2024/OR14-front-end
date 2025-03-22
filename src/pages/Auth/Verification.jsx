@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaFileAlt, FaFilePdf, FaFileImage } from "react-icons/fa";
 import { MdVerifiedUser } from "react-icons/md";
 import { IoMenu } from "react-icons/io5";
@@ -9,6 +9,21 @@ const Verification = () => {
     const [krsFile, setKrsFile] = useState(null);
     const [paymentFile, setPaymentFile] = useState(null);
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
+
+    // Check if screen is mobile on initial load and when window is resized
+    useEffect(() => {
+        const checkIfMobile = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+
+        checkIfMobile();
+        window.addEventListener('resize', checkIfMobile);
+
+        return () => {
+            window.removeEventListener('resize', checkIfMobile);
+        };
+    }, []);
 
     const toggleSidebar = () => {
         setSidebarOpen(!sidebarOpen);
@@ -42,11 +57,11 @@ const Verification = () => {
         const fileName = file.name.toLowerCase();
 
         if (fileType.startsWith("image/")) {
-            return <FaFileImage className="text-4xl md:text-6xl text-blue-500" />;
+            return <FaFileImage className="text-3xl md:text-4xl text-blue-500" />;
         } else if (fileType === "application/pdf" || fileName.endsWith(".pdf")) {
-            return <FaFilePdf className="text-4xl md:text-6xl text-red-500" />;
+            return <FaFilePdf className="text-3xl md:text-4xl text-red-500" />;
         } else {
-            return <FaFileAlt className="text-4xl md:text-6xl text-gray-600" />;
+            return <FaFileAlt className="text-3xl md:text-4xl text-gray-600" />;
         }
     };
 
@@ -66,8 +81,8 @@ const Verification = () => {
         if (!file) {
             return (
                 <div className="text-center">
-                    <p className="text-gray-500 mb-2 text-sm md:text-base">Klik &quot;Ganti File&quot; untuk mengunggah</p>
-                    <p className="text-gray-400 text-xs md:text-sm">Format: PDF, JPG</p>
+                    <p className="text-gray-500 mb-2 text-sm">Klik &quot;Ganti File&quot; untuk mengunggah</p>
+                    <p className="text-gray-400 text-xs">Format: PDF, JPG</p>
                 </div>
             );
         }
@@ -79,17 +94,17 @@ const Verification = () => {
                 <img
                     src={preview}
                     alt={`${fileType} Preview`}
-                    className="max-h-28 md:max-h-56 max-w-full object-contain"
+                    className="max-h-24 md:max-h-40 max-w-full object-contain"
                 />
             );
         } else {
             return (
                 <div className="flex flex-col items-center justify-center">
                     {getFileIcon(file)}
-                    <p className="text-center text-gray-700 mt-2 text-sm md:text-base">
+                    <p className="text-center text-gray-700 mt-2 text-xs md:text-sm">
                         {file.name.length > 20 ? file.name.substring(0, 17) + '...' : file.name}
                     </p>
-                    <p className="text-center text-gray-500 text-xs md:text-sm mt-1">
+                    <p className="text-center text-gray-500 text-xs mt-1">
                         {(file.size / 1024).toFixed(1)} KB
                     </p>
                 </div>
@@ -98,41 +113,53 @@ const Verification = () => {
     };
 
     return (
-        <div className="flex flex-col md:flex-row min-h-screen bg-white">
+        <div className="flex flex-col md:flex-row min-h-screen h-full">
             {/* Mobile Header with Burger Menu */}
             <div className="md:hidden bg-[#2d2460] p-4 flex justify-between items-center sticky top-0 z-50">
                 <button onClick={toggleSidebar} className="text-white text-3xl">
                     <IoMenu />
                 </button>
+                <img src="/assets/sidebar/or14white.svg" alt="Logo" className="h-8" />
+                <div className="w-8"></div> {/* Empty div for balanced spacing */}
             </div>
 
-            {/* Sidebar - hidden by default on mobile, shown when toggled */}
-            <div className={`${sidebarOpen ? 'fixed inset-0 z-40' : 'hidden'} md:block md:w-1/4 h-full`}>
-                <div className="md:fixed md:w-1/4 md:h-full">
-                    <SidebarComponent closeSidebar={() => setSidebarOpen(false)} />
+            {/* Sidebar - different display for mobile vs desktop */}
+            {isMobile ? (
+                <div className={`fixed inset-0 z-40 transition-transform duration-300 transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+                    <div className="relative h-full">
+                        <SidebarComponent closeSidebar={() => setSidebarOpen(false)} />
+                        {/* Semi-transparent overlay */}
+                        <div
+                            className={`fixed inset-0 bg-black bg-opacity-50 z-30 ${sidebarOpen ? 'block' : 'hidden'}`}
+                            onClick={() => setSidebarOpen(false)}
+                        ></div>
+                    </div>
                 </div>
-            </div>
+            ) : (
+                <div className="md:block sticky top-0 h-screen overflow-y-auto">
+                    <SidebarComponent />
+                </div>
+            )}
 
             {/* Main Content */}
-            <main className="flex-1 p-4 md:p-8 md:pl-12 flex flex-col gap-4 md:gap-8 relative">
-                {/* User Profile Button */}
+            <section className="flex-1 p-4 p-4 px-6 md:p-8 md:px-16 flex flex-col gap-4 md:gap-6 overflow-y-auto">
+                {/* Edit Profile */}
                 <div className="self-end">
-
                     <ProfileComponent />
                 </div>
 
                 <div>
-                    <h2 className="text-secondary text-xl md:text-3xl font-bold mt-2 md:mt-4">
+                    <h2 className="text-secondary text-lg md:text-xl font-bold mt-2">
                         Upload berkas yang diperlukan di sini
                     </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12 mt-6 p-2 md:p-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 mt-4 p-2">
                         <div>
-                            <h3 className="text-xl md:text-2xl font-semibold mb-4 md:mb-8">Scan KRS</h3>
-                            <div className="w-full bg-[#EBF2FF] p-4 h-48 md:h-72 rounded-2xl flex flex-col justify-center items-center relative">
+                            <h3 className="text-lg font-semibold mb-3">Scan KRS</h3>
+                            <div className="w-full bg-[#EBF2FF] p-3 h-40 md:h-52 rounded-xl flex flex-col justify-center items-center relative">
                                 {renderFilePreview(krsFile, "KRS")}
                                 {krsFile && (
-                                    <div className="absolute bottom-4 left-0 right-0 bg-white bg-opacity-80 p-2 text-center">
-                                        <p className="truncate text-sm md:text-lg font-medium">{krsFile.name}</p>
+                                    <div className="absolute bottom-2 left-0 right-0 bg-white bg-opacity-80 p-1 text-center">
+                                        <p className="truncate text-xs md:text-sm font-medium">{krsFile.name}</p>
                                     </div>
                                 )}
                             </div>
@@ -145,18 +172,18 @@ const Verification = () => {
                             />
                             <label
                                 htmlFor="krsFileInput"
-                                className="w-full md:w-3/4 border-2 py-3 md:py-6 rounded-xl mt-4 md:mt-8 text-secondary border-secondary text-lg md:text-2xl font-bold hover:bg-secondary hover:text-white hover:cursor-pointer block text-center"
+                                className="w-full md:w-3/4 border-2 py-2 md:py-3 rounded-lg mt-3 text-secondary border-secondary text-sm md:text-base font-bold hover:bg-secondary hover:text-white hover:cursor-pointer block text-center"
                             >
                                 Ganti File
                             </label>
                         </div>
                         <div>
-                            <h3 className="text-xl md:text-2xl font-semibold mb-4 md:mb-8">Bukti Pembayaran</h3>
-                            <div className="w-full bg-[#EBF2FF] p-4 h-48 md:h-72 rounded-2xl flex flex-col justify-center items-center relative">
+                            <h3 className="text-lg font-semibold mb-3">Bukti Pembayaran</h3>
+                            <div className="w-full bg-[#EBF2FF] p-3 h-40 md:h-52 rounded-xl flex flex-col justify-center items-center relative">
                                 {renderFilePreview(paymentFile, "Payment")}
                                 {paymentFile && (
-                                    <div className="absolute bottom-4 left-0 right-0 bg-white bg-opacity-80 p-2 text-center">
-                                        <p className="truncate text-sm md:text-lg font-medium">{paymentFile.name}</p>
+                                    <div className="absolute bottom-2 left-0 right-0 bg-white bg-opacity-80 p-1 text-center">
+                                        <p className="truncate text-xs md:text-sm font-medium">{paymentFile.name}</p>
                                     </div>
                                 )}
                             </div>
@@ -169,44 +196,33 @@ const Verification = () => {
                             />
                             <label
                                 htmlFor="paymentFileInput"
-                                className="w-full md:w-3/4 border-2 py-3 md:py-6 rounded-xl mt-4 md:mt-8 text-secondary border-secondary text-lg md:text-2xl font-bold hover:bg-secondary hover:text-white hover:cursor-pointer block text-center"
+                                className="w-full md:w-3/4 border-2 py-2 md:py-3 rounded-lg mt-3 text-secondary border-secondary text-sm md:text-base font-bold hover:bg-secondary hover:text-white hover:cursor-pointer block text-center"
                             >
                                 Ganti File
                             </label>
                         </div>
                     </div>
 
-                    <div className="flex justify-center md:justify-start mt-6 md:mt-10">
+                    <div className="flex justify-center md:justify-start mt-4 md:mt-6">
                         <button
                             onClick={handleSubmit}
-                            className={`w-full border-2 py-3 md:py-6 rounded-xl text-white bg-[#1E0771] text-lg md:text-2xl font-bold hover:bg-secondary hover:cursor-pointer ${!krsFile || !paymentFile ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            className={`w-full md:w-1/2 border-2 py-2 md:py-3 rounded-lg text-white bg-[#1E0771] text-sm md:text-base font-bold hover:bg-secondary hover:cursor-pointer ${!krsFile || !paymentFile ? 'opacity-50 cursor-not-allowed' : ''}`}
                             disabled={!krsFile || !paymentFile}
                         >
                             Kirim
                         </button>
                     </div>
 
-                    <div className="flex flex-row text-white place-items-center w-full bg-[#1E0771] py-3 md:py-6 px-4 md:px-8 text-lg md:text-2xl gap-3 md:gap-6 mt-6 md:mt-10 rounded-xl">
-                        <MdVerifiedUser className="text-2xl md:text-4xl" />
-                        <h2 className="">
+                    <div className="flex flex-row text-white place-items-center w-full bg-[#1E0771] py-2 md:py-3 px-3 md:px-5 text-sm md:text-base gap-2 md:gap-4 mt-4 md:mt-6 rounded-lg">
+                        <MdVerifiedUser className="text-xl md:text-2xl" />
+                        <h2>
                             Verifikasi Berhasil!
                         </h2>
                     </div>
                 </div>
 
                 {/* Background images - only visible on larger screens */}
-                <img
-                    src="/assets/bg/Ellipse31.svg"
-                    alt="Decor 1"
-                    className="absolute top-0 right-0 hidden lg:block -z-10"
-                />
-
-                <img
-                    src="/assets/bg/Ellipse32.svg"
-                    alt="Decor 2"
-                    className="absolute top-[55%] right-[55%] hidden lg:block -z-10"
-                />
-            </main>
+            </section>
         </div>
     );
 };

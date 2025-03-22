@@ -83,10 +83,10 @@ const Exam = () => {
         <div className="flex flex-col p-4 md:p-8 w-full">
             {/* Header Section - Responsive */}
             <div className="flex flex-col md:flex-row justify-between w-full gap-4 md:gap-0">
-                <div className="flex justify-center py-3 md:py-4 px-4 md:px-16 bg-[#1E0771] rounded-2xl md:rounded-3xl items-center">
+                <div className="flex justify-center py-3 md:py-4 px-4 md:px-16 bg-[#2E1461] rounded-2xl md:rounded-3xl items-center">
                     <h1 className="text-white text-sm md:text-xl font-semibold">Ujian Multimedia & Desain</h1>
                 </div>
-                <div className="flex justify-center py-3 md:py-6 px-4 md:px-20 bg-[#1E0771] rounded-2xl md:rounded-3xl items-center">
+                <div className="flex justify-center py-3 md:py-6 px-4 md:px-20 bg-[#2E1461] rounded-2xl md:rounded-3xl items-center">
                     <h2 className="text-white text-sm md:text-xl font-semibold">
                         {formatTime(timer)}
                     </h2>
@@ -100,10 +100,10 @@ const Exam = () => {
                         key={index}
                         onClick={() => goToQuestion(index)}
                         className={`flex justify-center py-2 md:py-4 px-3 md:px-6 rounded-lg items-center hover:cursor-pointer ${currentQuestionIndex === index
-                            ? 'bg-[#1E0771] text-white'
+                            ? 'bg-[#2E1461] text-white'
                             : answers[index] !== null
-                                ? 'bg-green-500 text-white'
-                                : 'bg-[#B2BCE5] text-white'
+                                ? 'bg-green-900 text-white'
+                                : 'bg-[#E8D9FF] text-white'
                             }`}
                     >
                         <h3 className="text-base md:text-xl font-semibold">
@@ -124,12 +124,12 @@ const Exam = () => {
                         <li
                             key={index}
                             className={`p-3 md:p-4 rounded-lg cursor-pointer flex items-center gap-2 md:gap-3 
-                            ${answers[currentQuestionIndex] === index ? 'bg-secondary text-white' : 'bg-[#B2BCE5]'}
+                            ${answers[currentQuestionIndex] === index ? 'bg-secondary text-white' : 'bg-[#E8D9FF]'}
                         `}
                             onClick={() => handleAnswerChange(index)}
                         >
                             <span className={`w-5 md:w-6 h-5 md:h-6 border-4 rounded-full flex items-center justify-center 
-                            ${answers[currentQuestionIndex] === index ? ' bg-[#1E0771] border-[#B2BCE5]' : ' border-[#1E0771] bg-[#B2BCE5]'}
+                            ${answers[currentQuestionIndex] === index ? ' bg-[#2E1461] border-[#B2BCE5]' : ' border-[#2E1461] bg-[#B2BCE5]'}
                         `}>
                                 {answers[currentQuestionIndex] === index && <span className="w-2 md:w-3 h-2 md:h-3 bg-[#301D54] rounded-full"></span>}
                             </span>
