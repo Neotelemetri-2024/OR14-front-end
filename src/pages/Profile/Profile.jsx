@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { IoMenu, IoInformationCircle } from "react-icons/io5";
 import { FaUser, FaCamera } from "react-icons/fa";
 import { MdClose } from "react-icons/md";
-import SidebarComponent from "../../Components/SidebarComponent";
-import ProfileComponent from "../../Components/ProfileComponent";
+import SidebarComponent from "../../components/SidebarComponent";
+import ProfileComponent from "../../components/ProfileComponent";
 
 const Profile = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -273,7 +273,7 @@ const Profile = () => {
                         </div>
 
                         {/* Password Change */}
-                        <div className="mt-6 md:mt-8">
+                        {/* <div className="mt-6 md:mt-8">
                             <h2 className="text-xl md:text-2xl font-bold text-secondary mb-4">
                                 Ganti Password
                             </h2>
@@ -287,7 +287,7 @@ const Profile = () => {
                                     <input type="password" className="w-full py-3 px-4 border-2 border-secondary rounded-xl focus:bg-gray-200 font-semibold" placeholder="Masukkan password baru" />
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
 
                         {/* Submit Button */}
                         <div className="flex justify-center md:justify-start mt-6 md:mt-8">
@@ -322,10 +322,10 @@ const Profile = () => {
                         className="bg-white rounded-xl p-6 max-w-md w-full shadow-xl"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <div className="flex justify-between items-center mb-4">
+                        <div className="flex justify-end items-center mb-4">
                             <button
                                 onClick={() => setShowModal(false)}
-                                className="text-gray-500 hover:text-gray-700"
+                                className="text-gray-500 hover:text-gray-700 "
                             >
                                 <MdClose className="w-6 h-6" />
                             </button>

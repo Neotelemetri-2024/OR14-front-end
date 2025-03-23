@@ -2,12 +2,14 @@ import { useState, useEffect } from "react";
 import { FaFileAlt, FaFilePdf, FaFileImage } from "react-icons/fa";
 import { MdVerifiedUser } from "react-icons/md";
 import { IoMenu } from "react-icons/io5";
-import SidebarComponent from "../../Components/SidebarComponent";
-import ProfileComponent from "../../Components/ProfileComponent";
+import SidebarComponent from "../../components/SidebarComponent";
+import ProfileComponent from "../../components/ProfileComponent";
 
 const Verification = () => {
     const [krsFile, setKrsFile] = useState(null);
     const [paymentFile, setPaymentFile] = useState(null);
+    const [neoIgFile, setNeoIgFile] = useState(null);
+    const [neoMarketingIgFile, setNeoMarketingIgFile] = useState(null);
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
 
@@ -43,10 +45,25 @@ const Verification = () => {
         }
     };
 
+    const handleNeoIgFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setNeoIgFile(file);
+        }
+    };
+
+    const handleNeoMarketingIgFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setNeoMarketingIgFile(file);
+        }
+    };
+
     const handleSubmit = () => {
-        if (krsFile && paymentFile) {
+        if (krsFile && paymentFile && neoIgFile && neoMarketingIgFile) {
             // Di sini Anda akan mengirim file ke server
             // Untuk contoh ini, kita hanya menampilkan pesan sukses
+            console.log("Semua file telah diunggah");
         }
     };
 
@@ -77,12 +94,11 @@ const Verification = () => {
         return null;
     };
 
-    const renderFilePreview = (file, fileType) => {
+    const renderFilePreview = (file, fileType, format) => {
         if (!file) {
             return (
                 <div className="text-center">
-                    <p className="text-gray-500 mb-2 text-sm">Klik &quot;Ganti File&quot; untuk mengunggah</p>
-                    <p className="text-gray-400 text-xs">Format: PDF, JPG</p>
+                    <p className="text-gray-400 text-xs">Format: {format}</p>
                 </div>
             );
         }
@@ -154,14 +170,14 @@ const Verification = () => {
                     </div>
 
                     <div>
-                        <h2 className="text-secondary text-lg md:text-xl font-bold mt-2">
+                        <h2 className="text-secondary text-xl md:text-2xl font-bold">
                             Upload berkas yang diperlukan di sini
                         </h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 mt-4 p-2">
                             <div>
                                 <h3 className="text-lg font-semibold mb-3">Scan KRS</h3>
-                                <div className="w-full bg-[#EBF2FF] p-3 h-40 md:h-52 rounded-xl flex flex-col justify-center items-center relative">
-                                    {renderFilePreview(krsFile, "KRS")}
+                                <div className="w-full bg-[#E8D9FF] p-3 h-40 md:h-52 rounded-xl flex flex-col justify-center items-center relative">
+                                    {renderFilePreview(krsFile, "KRS", ".pdf,.jpg,.jpeg")}
                                     {krsFile && (
                                         <div className="absolute bottom-2 left-0 right-0 bg-white bg-opacity-80 p-1 text-center">
                                             <p className="truncate text-xs md:text-sm font-medium">{krsFile.name}</p>
@@ -182,10 +198,11 @@ const Verification = () => {
                                     Ganti File
                                 </label>
                             </div>
+
                             <div>
                                 <h3 className="text-lg font-semibold mb-3">Bukti Pembayaran</h3>
-                                <div className="w-full bg-[#EBF2FF] p-3 h-40 md:h-52 rounded-xl flex flex-col justify-center items-center relative">
-                                    {renderFilePreview(paymentFile, "Payment")}
+                                <div className="w-full bg-[#E8D9FF] p-3 h-40 md:h-52 rounded-xl flex flex-col justify-center items-center relative">
+                                    {renderFilePreview(paymentFile, "Payment", ".pdf,.jpg,.jpeg")}
                                     {paymentFile && (
                                         <div className="absolute bottom-2 left-0 right-0 bg-white bg-opacity-80 p-1 text-center">
                                             <p className="truncate text-xs md:text-sm font-medium">{paymentFile.name}</p>
@@ -206,19 +223,70 @@ const Verification = () => {
                                     Ganti File
                                 </label>
                             </div>
+
+                            <div>
+                                <h3 className="text-lg font-semibold mb-3">Bukti Follow Instagram Neo Telemetri</h3>
+                                <div className="w-full bg-[#E8D9FF] p-3 h-40 md:h-52 rounded-xl flex flex-col justify-center items-center relative">
+                                    {renderFilePreview(neoIgFile, "Neo IG", ".jpg,.jpeg")}
+                                    {neoIgFile && (
+                                        <div className="absolute bottom-2 left-0 right-0 bg-white bg-opacity-80 p-1 text-center">
+                                            <p className="truncate text-xs md:text-sm font-medium">{neoIgFile.name}</p>
+                                        </div>
+                                    )}
+                                </div>
+                                <input
+                                    type="file"
+                                    id="neoIgFileInput"
+                                    className="hidden"
+                                    onChange={handleNeoIgFileChange}
+                                    accept=".jpg,.jpeg"
+                                />
+                                <label
+                                    htmlFor="neoIgFileInput"
+                                    className="w-full md:w-3/4 border-2 py-2 md:py-3 rounded-lg mt-3 text-secondary border-secondary text-sm md:text-base font-bold hover:bg-secondary hover:text-white hover:cursor-pointer block text-center"
+                                >
+                                    Ganti File
+                                </label>
+                            </div>
+
+                            <div>
+                                <h3 className="text-lg font-semibold mb-3">Bukti Follow Instagram Marketing Neo Telemetri</h3>
+                                <div className="w-full bg-[#E8D9FF] p-3 h-40 md:h-52 rounded-xl flex flex-col justify-center items-center relative">
+                                    {renderFilePreview(neoMarketingIgFile, "Neo Marketing IG", ".jpg,.jpeg")}
+                                    {neoMarketingIgFile && (
+                                        <div className="absolute bottom-2 left-0 right-0 bg-white bg-opacity-80 p-1 text-center">
+                                            <p className="truncate text-xs md:text-sm font-medium">{neoMarketingIgFile.name}</p>
+                                        </div>
+                                    )}
+                                </div>
+                                <input
+                                    type="file"
+                                    id="neoMarketingIgFileInput"
+                                    className="hidden"
+                                    onChange={handleNeoMarketingIgFileChange}
+                                    accept=".jpg,.jpeg"
+                                />
+                                <label
+                                    htmlFor="neoMarketingIgFileInput"
+                                    className="w-full md:w-3/4 border-2 py-2 md:py-3 rounded-lg mt-3 text-secondary border-secondary text-sm md:text-base font-bold hover:bg-secondary hover:text-white hover:cursor-pointer block text-center"
+                                >
+                                    Ganti File
+                                </label>
+                            </div>
+
                         </div>
 
                         <div className="flex justify-center md:justify-start mt-4 md:mt-6">
                             <button
                                 onClick={handleSubmit}
-                                className={`w-full md:w-1/2 border-2 py-2 md:py-3 rounded-lg text-white bg-[#1E0771] text-sm md:text-base font-bold hover:bg-secondary hover:cursor-pointer ${!krsFile || !paymentFile ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                disabled={!krsFile || !paymentFile}
+                                className={`w-full md:w-1/2 border-2 py-2 md:py-3 rounded-lg text-white bg-[#2E1461] text-sm md:text-base font-bold hover:bg-secondary hover:cursor-pointer ${!krsFile || !paymentFile || !neoIgFile || !neoMarketingIgFile ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                disabled={!krsFile || !paymentFile || !neoIgFile || !neoMarketingIgFile}
                             >
                                 Kirim
                             </button>
                         </div>
 
-                        <div className="flex flex-row text-white place-items-center w-full bg-[#1E0771] py-2 md:py-3 px-3 md:px-5 text-sm md:text-base gap-2 md:gap-4 mt-4 md:mt-6 rounded-lg">
+                        <div className="flex flex-row text-white place-items-center w-full  bg-gradient-to-b from-[#1B054E] to-[#7449B6] py-2 md:py-3 px-3 md:px-5 text-sm md:text-base gap-2 md:gap-4 mt-4 md:mt-6 rounded-lg">
                             <MdVerifiedUser className="text-xl md:text-2xl" />
                             <h2>
                                 Verifikasi Berhasil!

@@ -1,13 +1,18 @@
 import { MdArrowCircleLeft, MdHome, MdInsertDriveFile, MdVerifiedUser, MdClose, MdMenu } from "react-icons/md";
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
+import { useAuth } from "../context/AuthContext"; // Import useAuth hook
+import { toast } from "react-toastify"; // Atau gunakan 'sonner' jika itu yang Anda pakai
 
 const SidebarComponent = ({ closeSidebar }) => {
     const location = useLocation();
+    const navigate = useNavigate();
+    const { logout } = useAuth(); // Mendapatkan fungsi logout dari context
     const currentPath = location.pathname;
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
 
     // Helper function to determine if a path is active
     const isActive = (path) => {
@@ -27,6 +32,47 @@ const SidebarComponent = ({ closeSidebar }) => {
     const toggleCollapse = () => {
         if (!isMobile) {
             setIsCollapsed(!isCollapsed);
+        }
+    };
+
+    // Handle logout function
+    const handleLogout = async () => {
+        if (isLoggingOut) return; // Prevent multiple clicks
+
+        setIsLoggingOut(true);
+        try {
+            // Call logout API
+            const result = await logout();
+
+            if (result.success) {
+                toast.success("Logout berhasil!", {
+                    position: "top-right",
+                    autoClose: 2000,
+                });
+
+                // Redirect to login page after a short delay
+                setTimeout(() => {
+                    navigate("/auth");
+                }, 1000);
+            } else {
+                toast.error("Gagal logout. " + (result.message || "Silakan coba lagi."), {
+                    position: "top-right",
+                    autoClose: 3000,
+                });
+            }
+        } catch (error) {
+            console.error("Logout error:", error);
+            toast.error("Terjadi kesalahan saat logout", {
+                position: "top-right",
+                autoClose: 3000,
+            });
+
+            // Even if server logout fails, still clear local session and redirect
+            setTimeout(() => {
+                navigate("/auth");
+            }, 1000);
+        } finally {
+            setIsLoggingOut(false);
         }
     };
 
@@ -69,7 +115,8 @@ const SidebarComponent = ({ closeSidebar }) => {
             {!isMobile && (
                 <button
                     onClick={toggleCollapse}
-                    className="absolute top-4 right-4 text-white text-xl hover:bg-white/20 p-1 rounded-full z-10"
+                    className={`text-white text-xl hover:bg-white/20 p-1 rounded-full z-10 ${isCollapsed ? 'absolute left-1/2 top-4 transform -translate-x-1/2' : 'absolute top-4 right-4'
+                        }`}
                 >
                     {isCollapsed ? <MdMenu /> : <MdClose />}
                 </button>
@@ -91,7 +138,7 @@ const SidebarComponent = ({ closeSidebar }) => {
                     onClick={handleLinkClick}
                     className={`${baseButtonClass} ${isActive('/dashboard') && !isActive('/verification') && !isActive('/preparation') ? activeClass : inactiveClass}`}
                 >
-                    <div className="w-8 flex justify-center ml-6 md:ml-10">
+                    <div className={`flex justify-center ${isCollapsed && !isMobile ? 'w-full' : 'w-8 ml-6 md:ml-10'}`}>
                         <MdHome className="text-xl md:text-2xl" />
                     </div>
                     {(!isCollapsed || isMobile) && <h2>Dashboard</h2>}
@@ -101,7 +148,7 @@ const SidebarComponent = ({ closeSidebar }) => {
                     onClick={handleLinkClick}
                     className={`${baseButtonClass} ${isActive('/verification') ? activeClass : inactiveClass}`}
                 >
-                    <div className="w-8 flex justify-center ml-6 md:ml-10">
+                    <div className={`flex justify-center ${isCollapsed && !isMobile ? 'w-full' : 'w-8 ml-6 md:ml-10'}`}>
                         <MdVerifiedUser className="text-xl md:text-2xl" />
                     </div>
                     {(!isCollapsed || isMobile) && <h2>Verifikasi</h2>}
@@ -111,7 +158,7 @@ const SidebarComponent = ({ closeSidebar }) => {
                     onClick={handleLinkClick}
                     className={`${baseButtonClass} ${isActive('/preparation') ? activeClass : inactiveClass}`}
                 >
-                    <div className="w-8 flex justify-center ml-6 md:ml-10">
+                    <div className={`flex justify-center ${isCollapsed && !isMobile ? 'w-full' : 'w-8 ml-6 md:ml-10'}`}>
                         <MdInsertDriveFile className="text-xl md:text-2xl" />
                     </div>
                     {(!isCollapsed || isMobile) && <h2>Ujian</h2>}
@@ -119,13 +166,16 @@ const SidebarComponent = ({ closeSidebar }) => {
             </div>
 
             <button
-                onClick={handleLinkClick}
-                className={`${baseButtonClass} ${inactiveClass} mt-auto mb-8`}
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className={`${baseButtonClass} ${inactiveClass} mt-auto mb-8 ${isLoggingOut ? 'opacity-70 cursor-not-allowed' : ''}`}
             >
-                <div className="w-8 flex justify-center ml-6 md:ml-10">
-                    <MdArrowCircleLeft className="text-xl md:text-2xl" />
+                <div className={`flex justify-center ${isCollapsed && !isMobile ? 'w-full' : 'w-8 ml-6 md:ml-10'}`}>
+                    <MdArrowCircleLeft className={`text-xl md:text-2xl ${isLoggingOut ? 'animate-pulse' : ''}`} />
                 </div>
-                {(!isCollapsed || isMobile) && <h2>Keluar</h2>}
+                {(!isCollapsed || isMobile) && (
+                    <h2>{isLoggingOut ? "Proses Keluar..." : "Keluar"}</h2>
+                )}
             </button>
         </div>
     );

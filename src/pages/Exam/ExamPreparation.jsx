@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { IoMenu } from "react-icons/io5";
-import SidebarComponent from "../../Components/SidebarComponent";
-import ProfileComponent from "../../Components/ProfileComponent";
+import SidebarComponent from "../../components/SidebarComponent";
+import ProfileComponent from "../../components/ProfileComponent";
 import { Link } from "react-router-dom";
 
 const ExamPreparation = () => {
@@ -120,7 +120,7 @@ const ExamPreparation = () => {
                             <div
                                 onClick={() => handleSelect('programming')}
                                 className={`border-2 ${selectedDivision === 'programming'
-                                    ? 'border-4 border-[#1E0771] bg-[#EBF2FF]'
+                                    ? 'border-4 border-[#2E1461] bg-[#EBF2FF]'
                                     : 'border-secondary'} rounded-lg py-4 md:py-6 px-4 flex flex-col justify-center items-center w-full h-44 md:h-56 gap-3 md:gap-4 hover:bg-secondary hover:text-white transition-colors cursor-pointer`}
                             >
                                 <img src="/assets/programming.svg" className="w-20 h-20 md:w-28 md:h-28 object-contain" alt="Programming" />
@@ -129,9 +129,9 @@ const ExamPreparation = () => {
                             <button
                                 onClick={() => handleSelect('programming')}
                                 className={`border-2 border-secondary rounded-xl py-2 md:py-3 mx-2 md:mx-4 mt-4 md:mt-6 ${selectedDivision === 'programming'
-                                    ? 'bg-white text-[#1E0771] border-[#1E0771] font-bold'
-                                    : 'bg-[#1E0771] text-white'
-                                    } font-semibold text-base hover:cursor-pointer hover:bg-white hover:text-[#1E0771]`}>
+                                    ? 'bg-white text-[#2E1461] border-[#2E1461] font-bold'
+                                    : 'bg-[#2E1461] text-white'
+                                    } font-semibold text-base hover:cursor-pointer hover:bg-white hover:text-[#2E1461]`}>
                                 {selectedDivision === 'programming' ? 'Dipilih' : 'Pilih'}
                             </button>
                         </div>
@@ -141,18 +141,18 @@ const ExamPreparation = () => {
                             <div
                                 onClick={() => handleSelect('multimedia')}
                                 className={`border-2 ${selectedDivision === 'multimedia'
-                                    ? 'border-4 border-[#1E0771] bg-[#EBF2FF]'
+                                    ? 'border-4 border-[#2E1461] bg-[#EBF2FF]'
                                     : 'border-secondary'} rounded-lg py-4 md:py-6 px-4 flex flex-col justify-center items-center w-full h-44 md:h-56 gap-3 md:gap-4 hover:bg-secondary hover:text-white transition-colors cursor-pointer`}
                             >
                                 <img src="/assets/mmd.svg" className="w-20 h-20 md:w-28 md:h-28 object-contain rotate-20" alt="Multimedia" />
-                                <h3 className="text-lg md:text-xl font-medium text-center">Divisi Multimedia dan Design</h3>
+                                <h3 className="text-lg md:text-xl font-medium text-center">Divisi Multimedia & Desain</h3>
                             </div>
                             <button
                                 onClick={() => handleSelect('multimedia')}
                                 className={`border-2 border-secondary rounded-xl py-2 md:py-3 mx-2 md:mx-4 mt-4 md:mt-6 ${selectedDivision === 'multimedia'
-                                    ? 'bg-white text-[#1E0771] border-[#1E0771] font-bold'
-                                    : 'bg-[#1E0771] text-white'
-                                    } font-semibold text-base hover:cursor-pointer hover:bg-white hover:text-[#1E0771]`}>
+                                    ? 'bg-white text-[#2E1461] border-[#2E1461] font-bold'
+                                    : 'bg-[#2E1461] text-white'
+                                    } font-semibold text-base hover:cursor-pointer hover:bg-white hover:text-[#2E1461]`}>
                                 {selectedDivision === 'multimedia' ? 'Dipilih' : 'Pilih'}
                             </button>
                         </div>
@@ -162,18 +162,18 @@ const ExamPreparation = () => {
                             <div
                                 onClick={() => handleSelect('skj')}
                                 className={`border-2 ${selectedDivision === 'skj'
-                                    ? 'border-4 border-[#1E0771] bg-[#EBF2FF]'
+                                    ? 'border-4 border-[#2E1461] bg-[#EBF2FF]'
                                     : 'border-secondary'} rounded-lg py-4 md:py-6 px-4 flex flex-col justify-center items-center w-full h-44 md:h-56 gap-3 md:gap-4 hover:bg-secondary hover:text-white transition-colors cursor-pointer`}
                             >
-                                <img src="/assets/skj.svg" className="w-20 h-20 md:w-28 md:h-28 object-contain" alt="Sistem Komputer" />
-                                <h3 className="text-lg md:text-xl font-medium text-center">Divisi Sistem Komputer dan Jaringan</h3>
+                                <img src="/assets/skj.svg" className="w-20 h-20 md:w-28 md:h-28 object-contain" alt="Sistem Komputer & Jaringan" />
+                                <h3 className="text-lg md:text-xl font-medium text-center">Divisi Sistem Komputer & Jaringan</h3>
                             </div>
                             <button
                                 onClick={() => handleSelect('skj')}
                                 className={`border-2 border-secondary rounded-xl py-2 md:py-3 mx-2 md:mx-4 mt-4 md:mt-6 ${selectedDivision === 'skj'
-                                    ? 'bg-white text-[#1E0771] border-[#1E0771] font-bold'
-                                    : 'bg-[#1E0771] text-white'
-                                    } font-semibold text-base hover:cursor-pointer hover:bg-white hover:text-[#1E0771]`}>
+                                    ? 'bg-white text-[#2E1461] border-[#2E1461] font-bold'
+                                    : 'bg-[#2E1461] text-white'
+                                    } font-semibold text-base hover:cursor-pointer hover:bg-white hover:text-[#2E1461]`}>
                                 {selectedDivision === 'skj' ? 'Dipilih' : 'Pilih'}
                             </button>
                         </div>
@@ -197,8 +197,8 @@ const ExamPreparation = () => {
                     <div className="flex justify-center md:justify-start mt-6 md:mt-10">
                         <button
                             onClick={handleStartExamClick}
-                            className={`border-2 border-[#1E0771] ${selectedDivision ? 'bg-[#1E0771] text-white' : 'bg-gray-300 text-gray-600 cursor-not-allowed'
-                                } py-3 text-base md:text-lg font-semibold rounded-xl ${selectedDivision ? 'hover:bg-white hover:text-[#1E0771] hover:cursor-pointer' : ''
+                            className={`border-2 border-[#2E1461] ${selectedDivision ? 'bg-[#2E1461] text-white' : 'bg-gray-300 text-gray-600 cursor-not-allowed'
+                                } py-3 text-base md:text-lg font-semibold rounded-xl ${selectedDivision ? 'hover:bg-white hover:text-[#2E1461] hover:cursor-pointer' : ''
                                 } w-full md:w-2/3 lg:w-1/3`}
                             disabled={!selectedDivision}
                         >
@@ -215,7 +215,7 @@ const ExamPreparation = () => {
                         className="bg-white rounded-xl p-6 md:p-8 max-w-md w-11/12 md:w-full shadow-xl"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <h3 className="text-xl md:text-2xl font-bold text-[#1E0771] mb-4">Konfirmasi Ujian</h3>
+                        <h3 className="text-xl md:text-2xl font-bold text-[#2E1461] mb-4">Konfirmasi Ujian</h3>
                         <p className="text-base md:text-lg mb-6">
                             Apakah kamu yakin ingin memulai ujian untuk Divisi <span className="font-semibold">{getDivisionName()}</span>?
                         </p>
@@ -225,13 +225,13 @@ const ExamPreparation = () => {
                         <div className="flex flex-col md:flex-row gap-3 md:gap-4">
                             <button
                                 onClick={handleCancelExam}
-                                className="py-3 px-4 md:px-6 border-2 border-[#1E0771] text-[#1E0771] font-semibold rounded-lg hover:bg-gray-100 md:w-1/2 order-2 md:order-1"
+                                className="py-3 px-4 md:px-6 border-2 border-[#2E1461] text-[#2E1461] font-semibold rounded-lg hover:bg-gray-100 md:w-1/2 order-2 md:order-1"
                             >
                                 Kembali
                             </button>
                             <Link
                                 to="/exam"
-                                className="py-3 px-4 md:px-6 bg-[#1E0771] text-white font-semibold rounded-lg hover:bg-[#2d2460] text-center md:w-1/2 order-1 md:order-2"
+                                className="py-3 px-4 md:px-6 bg-[#2E1461] text-white font-semibold rounded-lg hover:bg-[#2d2460] text-center md:w-1/2 order-1 md:order-2"
                             >
                                 Mulai Sekarang
                             </Link>

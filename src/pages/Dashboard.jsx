@@ -1,10 +1,10 @@
 import { FaUser } from "react-icons/fa";
 import { MdVerifiedUser } from "react-icons/md";
 import { IoMenu } from "react-icons/io5";
-import SidebarComponent from "../Components/SidebarComponent";
+import SidebarComponent from "../components/SidebarComponent";
 import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
-import ProfileComponent from "../Components/ProfileComponent";
+import ProfileComponent from "../components/ProfileComponent";
 
 const TimelineItem = ({ title, date, isActive, isLast }) => {
     return (
@@ -105,9 +105,9 @@ const Dashboard = () => {
                         <h2 className="text-secondary text-xl md:text-2xl font-semibold">Hello Berka Aldizar Ganteng!</h2>
                     </div>
 
-                    <div className="flex flex-row items-center gap-3 md:gap-4 px-4 md:px-6 border-2 py-3 md:py-4 bg-[#AD87B5] rounded-xl text-white">
+                    <div className="flex flex-row items-center gap-3 md:gap-4 px-4 md:px-6 border-2 py-3 bg-[#AD87B5] rounded-xl text-white">
                         <MdVerifiedUser className="text-lg md:text-xl" />
-                        <h2 className="text-base md:text-xl">Waduh, Kamu Belum Verifikasi!</h2>
+                        <h2 className="text-base md:text-lg">Waduh, Kamu Belum Verifikasi!</h2>
                     </div>
 
                     <button className="flex justify-center items-center bg-gradient-to-b from-[#1B054E] to-[#7449B6] text-white font-bold py-3 px-8 rounded-lg transition-all duration-300 ease-in-out hover:cursor-pointer hover:shadow-lg hover:shadow-purple-400/50 hover:scale-105 hover:from-[#2A0775] hover:to-[#8A5BD0]">
@@ -116,7 +116,7 @@ const Dashboard = () => {
 
                     {/* Profile and Timeline - Stack on mobile, side by side on larger screens */}
                     <div className="flex flex-col md:flex-row gap-4 md:gap-6">
-                        <div className="w-full md:w-2/5 bg-[#E8D9FF] py-6 md:py-8 flex flex-col place-items-center gap-3 md:gap-4 rounded-xl text-secondary h-fit">
+                        <div className="w-full md:w-2/5 bg-[#E8D9FF] py-6 md:py-8 flex flex-col place-items-center gap-3  rounded-xl text-secondary h-fit">
                             <div className="text-4xl md:text-6xl p-4 md:p-5 bg-[#1E0771] text-white rounded-full">
                                 <FaUser />
                             </div>

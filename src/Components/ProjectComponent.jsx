@@ -35,7 +35,6 @@ const projects = [
 
 const ProjectComponent = () => {
     const [isMobile, setIsMobile] = useState(false);
-    const [activeProject, setActiveProject] = useState(null);
 
     // Handle responsive behavior
     useEffect(() => {
