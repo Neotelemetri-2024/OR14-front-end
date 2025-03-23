@@ -39,6 +39,7 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     // Login function
+    // Di dalam fungsi login pada AuthContext.js
     const login = async (email, password) => {
         try {
             setLoading(true);
@@ -49,9 +50,10 @@ export const AuthProvider = ({ children }) => {
                 // Save token to localStorage
                 localStorage.setItem('token', response.data.data.token);
 
-                // Set user data and authenticated state
+                // PENTING: Pastikan sudah set user dan authenticated sebelum return
                 setUser(response.data.data.user);
                 setAuthenticated(true);
+                setError(null);
 
                 // Log successful authentication to identify potential issues
                 console.log('Login successful, authenticated:', true);
@@ -63,6 +65,9 @@ export const AuthProvider = ({ children }) => {
         } catch (error) {
             console.error('Login error:', error);
             setError(error.response?.data?.message || 'Login gagal');
+            // PENTING: Set authenticated dan user ke state awal jika login gagal
+            setAuthenticated(false);
+            setUser(null);
             return {
                 success: false,
                 message: error.response?.data?.message || 'Login gagal. Silakan periksa kredensial Anda.'

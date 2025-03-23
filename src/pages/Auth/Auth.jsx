@@ -4,9 +4,11 @@ import { useNavigate } from "react-router-dom";
 import { authService } from "../../services/api";
 import { toast } from "react-toastify";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { useAuth } from "../../context/AuthContext";
 
 const Auth = ({ isLogin }) => {
     const navigate = useNavigate();
+    const { login } = useAuth();
     const [isLoginPage, setIsLoginPage] = useState(isLogin);
     const [formData, setFormData] = useState({
         name: "",
@@ -107,11 +109,10 @@ const Auth = ({ isLogin }) => {
         try {
             if (isLoginPage) {
                 // Login logic
-                const result = await authService.login(formData.email, formData.password);
+                const result = await login(formData.email, formData.password);
 
                 if (result.success) {
-                    // Show toast notification for successful login
-                    toast.success("Login berhasil! Mengalihkan ke dashboard...", {
+                    toast.success("Login berhasil! Selamat datang di dashboard!", {
                         position: "top-right",
                         autoClose: 2000,
                         hideProgressBar: false,
@@ -128,8 +129,10 @@ const Auth = ({ isLogin }) => {
                         password_confirmation: ""
                     });
 
-                    // Navigasi langsung tanpa setTimeout untuk mencegah masalah
-                    navigate("/dashboard", { replace: true });
+                    // Tambahkan timeout kecil untuk memastikan token tersimpan dan AuthContext terupdate
+                    setTimeout(() => {
+                        navigate("/dashboard", { replace: true });
+                    }, 2000);
                 } else {
                     // Show toast for error
                     toast.error(result.message || "Login gagal. Silakan periksa kredensial Anda.", {
@@ -222,9 +225,9 @@ const Auth = ({ isLogin }) => {
 
             {/* Form Section - Full width on mobile, half width on larger screens */}
             <section id="forms" className="flex flex-col justify-evenly w-full md:w-1/2 py-4 px-4 sm:px-8 md:px-12 pb-16 overflow-y-auto">
-                <div className="flex justify-center md:justify-start mb-4">
-                    <img src="/images/or14.svg" className="max-w-full h-10 md:h-12" alt="Logo" />
-                </div>
+                <button className="flex justify-center md:justify-start mb-4 hover:cursor-pointer" onClick={() => navigate("/")}>
+                    <img src="/images/or14.svg" className="max-w-full h-10 md:h-20" alt="Logo" />
+                </button>
                 <div className="px-2 sm:px-6 md:px-8 max-w-lg mx-auto w-full">
                     {isLoginPage ?
                         <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-center md:text-left mb-6">Masuk</h1> :

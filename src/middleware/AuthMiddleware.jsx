@@ -36,7 +36,6 @@ export const GuestRoute = () => {
     const { authenticated, loading } = useAuth();
     const location = useLocation();
 
-    // Intended destination jika sudah login (atau dari state, atau default ke dashboard)
     const from = location.state?.from || "/dashboard";
 
     if (loading) {
