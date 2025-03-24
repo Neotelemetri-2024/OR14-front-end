@@ -16,11 +16,15 @@ api.interceptors.request.use(
         if (token) {
             config.headers['Authorization'] = `Bearer ${token}`;
         }
+
+        // PENTING: Jangan set Content-Type jika data adalah FormData
+        if (config.data instanceof FormData) {
+            delete config.headers['Content-Type'];
+        }
+
         return config;
     },
-    (error) => {
-        return Promise.reject(error);
-    }
+    (error) => Promise.reject(error)
 );
 
 // Authentication service functions

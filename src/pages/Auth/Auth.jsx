@@ -286,7 +286,7 @@ const Auth = ({ isLogin }) => {
                                     className={`border py-2 px-3 rounded-lg w-full pr-10 ${errors.password ? "border-red-500" : "border-secondary"}`}
                                     value={formData.password}
                                     onChange={handleChange}
-                                    placeholder=""
+                                    placeholder="Masukkan password"
                                 />
                                 <button
                                     type="button"
