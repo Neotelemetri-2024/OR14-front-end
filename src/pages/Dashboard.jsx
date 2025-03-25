@@ -107,7 +107,7 @@ const Dashboard = () => {
 
         switch (verificationStatus) {
             case 'verified':
-                return "Kamu sudah terverifikasi!";
+                return "Profil kamu sudah lengkap!";
             case 'pending':
                 return "Verifikasi kamu sedang diproses!";
             case 'rejected':
@@ -117,7 +117,7 @@ const Dashboard = () => {
         }
     };
 
-    // Get verification button status
+    // Get verification button text
     const getVerificationButtonText = () => {
         if (!isProfileComplete) {
             return "Lengkapi Profil";
@@ -125,7 +125,7 @@ const Dashboard = () => {
 
         switch (verificationStatus) {
             case 'verified':
-                return "Verifikasi Selesai";
+                return "Profil Lengkap";
             case 'pending':
                 return "Sedang Diproses";
             case 'rejected':
@@ -135,13 +135,14 @@ const Dashboard = () => {
         }
     };
 
-    // Get button disabled status and destination
+    // Get button properties
     const getVerificationButtonProps = () => {
         if (!isProfileComplete) {
             return {
                 disabled: false,
                 destination: "/profile",
-                bgColor: "bg-gradient-to-b from-[#1B054E] to-[#7449B6]"
+                bgColor: "bg-gradient-to-b from-[#1B054E] to-[#7449B6]",
+                show: true
             };
         }
 
@@ -150,26 +151,30 @@ const Dashboard = () => {
                 return {
                     disabled: true,
                     destination: "#",
-                    bgColor: "bg-green-500"
+                    bgColor: "bg-green-500",
+                    show: false // Sembunyikan tombol ketika sudah diverifikasi
                 };
             case 'pending':
                 return {
                     disabled: true,
                     destination: "#",
-                    bgColor: "bg-yellow-500"
+                    bgColor: "bg-yellow-500",
+                    show: true
                 };
             case 'rejected':
             case null:
                 return {
                     disabled: false,
                     destination: "/verification",
-                    bgColor: "bg-gradient-to-b from-[#1B054E] to-[#7449B6]"
+                    bgColor: "bg-gradient-to-b from-[#1B054E] to-[#7449B6]",
+                    show: true
                 };
             default:
                 return {
                     disabled: false,
                     destination: "/verification",
-                    bgColor: "bg-gradient-to-b from-[#1B054E] to-[#7449B6]"
+                    bgColor: "bg-gradient-to-b from-[#1B054E] to-[#7449B6]",
+                    show: true
                 };
         }
     };
@@ -257,16 +262,18 @@ const Dashboard = () => {
                                 <h2 className="text-base md:text-lg">{getVerificationMessage()}</h2>
                             </div>
 
-                            {/* Verification Button */}
-                            <Link to={buttonProps.destination} className={buttonProps.disabled ? "pointer-events-none" : ""}>
-                                <button
-                                    className={`flex justify-center items-center ${buttonProps.bgColor} text-white font-bold py-3 px-8 w-full md:w-auto rounded-lg transition-all duration-300 ease-in-out ${!buttonProps.disabled ? 'hover:cursor-pointer hover:shadow-lg hover:shadow-purple-400/50 hover:scale-105 hover:from-[#2A0775] hover:to-[#8A5BD0]' : 'opacity-80'
-                                        }`}
-                                    disabled={buttonProps.disabled}
-                                >
-                                    {getVerificationButtonText()}
-                                </button>
-                            </Link>
+                            {/* Verification Button - Hanya tampilkan jika buttonProps.show adalah true */}
+                            {buttonProps.show && (
+                                <Link to={buttonProps.destination} className={buttonProps.disabled ? "pointer-events-none" : ""}>
+                                    <button
+                                        className={`flex justify-center items-center ${buttonProps.bgColor} text-white font-bold py-3 px-8 w-full md:w-auto rounded-lg transition-all duration-300 ease-in-out ${!buttonProps.disabled ? 'hover:cursor-pointer hover:shadow-lg hover:shadow-purple-400/50 hover:scale-105 hover:from-[#2A0775] hover:to-[#8A5BD0]' : 'opacity-80'
+                                            }`}
+                                        disabled={buttonProps.disabled}
+                                    >
+                                        {getVerificationButtonText()}
+                                    </button>
+                                </Link>
+                            )}
 
                             {/* Profile and Timeline - Stack on mobile, side by side on larger screens */}
                             <div className="flex flex-col md:flex-row gap-4 md:gap-6">

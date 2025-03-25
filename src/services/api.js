@@ -17,7 +17,6 @@ api.interceptors.request.use(
             config.headers['Authorization'] = `Bearer ${token}`;
         }
 
-        // PENTING: Jangan set Content-Type jika data adalah FormData
         if (config.data instanceof FormData) {
             delete config.headers['Content-Type'];
         }
