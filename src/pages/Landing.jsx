@@ -196,7 +196,7 @@ const Landing = () => {
                     <img src="/assets/landing/Group170.png" className={`absolute right-128 bottom-36 md:block hidden ${getAnimationClass('home', 'fadeIn', 300)}`} />
                     <img src="/assets/landing/Group171.png" className={`absolute right-0 top-30 md:block hidden ${getAnimationClass('home', 'fadeIn', 500)}`} />
                     <img src="/assets/programming.svg" className={`absolute left-50 top-40 md:block hidden h-12 -rotate-30 ${getAnimationClass('home', 'fadeIn', 700)}`} />
-                    <img src="/assets/mmd.svg" className={`absolute right-40 top-40 md:block hidden h-16 ${getAnimationClass('home', 'fadeIn', 900)}`} />
+                    <img src="/assets/multimedia.svg" className={`absolute right-40 top-40 md:block hidden h-16 ${getAnimationClass('home', 'fadeIn', 900)}`} />
                     <img src="/assets/skj.svg" className={`absolute right-30 bottom-40 md:block hidden h-16 ${getAnimationClass('home', 'fadeIn', 1100)}`} />
 
                     <img src="/assets/fikri.png" className={`max-w-full h-auto relative z-0 md:block hidden ${getAnimationClass('home', 'fadeIn', 200)}`} />

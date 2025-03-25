@@ -134,19 +134,6 @@ const ExamResult = () => {
                                     {examResult.score}
                                 </h2>
                             </div>
-
-                            {/* Waktu */}
-                            <div className="flex flex-row text-[#2E1461] text-xl md:text-2xl items-center justify-between">
-                                <div className="flex flex-row items-center gap-3 md:gap-6">
-                                    <FaTimesCircle className="text-4xl md:text-5xl opacity-0" />
-                                    <h2 className="font-semibold">
-                                        Waktu:
-                                    </h2>
-                                </div>
-                                <h2 className="text-lg md:text-xl font-bold text-[#2E1461]">
-                                    {new Date(examResult.start_time).toLocaleString()} - {new Date(examResult.end_time).toLocaleString()}
-                                </h2>
-                            </div>
                         </div>
                     </div>
                     <Link to="/dashboard">

@@ -1,105 +1,145 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import examService from '../../services/ExamService';
-import { toast } from 'react-toastify'; // You may need to install this library
+import { toast } from 'react-toastify';
 
 const Exam = () => {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [questions, setQuestions] = useState([]);
     const [answers, setAnswers] = useState({});
-    const [timer, setTimer] = useState(0);
+    const [remainingTime, setRemainingTime] = useState(0);
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
     const [examData, setExamData] = useState(null);
+
+    // Use a ref to track the interval
+    const timerIntervalRef = useRef(null);
 
     const navigate = useNavigate();
 
     // Fetch exam questions on component mount
     useEffect(() => {
         const fetchExamQuestions = async () => {
-            setLoading(true);
-            const response = await examService.getExamQuestions();
+            try {
+                setLoading(true);
+                const response = await examService.getExamQuestions();
 
-            if (response.success) {
-                const examData = response.data.data;
-                setExamData(examData);
+                if (response.success) {
+                    const data = response.data.data;
+                    setExamData(data);
 
-                if (examData.questions && examData.questions.length > 0) {
-                    setQuestions(examData.questions);
+                    // Set questions data
+                    if (data.questions && data.questions.length > 0) {
+                        setQuestions(data.questions);
 
-                    // Initialize answers from any existing user answers
-                    const initialAnswers = {};
-                    examData.questions.forEach(question => {
-                        if (question.user_answer) {
-                            initialAnswers[question.id] = question.user_answer;
-                        }
-                    });
-                    setAnswers(initialAnswers);
+                        // Initialize answers from any existing user answers
+                        const initialAnswers = {};
+                        data.questions.forEach(question => {
+                            if (question.user_answer) {
+                                initialAnswers[question.id] = question.user_answer;
+                            }
+                        });
+                        setAnswers(initialAnswers);
+                    } else {
+                        toast.error('Tidak ada soal ditemukan untuk ujian ini');
+                    }
+
+                    // Set timer explicitly
+                    if (data.remaining_seconds && data.remaining_seconds > 0) {
+                        setRemainingTime(data.remaining_seconds);
+                    }
                 } else {
-                    toast.error('Tidak ada soal ditemukan untuk ujian ini');
+                    toast.error(response.message || 'Gagal memuat soal ujian');
+                    navigate('/exam-preparation');
                 }
-            } else {
-                toast.error(response.message);
-                // If there's no active exam, redirect to preparation page
+            } catch (error) {
+                console.error("Error fetching exam data:", error);
+                toast.error('Terjadi kesalahan saat memuat soal ujian');
                 navigate('/exam-preparation');
+            } finally {
+                setLoading(false);
             }
-
-            setLoading(false);
         };
 
         fetchExamQuestions();
+
+        // Clean up on unmount
+        return () => {
+            if (timerIntervalRef.current) {
+                clearInterval(timerIntervalRef.current);
+            }
+        };
     }, [navigate]);
 
-    // Timer functionality
-    // Pada useEffect untuk timer
+    // Setup timer when remainingTime changes
     useEffect(() => {
-        if (examData && examData.remaining_seconds) {
-            // Gunakan remaining_seconds dari server
-            setTimer(examData.remaining_seconds);
+        // Clear any existing intervals
+        if (timerIntervalRef.current) {
+            clearInterval(timerIntervalRef.current);
+            timerIntervalRef.current = null;
+        }
 
-            const interval = setInterval(() => {
-                setTimer(prevTimer => {
-                    // Jika timer habis
-                    if (prevTimer <= 1) {
-                        clearInterval(interval);
-                        // Auto submit exam
-                        handleTimeUp();
+        // Only set up interval if we have a positive time remaining
+        if (remainingTime > 0) {
+            timerIntervalRef.current = setInterval(() => {
+                setRemainingTime(prevTime => {
+                    const newTime = prevTime - 1;
+
+                    if (newTime <= 0) {
+                        clearInterval(timerIntervalRef.current);
+                        timerIntervalRef.current = null;
+
+                        // Handle time up in the next tick to avoid state update during render
+                        setTimeout(() => handleTimeUp(), 0);
                         return 0;
                     }
-                    return prevTimer - 1;
+                    return newTime;
                 });
             }, 1000);
-
-            return () => clearInterval(interval);
         }
-    }, [examData]);
 
+        // Cleanup function
+        return () => {
+            if (timerIntervalRef.current) {
+                clearInterval(timerIntervalRef.current);
+                timerIntervalRef.current = null;
+            }
+        };
+    }, [remainingTime]);
 
-
-    // Tambahkan function ketika waktu habis
+    // Handle when time is up
     const handleTimeUp = async () => {
+        if (submitting) return; // Prevent duplicate submissions
+
         toast.warn("Waktu ujian telah habis!");
         setSubmitting(true);
 
-        const response = await examService.finishExam();
-        if (response.success) {
-            toast.info('Ujian telah diselesaikan karena waktu habis.');
-            navigate('/exam-result');
-        } else {
-            toast.error(response.message);
+        try {
+            const response = await examService.finishExam();
+            if (response.success) {
+                toast.info('Ujian telah diselesaikan karena waktu habis.');
+                navigate('/exam-result');
+            } else {
+                toast.error(response.message || 'Gagal menyelesaikan ujian');
+            }
+        } catch (error) {
+            console.error("Error finishing exam:", error);
+            toast.error('Terjadi kesalahan saat menyelesaikan ujian');
+        } finally {
+            setSubmitting(false);
         }
-        setSubmitting(false);
     };
 
-    // Format timer as HH:MM:SS
     const formatTime = (seconds) => {
-        if (seconds < 0) seconds = 0;
-        const hrs = Math.floor(seconds / 3600);
-        const mins = Math.floor((seconds % 3600) / 60);
-        const secs = seconds % 60;
-        return `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        if (!seconds || seconds < 0) return "00:00";
+
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+
+        return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
     };
-    // Handle navigation
+
+    // Navigation functions
     const goToNextQuestion = () => {
         if (currentQuestionIndex < questions.length - 1) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
@@ -126,18 +166,29 @@ const Exam = () => {
 
         // Submit answer to backend
         setSubmitting(true);
-        const response = await examService.submitAnswer(questionId, optionId);
-
-        if (!response.success) {
-            toast.error(response.message);
-            // Revert local state if submission failed
+        try {
+            const response = await examService.submitAnswer(questionId, optionId);
+            if (!response.success) {
+                toast.error(response.message || 'Gagal menyimpan jawaban');
+                // Revert local state if submission failed
+                setAnswers(prev => {
+                    const newAnswers = { ...prev };
+                    delete newAnswers[questionId];
+                    return newAnswers;
+                });
+            }
+        } catch (error) {
+            console.error("Error submitting answer:", error);
+            toast.error('Terjadi kesalahan saat menyimpan jawaban');
+            // Revert local state
             setAnswers(prev => {
                 const newAnswers = { ...prev };
                 delete newAnswers[questionId];
                 return newAnswers;
             });
+        } finally {
+            setSubmitting(false);
         }
-        setSubmitting(false);
     };
 
     // Handle finish exam
@@ -151,21 +202,27 @@ const Exam = () => {
         }
 
         setSubmitting(true);
-        const response = await examService.finishExam();
-
-        if (response.success) {
-            toast.success('Ujian berhasil diselesaikan!');
-            navigate('/exam-result');
-        } else {
-            toast.error(response.message);
+        try {
+            const response = await examService.finishExam();
+            if (response.success) {
+                toast.success('Ujian berhasil diselesaikan!');
+                navigate('/exam-result');
+            } else {
+                toast.error(response.message || 'Gagal menyelesaikan ujian');
+            }
+        } catch (error) {
+            console.error("Error finishing exam:", error);
+            toast.error('Terjadi kesalahan saat menyelesaikan ujian');
+        } finally {
+            setSubmitting(false);
         }
-        setSubmitting(false);
     };
 
     if (loading) {
         return (
             <div className="flex items-center justify-center h-screen">
-                <p>Loading...</p>
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#2E1461]"></div>
+                <p className="ml-3">Loading...</p>
             </div>
         );
     }
@@ -193,10 +250,12 @@ const Exam = () => {
                 <div className="flex justify-center py-3 md:py-4 px-4 md:px-16 bg-[#2E1461] rounded-2xl md:rounded-3xl items-center">
                     <h1 className="text-white text-sm md:text-xl font-semibold">Ujian {examData?.division}</h1>
                 </div>
-                <div className="flex justify-center py-3 md:py-6 px-4 md:px-20 bg-[#2E1461] rounded-2xl md:rounded-3xl items-center">
-                    <h2 className="text-white text-sm md:text-xl font-semibold">
-                        {formatTime(timer)}
-                    </h2>
+
+                {/* Cleaner Timer Display */}
+                <div className="flex justify-center py-3 md:py-4 px-8 md:px-16 bg-[#2E1461] rounded-2xl md:rounded-3xl items-center">
+                    <span className="text-white text-base md:text-xl font-mono font-semibold">
+                        {formatTime(remainingTime)}
+                    </span>
                 </div>
             </div>
 
@@ -209,8 +268,8 @@ const Exam = () => {
                         className={`flex justify-center py-2 md:py-4 px-3 md:px-6 rounded-lg items-center hover:cursor-pointer ${currentQuestionIndex === index
                             ? 'bg-[#2E1461] text-white'
                             : answers[question.id] !== undefined
-                                ? 'bg-green-900 text-white'
-                                : 'bg-[#E8D9FF] text-white'
+                                ? 'bg-green-700 text-white'
+                                : 'bg-[#E8D9FF] text-gray-800'
                             }`}
                     >
                         <h3 className="text-base md:text-xl font-semibold">
@@ -231,14 +290,14 @@ const Exam = () => {
                         <li
                             key={option.id}
                             className={`p-3 md:p-4 rounded-lg cursor-pointer flex items-center gap-2 md:gap-3 
-                            ${answers[currentQuestion.id] === option.id ? 'bg-secondary text-white' : 'bg-[#E8D9FF]'}
+                            ${answers[currentQuestion.id] === option.id ? 'bg-[#2E1461] text-white' : 'bg-[#E8D9FF] text-gray-800'}
                             ${submitting ? 'opacity-75 pointer-events-none' : ''}`}
                             onClick={() => !submitting && handleAnswerChange(currentQuestion.id, option.id)}
                         >
                             <span className={`w-5 md:w-6 h-5 md:h-6 border-4 rounded-full flex items-center justify-center 
-                            ${answers[currentQuestion.id] === option.id ? ' bg-[#2E1461] border-[#B2BCE5]' : ' border-[#2E1461] bg-[#B2BCE5]'}
-                        `}>
-                                {answers[currentQuestion.id] === option.id && <span className="w-2 md:w-3 h-2 md:h-3 bg-[#301D54] rounded-full"></span>}
+                            ${answers[currentQuestion.id] === option.id ? 'bg-[#2E1461] border-[#B2BCE5]' : 'border-[#2E1461] bg-[#B2BCE5]'}
+                            `}>
+                                {answers[currentQuestion.id] === option.id && <span className="w-2 md:w-3 h-2 md:h-3 bg-white rounded-full"></span>}
                             </span>
                             <label className="cursor-pointer w-full text-sm md:text-base">
                                 {option.option_text}
