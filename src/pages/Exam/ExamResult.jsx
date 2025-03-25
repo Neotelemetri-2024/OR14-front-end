@@ -1,7 +1,16 @@
+import { useState, useEffect } from "react";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import examService from "../../services/ExamService";
+import { toast } from "react-toastify"; // You may need to install this library
 
 const ExamResult = () => {
+    const [loading, setLoading] = useState(true);
+    const [examResult, setExamResult] = useState(null);
+
+    const navigate = useNavigate();
+    const { examId } = useParams(); // If you want to support viewing specific exam results
+
     // CSS untuk animasi gambar dekorasi
     const animationStyles = `
         @keyframes fadeInScale {
@@ -15,6 +24,52 @@ const ExamResult = () => {
             100% { transform: translateY(0) scale(1); }
         }
     `;
+
+    // Fetch exam result on component mount
+    useEffect(() => {
+        const fetchExamResult = async () => {
+            setLoading(true);
+            const response = await examService.getExamResult(examId);
+
+            if (response.success) {
+                setExamResult(response.data.data);
+            } else {
+                toast.error(response.message);
+                // If there's no result, redirect to dashboard
+                setTimeout(() => navigate('/dashboard'), 2000);
+            }
+
+            setLoading(false);
+        };
+
+        fetchExamResult();
+    }, [examId, navigate]);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-[#1E0771]">
+                <div className="bg-white p-6 rounded-xl">
+                    <p className="text-lg">Loading hasil ujian...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (!examResult) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-[#1E0771]">
+                <div className="bg-white p-6 rounded-xl">
+                    <p className="text-lg">Hasil ujian tidak ditemukan</p>
+                    <Link to="/dashboard">
+                        <button className="mt-4 border-2 w-full py-3 px-4 rounded-lg bg-secondary text-white font-semibold hover:cursor-pointer hover:bg-white hover:text-[#2E1461] transition duration-300">
+                            Kembali ke Dashboard
+                        </button>
+                    </Link>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="min-h-screen h-full bg-[#1E0771] relative overflow-hidden">
             {/* Inject animation keyframes */}
@@ -35,7 +90,7 @@ const ExamResult = () => {
                     <h1 className="text-2xl md:text-3xl font-bold text-[#1E0771]">Hasil akhir ujian</h1>
                     <div className="border-2 mt-6 md:mt-8 p-4 md:p-6 rounded-xl border-secondary">
                         <h2 className="text-lg md:text-xl font-bold">
-                            Ujian divisi
+                            Ujian divisi {examResult.division}
                         </h2>
 
                         {/* ExamResult */}
@@ -44,27 +99,26 @@ const ExamResult = () => {
                             {/* Benar */}
                             <div className="flex flex-row text-[#2E1461] text-xl md:text-2xl items-center justify-between">
                                 <div className="flex flex-row items-center gap-3 md:gap-6">
-                                    <FaCheckCircle className="text-4xl md:text-5xl" />
+                                    <FaCheckCircle className="text-4xl md:text-5xl text-green-600" />
                                     <h2 className="font-semibold">
                                         Benar:
                                     </h2>
                                 </div>
                                 <h2 className="text-lg md:text-xl font-bold text-[#2E1461]">
-                                    17
+                                    {examResult.correct_answers}
                                 </h2>
                             </div>
-
 
                             {/* Salah */}
                             <div className="flex flex-row text-[#2E1461] text-xl md:text-2xl items-center justify-between">
                                 <div className="flex flex-row items-center gap-3 md:gap-6">
-                                    <FaTimesCircle className="text-4xl md:text-5xl" />
+                                    <FaTimesCircle className="text-4xl md:text-5xl text-red-600" />
                                     <h2 className="font-semibold">
                                         Salah:
                                     </h2>
                                 </div>
                                 <h2 className="text-lg md:text-xl font-bold text-[#2E1461]">
-                                    0
+                                    {examResult.incorrect_answers}
                                 </h2>
                             </div>
 
@@ -77,10 +131,22 @@ const ExamResult = () => {
                                     </h2>
                                 </div>
                                 <h2 className="text-lg md:text-xl font-bold text-[#2E1461]">
-                                    100
+                                    {examResult.score}
                                 </h2>
                             </div>
 
+                            {/* Waktu */}
+                            <div className="flex flex-row text-[#2E1461] text-xl md:text-2xl items-center justify-between">
+                                <div className="flex flex-row items-center gap-3 md:gap-6">
+                                    <FaTimesCircle className="text-4xl md:text-5xl opacity-0" />
+                                    <h2 className="font-semibold">
+                                        Waktu:
+                                    </h2>
+                                </div>
+                                <h2 className="text-lg md:text-xl font-bold text-[#2E1461]">
+                                    {new Date(examResult.start_time).toLocaleString()} - {new Date(examResult.end_time).toLocaleString()}
+                                </h2>
+                            </div>
                         </div>
                     </div>
                     <Link to="/dashboard">
