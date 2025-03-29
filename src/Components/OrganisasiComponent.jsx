@@ -3,24 +3,24 @@ import { useState, useEffect, useRef } from "react";
 
 const div = [
     {
-        division: "Marketing",
-        logo: "marketing",
-        desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eu massa arcu. Aliquam a odio sodales, iaculis neque eget, commodo tellus. Fusce varius commodo lorem, vitae vulputate mi ullamcorper in."
-    },
-    {
         division: "Organizing Committee",
         logo: "oc",
-        desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eu massa arcu. Aliquam a odio sodales, iaculis neque eget, commodo tellus. Fusce varius commodo lorem, vitae vulputate mi ullamcorper in."
+        desc: "OC berperan dalam perencanaan dan pelaksanaan acara atau kegiatan Neo Telemetri. Anggota akan belajar bagaimana mengatur timeline, menyusun konsep acara, serta memastikan setiap kegiatan berjalan dengan lancar."
+    },
+    {
+        division: "Marketing",
+        logo: "marketing",
+        desc: "divisi ini berfokus pada strategi pemasaran digital untuk produk Neo Telemetri serta pengelolaan proyek yang masuk. Anggota akan belajar bagaimana menyusun strategi promosi, mengelola brand produk Neo, serta memastikan proyek yang masuk dapat berjalan dengan optimal dan memberikan manfaat bagi client  maupun organisasi.h"
     },
     {
         division: "HRD",
         logo: "hrd",
-        desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eu massa arcu. Aliquam a odio sodales, iaculis neque eget, commodo tellus. Fusce varius commodo lorem, vitae vulputate mi ullamcorper in."
+        desc: "HRD bertanggung jawab atas pengelolaan dan pengembangan anggota Neo Telemetri. Subdivisi ini berfokus pada rekrutmen, pelatihan, serta peningkatan soft skill dan teamwork, sehingga setiap anggota dapat berkembang secara profesional dan pribadi dalam organisasi."
     },
     {
         division: "Public Relation",
         logo: "pr",
-        desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eu massa arcu. Aliquam a odio sodales, iaculis neque eget, commodo tellus. Fusce varius commodo lorem, vitae vulputate mi ullamcorper in."
+        desc: "divisi ini berperan sebagai jembatan komunikasi antara Neo Telemetri dengan pihak eksternal maupun internal. Anggota PR akan belajar cara membangun citra positif organisasi melalui media sosial, publikasi, serta relasi dengan komunitas dan mitra eksternal."
     }
 ];
 
@@ -247,7 +247,7 @@ const OrganisasiComponent = () => {
                         <div className="bg-white p-4 md:p-6 flex flex-col h-full">
                             <motion.p
                                 variants={textVariants}
-                                className="text-sm md:text-base text-gray-700 flex-grow"
+                                className="text-sm md:text-base text-gray-700 flex-grow text-justify"
                             >
                                 {division.desc}
                             </motion.p>

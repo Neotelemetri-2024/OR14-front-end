@@ -9,15 +9,15 @@ const div = [
         subdivision: [
             {
                 name: "UI/UX",
-                desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eu massa arcu. Aliquam a odio sodales, iaculis neque eget, commodo tellus. Fusce varius commodo lorem, vitae vulputate mi ullamcorper in."
+                desc: "Subdivisi ini berfokus pada perancangan tampilan dan pengalaman pengguna dalam aplikasi maupun website. Anggota akan belajar membuat desain yang tidak hanya menarik secara visual, tetapi juga nyaman dan mudah digunakan, dengan mempertimbangkan prinsip desain, interaksi, dan kebutuhan pengguna."
             },
             {
                 name: "Video Editing",
-                desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eu massa arcu. Aliquam a odio sodales, iaculis neque eget, commodo tellus. Fusce varius commodo lorem, vitae vulputate mi ullamcorper in."
+                desc: "Subdivisi ini mengajarkan keterampilan dalam mengedit video untuk berbagai keperluan, seperti konten kreatif, presentasi, hingga storytelling visual. Anggota akan belajar teknik dasar hingga lanjutan dalam pengolahan video, termasuk penyusunan alur cerita, transisi, efek, dan penyempurnaan warna agar hasilnya lebih menarik dan profesional."
             },
             {
                 name: "3D",
-                desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eu massa arcu. Aliquam a odio sodales, iaculis neque eget, commodo tellus. Fusce varius commodo lorem, vitae vulputate mi ullamcorper in."
+                desc: "Di subdivisi ini, anggota akan mendalami pembuatan model dan animasi 3D untuk berbagai kebutuhan, seperti visualisasi produk, desain karakter, dan elemen interaktif. Prosesnya mencakup modeling, texturing, dan rendering untuk menciptakan objek 3D yang realistis dan estetis."
             }
         ]
     },
@@ -27,15 +27,15 @@ const div = [
         subdivision: [
             {
                 name: "Web Programming",
-                desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eu massa arcu. Aliquam a odio sodales, iaculis neque eget, commodo tellus. Fusce varius commodo lorem, vitae vulputate mi ullamcorper in."
+                desc: "Subdivisi ini berfokus pada pengembangan website, mulai dari tampilan antarmuka hingga sistem backend. Anggota akan belajar membangun website yang interaktif, responsif, dan fungsional, serta memahami konsep dasar pemrograman web, manajemen database, dan pengolahan data untuk menciptakan solusi berbasis web yang efisien."
             },
             {
                 name: "Mobile Programming",
-                desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eu massa arcu. Aliquam a odio sodales, iaculis neque eget, commodo tellus. Fusce varius commodo lorem, vitae vulputate mi ullamcorper in."
+                desc: "Subdivisi ini berfokus pada pengembangan aplikasi mobile untuk berbagai platform. Anggota akan belajar membangun aplikasi yang optimal, efisien, dan user-friendly, dengan memahami konsep desain antarmuka, manajemen data, serta pengolahan fitur aplikasi agar dapat berjalan dengan baik di perangkat mobile."
             },
             {
                 name: "Machine learning",
-                desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eu massa arcu. Aliquam a odio sodales, iaculis neque eget, commodo tellus. Fusce varius commodo lorem, vitae vulputate mi ullamcorper in."
+                desc: "Subdivisi ini membahas penerapan kecerdasan buatan untuk mengolah data dan membuat model prediksi. Anggota akan belajar dasar-dasar machine learning, eksplorasi data, serta membangun model yang dapat digunakan untuk berbagai kebutuhan, seperti analisis pola, pengenalan gambar, dan pemrosesan bahasa alami."
             }
         ]
     },
@@ -44,12 +44,12 @@ const div = [
         logo: "skj",
         subdivision: [
             {
-                name: "Network",
-                desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eu massa arcu. Aliquam a odio sodales, iaculis neque eget, commodo tellus. Fusce varius commodo lorem, vitae vulputate mi ullamcorper in."
+                name: "Network Engineer",
+                desc: "Subdivisi ini berfokus pada perancangan, konfigurasi, dan pengelolaan jaringan komputer, baik dalam skala kecil maupun besar. Anggota akan belajar konsep jaringan, keamanan siber, administrasi perangkat jaringan, serta troubleshooting untuk memastikan konektivitas yang stabil dan aman dalam mendukung berbagai layanan berbasis teknologi."
             },
             {
-                name: "System",
-                desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eu massa arcu. Aliquam a odio sodales, iaculis neque eget, commodo tellus. Fusce varius commodo lorem, vitae vulputate mi ullamcorper in."
+                name: "System Engineer",
+                desc: "Subdivisi ini berfokus pada perancangan, pengelolaan, dan pemeliharaan sistem komputer dan infrastruktur teknologi agar berjalan optimal. Anggota akan belajar tentang manajemen server, virtualisasi, sistem operasi, serta otomasi dalam pengelolaan sistem untuk memastikan sistem tetap stabil, aman, dan efisien dalam mendukung berbagai kebutuhan teknologi."
             }
         ]
     }

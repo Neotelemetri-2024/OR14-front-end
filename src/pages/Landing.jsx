@@ -403,7 +403,7 @@ const Landing = () => {
                     animate="visible" // Guarantee visible on load
                 >
                     <h1 className="text-white text-2xl sm:text-2xl mb-4 md:mb-12 font-bold">Apa itu Open Recruitment UKM Neo Telemetri?</h1>
-                    <p className="text-white text-base sm:text-lg md:text-xl font-light text-justify">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eu massa arcu. Aliquam a odio sodales, iaculis neque eget, commodo tellus. Fusce varius commodo lorem, vitae vulputate mi ullamcorper in. Donec viverra neque tempor turpis molestie malesuada. Nam dapibus sapien ac ligula consectetur ultrices. Vestibulum ut ante elementum dolor molestie vestibulum.</p>
+                    <p className="text-white text-base sm:text-lg md:text-xl font-light text-justify">Open Recruitment Neo Telemetri adalah proses seleksi untuk mencari dan merekrut mahasiswa Universitas Andalas angkatan 2023 dan 2024 yang memiliki semangat belajar dan berkembang di bidang teknologi maupun manajemen organisasi. Open Recruitment ini bukan sekadar rekrutmen biasa, tetapi merupakan kesempatan bagi mahasiswa untuk bergabung dengan komunitas inovatif dan berkembang bersama dalam ekosistem teknologi dan organisasi yang solid.h</p>
                 </motion.div>
             </section>
 
@@ -526,6 +526,7 @@ const Landing = () => {
                     animate={jumbotronControls}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
+                    onClick={() => navigate("/auth?mode=login")}
                 >
                     Ayo Daftar!
                 </motion.button>

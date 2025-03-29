@@ -5,6 +5,7 @@ import { authService } from "../../services/api";
 import { toast } from "react-toastify";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useAuth } from "../../context/AuthContext";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Auth = ({ isLogin }) => {
     const navigate = useNavigate();
@@ -112,7 +113,10 @@ const Auth = ({ isLogin }) => {
                 const result = await login(formData.email, formData.password);
 
                 if (result.success) {
-                    toast.success("Login berhasil! Selamat datang di dashboard!", {
+                    // Periksa role user untuk menentukan pesan sukses
+                    const isAdmin = result.data && result.data.user && result.data.user.role === 'admin';
+
+                    toast.success(`Login berhasil! ${isAdmin ? 'Mengarahkan ke panel admin' : 'Selamat datang di dashboard!'}`, {
                         position: "top-right",
                         autoClose: 2000,
                         hideProgressBar: false,
@@ -129,10 +133,9 @@ const Auth = ({ isLogin }) => {
                         password_confirmation: ""
                     });
 
-                    // Tambahkan timeout kecil untuk memastikan token tersimpan dan AuthContext terupdate
-                    setTimeout(() => {
-                        navigate("/dashboard", { replace: true });
-                    }, 2000);
+                    // Arahkan langsung ke auto-redirect tanpa delay
+                    // Tampilkan toast tapi langsung redirect tanpa menunggu
+                    navigate("/auto-redirect", { replace: true });
                 } else {
                     // Show toast for error
                     toast.error(result.message || "Login gagal. Silakan periksa kredensial Anda.", {
@@ -220,185 +223,428 @@ const Auth = ({ isLogin }) => {
         setShowConfirmPassword(!showConfirmPassword);
     };
 
+    // Framer Motion Variants
+    const pageTransition = {
+        initial: { opacity: 0, x: isLoginPage ? -100 : 100 },
+        animate: { opacity: 1, x: 0 },
+        exit: { opacity: 0, x: isLoginPage ? 100 : -100 },
+        transition: { type: "tween", ease: "easeInOut", duration: 0.5 }
+    };
+
+    const formVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+                duration: 0.5,
+                staggerChildren: 0.1,
+                delayChildren: 0.2
+            }
+        }
+    };
+
+    const itemVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: { opacity: 1, y: 0 }
+    };
+
+    const buttonVariants = {
+        initial: { scale: 1 },
+        hover: { scale: 1.05, transition: { duration: 0.2 } },
+        tap: { scale: 0.95 }
+    };
+
+    // Animasi cahaya
+    const glowVariants = {
+        initial: {
+            opacity: 0.3,
+            boxShadow: "0px 0px 15px 5px rgba(116, 73, 182, 0.3)"
+        },
+        animate: {
+            opacity: [0.3, 0.7, 0.3],
+            boxShadow: [
+                "0px 0px 15px 5px rgba(116, 73, 182, 0.3)",
+                "0px 0px 30px 10px rgba(116, 73, 182, 0.7)",
+                "0px 0px 15px 5px rgba(116, 73, 182, 0.3)"
+            ],
+            transition: {
+                duration: 4,
+                repeat: Infinity,
+                repeatType: "reverse"
+            }
+        }
+    };
+
     return (
         <div className="flex flex-row w-full h-screen overflow-hidden">
 
             {/* Form Section - Full width on mobile, half width on larger screens */}
-            <section id="forms" className="flex flex-col justify-evenly w-full md:w-1/2 py-4 px-4 sm:px-8 md:px-12 pb-16 overflow-y-auto">
-                <button className="flex justify-center md:justify-start mb-4 hover:cursor-pointer" onClick={() => navigate("/")}>
+            <motion.section
+                id="forms"
+                className="flex flex-col justify-evenly w-full md:w-1/2 py-4 px-4 sm:px-8 md:px-12 pb-16 overflow-y-auto"
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5 }}
+            >
+                <motion.button
+                    className="flex justify-center md:justify-start mb-4 hover:cursor-pointer"
+                    onClick={() => navigate("/")}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                >
                     <img src="/images/or14.svg" className="max-w-full h-10 md:h-20" alt="Logo" />
-                </button>
-                <div className="px-2 sm:px-6 md:px-8 max-w-lg mx-auto w-full">
-                    {isLoginPage ?
-                        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-center md:text-left mb-6">Masuk</h1> :
-                        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-center md:text-left mb-6">Daftar</h1>
-                    }
+                </motion.button>
 
-                    {/* Notification display */}
-                    {notification.show && (
-                        <div className={`mb-4 p-3 rounded-md ${notification.type === "success"
-                            ? "bg-green-100 text-green-800 border border-green-200"
-                            : "bg-red-100 text-red-800 border border-red-200"
-                            }`}>
-                            {notification.message}
-                        </div>
-                    )}
+                <AnimatePresence mode="wait">
+                    <motion.div
+                        key={isLoginPage ? "login" : "register"}
+                        className="px-2 sm:px-6 md:px-8 max-w-lg mx-auto w-full"
+                        initial={pageTransition.initial}
+                        animate={pageTransition.animate}
+                        exit={pageTransition.exit}
+                        transition={pageTransition.transition}
+                    >
+                        <motion.h1
+                            className="text-xl sm:text-2xl md:text-3xl font-bold text-center md:text-left mb-6"
+                            initial={{ opacity: 0, y: -20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.2 }}
+                        >
+                            {isLoginPage ? "Masuk" : "Daftar"}
+                        </motion.h1>
 
-                    <form className="space-y-4" onSubmit={handleSubmit}>
-                        {!isLoginPage && (
-                            <div className="flex flex-col">
-                                <label htmlFor="name" className="font-semibold text-base md:text-lg mb-1">Nama Lengkap</label>
-                                <input
-                                    id="name"
-                                    type="text"
-                                    className={`border py-2 px-3 rounded-lg ${errors.name ? "border-red-500" : "border-secondary"}`}
-                                    value={formData.name}
-                                    onChange={handleChange}
-                                    placeholder="Masukkan nama lengkap"
-                                />
-                                {errors.name && (
-                                    <p className="text-red-500 text-sm mt-1">{errors.name}</p>
-                                )}
-                            </div>
-                        )}
-
-                        <div className="flex flex-col">
-                            <label htmlFor="email" className="font-semibold text-base md:text-lg mb-1">Email</label>
-                            <input
-                                id="email"
-                                type="email"
-                                className={`border py-2 px-3 rounded-lg ${errors.email ? "border-red-500" : "border-secondary"}`}
-                                value={formData.email}
-                                onChange={handleChange}
-                                placeholder="neotelemetri@example.com"
-                            />
-                            {errors.email && (
-                                <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-                            )}
-                        </div>
-
-                        <div className="flex flex-col">
-                            <label htmlFor="password" className="font-semibold text-base md:text-lg mb-1">Password</label>
-                            <div className="relative">
-                                <input
-                                    id="password"
-                                    type={showPassword ? "text" : "password"}
-                                    className={`border py-2 px-3 rounded-lg w-full pr-10 ${errors.password ? "border-red-500" : "border-secondary"}`}
-                                    value={formData.password}
-                                    onChange={handleChange}
-                                    placeholder="Masukkan password"
-                                />
-                                <button
-                                    type="button"
-                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                                    onClick={toggleShowPassword}
+                        {/* Notification display */}
+                        <AnimatePresence>
+                            {notification.show && (
+                                <motion.div
+                                    className={`mb-4 p-3 rounded-md ${notification.type === "success"
+                                        ? "bg-green-100 text-green-800 border border-green-200"
+                                        : "bg-red-100 text-red-800 border border-red-200"
+                                        }`}
+                                    initial={{ opacity: 0, y: -10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, height: 0 }}
                                 >
-                                    {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
-                                </button>
-                            </div>
-                            {errors.password && (
-                                <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+                                    {notification.message}
+                                </motion.div>
                             )}
-                        </div>
+                        </AnimatePresence>
 
-                        {!isLoginPage && (
-                            <div className="flex flex-col">
-                                <label htmlFor="password_confirmation" className="font-semibold text-base md:text-lg mb-1">Konfirmasi Password</label>
+                        <motion.form
+                            className="space-y-4"
+                            onSubmit={handleSubmit}
+                            variants={formVariants}
+                            initial="hidden"
+                            animate="visible"
+                        >
+                            <AnimatePresence>
+                                {!isLoginPage && (
+                                    <motion.div
+                                        className="flex flex-col"
+                                        variants={itemVariants}
+                                        initial="hidden"
+                                        animate="visible"
+                                        exit={{ opacity: 0, height: 0 }}
+                                    >
+                                        <label htmlFor="name" className="font-semibold text-base md:text-lg mb-1">Nama Lengkap</label>
+                                        <motion.input
+                                            id="name"
+                                            type="text"
+                                            className={`border py-2 px-3 rounded-lg ${errors.name ? "border-red-500" : "border-secondary"}`}
+                                            value={formData.name}
+                                            onChange={handleChange}
+                                            placeholder="Masukkan nama lengkap"
+                                            whileFocus={{ boxShadow: "0 0 0 2px rgba(116, 73, 182, 0.3)" }}
+                                        />
+                                        <AnimatePresence>
+                                            {errors.name && (
+                                                <motion.p
+                                                    className="text-red-500 text-sm mt-1"
+                                                    initial={{ opacity: 0, height: 0 }}
+                                                    animate={{ opacity: 1, height: "auto" }}
+                                                    exit={{ opacity: 0, height: 0 }}
+                                                >
+                                                    {errors.name}
+                                                </motion.p>
+                                            )}
+                                        </AnimatePresence>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+
+                            <motion.div
+                                className="flex flex-col"
+                                variants={itemVariants}
+                            >
+                                <label htmlFor="email" className="font-semibold text-base md:text-lg mb-1">Email</label>
+                                <motion.input
+                                    id="email"
+                                    type="email"
+                                    className={`border py-2 px-3 rounded-lg ${errors.email ? "border-red-500" : "border-secondary"}`}
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    placeholder="neotelemetri@example.com"
+                                    whileFocus={{ boxShadow: "0 0 0 2px rgba(116, 73, 182, 0.3)" }}
+                                />
+                                <AnimatePresence>
+                                    {errors.email && (
+                                        <motion.p
+                                            className="text-red-500 text-sm mt-1"
+                                            initial={{ opacity: 0, height: 0 }}
+                                            animate={{ opacity: 1, height: "auto" }}
+                                            exit={{ opacity: 0, height: 0 }}
+                                        >
+                                            {errors.email}
+                                        </motion.p>
+                                    )}
+                                </AnimatePresence>
+                            </motion.div>
+
+                            <motion.div
+                                className="flex flex-col"
+                                variants={itemVariants}
+                            >
+                                <label htmlFor="password" className="font-semibold text-base md:text-lg mb-1">Password</label>
                                 <div className="relative">
-                                    <input
-                                        id="password_confirmation"
-                                        type={showConfirmPassword ? "text" : "password"}
-                                        className={`border py-2 px-3 rounded-lg w-full pr-10 ${errors.password_confirmation ? "border-red-500" : "border-secondary"}`}
-                                        value={formData.password_confirmation}
+                                    <motion.input
+                                        id="password"
+                                        type={showPassword ? "text" : "password"}
+                                        className={`border py-2 px-3 rounded-lg w-full pr-10 ${errors.password ? "border-red-500" : "border-secondary"}`}
+                                        value={formData.password}
                                         onChange={handleChange}
-                                        placeholder="Masukkan ulang password"
+                                        placeholder="Masukkan password"
+                                        whileFocus={{ boxShadow: "0 0 0 2px rgba(116, 73, 182, 0.3)" }}
                                     />
-                                    <button
+                                    <motion.button
                                         type="button"
                                         className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                                        onClick={toggleShowConfirmPassword}
+                                        onClick={toggleShowPassword}
+                                        whileHover={{ scale: 1.1 }}
+                                        whileTap={{ scale: 0.9 }}
                                     >
-                                        {showConfirmPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
-                                    </button>
+                                        {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
+                                    </motion.button>
                                 </div>
-                                {errors.password_confirmation && (
-                                    <p className="text-red-500 text-sm mt-1">{errors.password_confirmation}</p>
+                                <AnimatePresence>
+                                    {errors.password && (
+                                        <motion.p
+                                            className="text-red-500 text-sm mt-1"
+                                            initial={{ opacity: 0, height: 0 }}
+                                            animate={{ opacity: 1, height: "auto" }}
+                                            exit={{ opacity: 0, height: 0 }}
+                                        >
+                                            {errors.password}
+                                        </motion.p>
+                                    )}
+                                </AnimatePresence>
+                            </motion.div>
+
+                            <AnimatePresence>
+                                {!isLoginPage && (
+                                    <motion.div
+                                        className="flex flex-col"
+                                        variants={itemVariants}
+                                        initial="hidden"
+                                        animate="visible"
+                                        exit={{ opacity: 0, height: 0 }}
+                                    >
+                                        <label htmlFor="password_confirmation" className="font-semibold text-base md:text-lg mb-1">Konfirmasi Password</label>
+                                        <div className="relative">
+                                            <motion.input
+                                                id="password_confirmation"
+                                                type={showConfirmPassword ? "text" : "password"}
+                                                className={`border py-2 px-3 rounded-lg w-full pr-10 ${errors.password_confirmation ? "border-red-500" : "border-secondary"}`}
+                                                value={formData.password_confirmation}
+                                                onChange={handleChange}
+                                                placeholder="Masukkan ulang password"
+                                                whileFocus={{ boxShadow: "0 0 0 2px rgba(116, 73, 182, 0.3)" }}
+                                            />
+                                            <motion.button
+                                                type="button"
+                                                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                                onClick={toggleShowConfirmPassword}
+                                                whileHover={{ scale: 1.1 }}
+                                                whileTap={{ scale: 0.9 }}
+                                            >
+                                                {showConfirmPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
+                                            </motion.button>
+                                        </div>
+                                        <AnimatePresence>
+                                            {errors.password_confirmation && (
+                                                <motion.p
+                                                    className="text-red-500 text-sm mt-1"
+                                                    initial={{ opacity: 0, height: 0 }}
+                                                    animate={{ opacity: 1, height: "auto" }}
+                                                    exit={{ opacity: 0, height: 0 }}
+                                                >
+                                                    {errors.password_confirmation}
+                                                </motion.p>
+                                            )}
+                                        </AnimatePresence>
+                                    </motion.div>
                                 )}
-                            </div>
-                        )}
+                            </AnimatePresence>
 
-                        {isLoginPage && (
-                            <div className="flex justify-end">
-                                <a className="text-[#868686] text-sm font-medium hover:text-black transition-colors" href="/forgot-password">
-                                    Lupa Kata Sandi?
-                                </a>
-                            </div>
-                        )}
+                            <AnimatePresence>
+                                {isLoginPage && (
+                                    <motion.div
+                                        className="flex justify-end"
+                                        variants={itemVariants}
+                                        initial="hidden"
+                                        animate="visible"
+                                        exit={{ opacity: 0, height: 0 }}
+                                    >
+                                        <motion.a
+                                            className="text-[#868686] text-sm font-medium hover:text-black transition-colors"
+                                            href="/forgot-password"
+                                            whileHover={{ color: "#000" }}
+                                        >
+                                            Lupa Kata Sandi?
+                                        </motion.a>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
 
-                        <div className="pt-4">
-                            <button
-                                type="submit"
-                                className="w-full py-2.5 md:py-3 bg-primary rounded-lg text-white font-semibold tracking-wide text-base md:text-lg border-2 border-primary hover:bg-white hover:text-primary transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-                                disabled={isLoading}
+                            <motion.div
+                                className="pt-4"
+                                variants={itemVariants}
                             >
-                                {isLoading ?
-                                    <span className="flex items-center justify-center">
-                                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                        </svg>
-                                        Memproses...
-                                    </span>
-                                    :
-                                    (isLoginPage ? "Masuk" : "Daftar")
-                                }
-                            </button>
-                        </div>
-                    </form>
+                                <motion.button
+                                    type="submit"
+                                    className="w-full py-2.5 md:py-3 bg-primary rounded-lg text-white font-semibold tracking-wide text-base md:text-lg border-2 border-primary hover:bg-white hover:text-primary transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                                    disabled={isLoading}
+                                    variants={buttonVariants}
+                                    initial="initial"
+                                    whileHover="hover"
+                                    whileTap="tap"
+                                >
+                                    {isLoading ?
+                                        <span className="flex items-center justify-center">
+                                            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                            </svg>
+                                            Memproses...
+                                        </span>
+                                        :
+                                        (isLoginPage ? "Masuk" : "Daftar")
+                                    }
+                                </motion.button>
+                            </motion.div>
+                        </motion.form>
 
-                    <div className="mt-6 text-center">
-                        {isLoginPage ? (
-                            <p className="text-sm md:text-base text-[#868686]">
-                                Belum memiliki akun?
-                                <button
-                                    className="ml-1 text-primary font-semibold hover:underline focus:outline-none"
-                                    onClick={handleIsLoginPage}
-                                >
-                                    Daftar
-                                </button>
-                            </p>
-                        ) : (
-                            <p className="text-sm md:text-base text-[#868686]">
-                                Sudah memiliki akun?
-                                <button
-                                    className="ml-1 text-primary font-semibold hover:underline focus:outline-none"
-                                    onClick={handleIsLoginPage}
-                                >
-                                    Login
-                                </button>
-                            </p>
-                        )}
-                    </div>
-                </div>
-            </section>
+                        <motion.div
+                            className="mt-6 text-center"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.5 }}
+                        >
+                            {isLoginPage ? (
+                                <p className="text-sm md:text-base text-[#868686]">
+                                    Belum memiliki akun?
+                                    <motion.button
+                                        className="ml-1 text-primary font-semibold hover:underline focus:outline-none"
+                                        onClick={handleIsLoginPage}
+                                        whileHover={{ scale: 1.05, textDecoration: "underline" }}
+                                        whileTap={{ scale: 0.95 }}
+                                    >
+                                        Daftar
+                                    </motion.button>
+                                </p>
+                            ) : (
+                                <p className="text-sm md:text-base text-[#868686]">
+                                    Sudah memiliki akun?
+                                    <motion.button
+                                        className="ml-1 text-primary font-semibold hover:underline focus:outline-none"
+                                        onClick={handleIsLoginPage}
+                                        whileHover={{ scale: 1.05, textDecoration: "underline" }}
+                                        whileTap={{ scale: 0.95 }}
+                                    >
+                                        Login
+                                    </motion.button>
+                                </p>
+                            )}
+                        </motion.div>
+                    </motion.div>
+                </AnimatePresence>
+            </motion.section>
 
             {/* Background Image Section - Hidden on mobile, visible on larger screens */}
-            <section className="hidden md:block bg-gradient-to-b from-[#1B054E] to-[#7449B6] md:w-1/2 relative">
-                <img src="/assets/auth/Group184.png" className="w-full h-full object-cover" alt="Auth background" />
-            </section>
+            <motion.section
+                className="hidden md:block bg-gradient-to-b from-[#1B054E] to-[#7449B6] md:w-1/2 relative overflow-hidden"
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+            >
+                {/* Efek bercahaya/glow pada background */}
+                <motion.div
+                    className="absolute inset-0 rounded-l-3xl overflow-hidden"
+                    variants={glowVariants}
+                    initial="initial"
+                    animate="animate"
+                />
+
+                {/* Pulsating light effect on top of the image */}
+                <motion.div
+                    className="absolute top-1/4 left-1/4 w-32 h-32 rounded-full bg-white"
+                    initial={{ opacity: 0.1 }}
+                    animate={{
+                        opacity: [0.1, 0.3, 0.1],
+                        scale: [1, 1.5, 1],
+                    }}
+                    transition={{
+                        duration: 5,
+                        repeat: Infinity,
+                        repeatType: "reverse"
+                    }}
+                    style={{ filter: "blur(40px)" }}
+                />
+
+                <motion.div
+                    className="absolute bottom-1/3 right-1/4 w-24 h-24 rounded-full bg-purple-300"
+                    initial={{ opacity: 0.1 }}
+                    animate={{
+                        opacity: [0.1, 0.3, 0.1],
+                        scale: [1, 1.3, 1],
+                    }}
+                    transition={{
+                        duration: 4,
+                        delay: 1,
+                        repeat: Infinity,
+                        repeatType: "reverse"
+                    }}
+                    style={{ filter: "blur(30px)" }}
+                />
+
+                <motion.img
+                    src="/assets/auth/Group184.png"
+                    className="w-full h-full object-cover relative z-10"
+                    alt="Auth background"
+                    initial={{ scale: 1.05 }}
+                    animate={{ scale: 1 }}
+                    transition={{ duration: 0.7 }}
+                />
+            </motion.section>
 
             {/* Background Decoration - Hidden on small screens */}
-            <img
+            <motion.img
                 src="/assets/bg/Ellipse28.svg"
                 className="decoration-1 absolute bottom-[55%] left-[20%] -z-10 hidden lg:block"
                 style={{ opacity: 0.5 }}
                 alt="Decoration 1"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 0.5, y: 0 }}
+                transition={{ duration: 1, delay: 0.5 }}
             />
-            <img
+            <motion.img
                 src="/assets/bg/Ellipse29.svg"
                 className="decoration-2 absolute top-[33%] right-[75%] -z-10 hidden lg:block"
                 style={{ opacity: 0.5 }}
                 alt="Decoration 2"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 0.5, y: 0 }}
+                transition={{ duration: 1, delay: 0.7 }}
             />
         </div>
     );

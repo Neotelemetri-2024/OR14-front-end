@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import api from '../services/api';
+import { authService } from '../services/api';
 
 const AuthContext = createContext();
 
@@ -20,10 +20,21 @@ export const AuthProvider = ({ children }) => {
             }
 
             try {
-                const response = await api.get('/user');
-                if (response.data && response.data.data) {
-                    setUser(response.data.data);
+                const response = await authService.getCurrentUser();
+                if (response.success && response.data) {
+                    console.log("Auth status: User authenticated", response.data);
+                    setUser(response.data);
                     setAuthenticated(true);
+
+                    // Log jika user adalah admin
+                    if (response.data.role === 'admin') {
+                        console.log("User is admin");
+                    }
+                } else {
+                    console.log("Auth check failed: Token invalid or expired");
+                    localStorage.removeItem('token');
+                    setAuthenticated(false);
+                    setUser(null);
                 }
             } catch (error) {
                 console.error('Authentication check failed:', error);
@@ -38,34 +49,33 @@ export const AuthProvider = ({ children }) => {
         checkAuthStatus();
     }, []);
 
-    // Login function
-    // Di dalam fungsi login pada AuthContext.js
     const login = async (email, password) => {
         try {
             setLoading(true);
-            const response = await api.post('/login', { email, password });
+            setError(null);
+
+            const response = await authService.login({ email, password });
 
             // Check if token exists in response
-            if (response.data.data && response.data.data.token) {
-                // Save token to localStorage
-                localStorage.setItem('token', response.data.data.token);
-
-                // PENTING: Pastikan sudah set user dan authenticated sebelum return
-                setUser(response.data.data.user);
+            if (response.success && response.data && response.data.token) {
+                // Set user dan authenticated state
+                setUser(response.data.user);
                 setAuthenticated(true);
-                setError(null);
 
-                // Log successful authentication to identify potential issues
-                console.log('Login successful, authenticated:', true);
+                console.log('Login successful, user:', response.data.user);
 
-                return { success: true, data: response.data.data };
+                // Periksa jika user memiliki role admin
+                if (response.data.user && response.data.user.role === 'admin') {
+                    console.log('User is admin, should redirect to admin dashboard');
+                }
+
+                return { success: true, data: response.data };
             } else {
                 throw new Error('Token tidak ditemukan dalam respons');
             }
         } catch (error) {
             console.error('Login error:', error);
             setError(error.response?.data?.message || 'Login gagal');
-            // PENTING: Set authenticated dan user ke state awal jika login gagal
             setAuthenticated(false);
             setUser(null);
             return {
@@ -81,7 +91,7 @@ export const AuthProvider = ({ children }) => {
     const register = async (userData) => {
         try {
             setLoading(true);
-            const response = await api.post('/register', userData);
+            const response = await authService.register(userData);
             setError(null);
             return { success: true, data: response.data };
         } catch (error) {
@@ -99,7 +109,7 @@ export const AuthProvider = ({ children }) => {
     const logout = async () => {
         try {
             setLoading(true);
-            await api.get('/logout');
+            await authService.logout();
 
             // Always clear local state regardless of API response
             localStorage.removeItem('token');
@@ -122,6 +132,46 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    // Check if user is admin
+    const isAdmin = () => {
+        return user && user.role === 'admin';
+    };
+
+    // Force refresh user data
+    const refreshUserData = async () => {
+        try {
+            setLoading(true);
+            const response = await authService.getCurrentUser();
+            if (response.success && response.data) {
+                setUser(response.data);
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.error('Error refreshing user data:', error);
+            return false;
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const redirectBasedOnRole = () => {
+        // Periksa apakah sudah login dan user sudah dimuat
+        if (authenticated && user) {
+            // Cek apakah user adalah admin
+            if (user.role === 'admin') {
+                console.log("Redirecting to admin dashboard based on role");
+                // Gunakan window.location untuk hard refresh
+                window.location.href = '/admin/dashboard';
+            } else {
+                console.log("Redirecting to user dashboard based on role");
+                window.location.href = '/dashboard';
+            }
+            return true;
+        }
+        return false;
+    };
+
     return (
         <AuthContext.Provider
             value={{
@@ -131,7 +181,10 @@ export const AuthProvider = ({ children }) => {
                 error,
                 login,
                 register,
-                logout
+                logout,
+                isAdmin,
+                refreshUserData,
+                redirectBasedOnRole
             }}
         >
             {children}

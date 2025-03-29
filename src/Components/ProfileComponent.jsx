@@ -14,9 +14,9 @@ const ProfileComponent = () => {
 
     return (
         <Link to="/profile">
-            <button className="self-end flex flex-row gap-2 md:gap-4 items-center hover:bg-gray-100 hover:cursor-pointer pl-2">
+            <button className="self-end flex flex-row gap-2 md:gap-4 items-center hover:bg-gray-100 hover:cursor-pointer pl-2 rounded-r-full">
                 <h2 className="text-[#2E1461] text-lg md:text-xl font-bold">{displayName}</h2>
-                <div className="border p-3 md:p-6 bg-[#372088] overflow-hidden relative">
+                <div className="border p-3 md:p-6 bg-[#372088] overflow-hidden relative rounded-full">
                     {profile?.photo_url ? (
                         <img
                             src={profile.photo_url}

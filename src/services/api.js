@@ -39,8 +39,6 @@ export const authService = {
                 message: error.response?.data?.message || 'Terjadi kesalahan saat registrasi'
             };
         }
-
-
     },
 
     async resendVerification(email) {
@@ -71,15 +69,22 @@ export const authService = {
     },
 
     // Login user
-    login: async (email, password) => {
+    login: async (credentials) => {
         try {
-            const response = await api.post('/login', { email, password });
+            const response = await api.post('/login', credentials);
+            console.log("Login response:", response.data);
+
             // Simpan token di localStorage
             if (response.data.data.token) {
                 localStorage.setItem('token', response.data.data.token);
             }
-            return { success: true, data: response.data.data };
+
+            return {
+                success: true,
+                data: response.data.data
+            };
         } catch (error) {
+            console.error("Login error:", error.response || error);
             return {
                 success: false,
                 message: error.response?.data?.message || 'Login gagal. Periksa kredensial Anda.'
@@ -94,6 +99,9 @@ export const authService = {
             localStorage.removeItem('token');
             return { success: true };
         } catch (error) {
+            console.error("Logout error:", error);
+            // Tetap hapus token lokal meskipun ada error
+            localStorage.removeItem('token');
             return {
                 success: false,
                 message: error.response?.data?.message || 'Terjadi kesalahan saat logout'
@@ -105,8 +113,29 @@ export const authService = {
     getCurrentUser: async () => {
         try {
             const response = await api.get('/user');
-            return { success: true, data: response.data.data };
+            console.log("getCurrentUser response:", response.data);
+
+            // Jika user tidak memiliki role, cek apakah perlu ditambahkan role
+            const userData = response.data.data;
+
+            // UNCOMMENT KODE INI UNTUK TESTING ADMIN ROLE (DEVELOPMENT ONLY)
+            /*
+            if (userData && !userData.role) {
+                // Untuk testing, tambahkan role admin ke user tertentu
+                // Gunakan email spesifik atau kondisi lain untuk membatasi siapa yang mendapat role admin
+                if (userData.email === 'admin@example.com') {
+                    userData.role = 'admin';
+                    console.log("Added admin role for testing purposes");
+                }
+            }
+            */
+
+            return {
+                success: true,
+                data: userData
+            };
         } catch (error) {
+            console.error("Get current user error:", error.response || error);
             return {
                 success: false,
                 message: error.response?.data?.message || 'Gagal mendapatkan data profil'
@@ -149,6 +178,141 @@ export const authService = {
             return {
                 success: false,
                 message: error.response?.data?.message || 'Reset password gagal'
+            };
+        }
+    },
+
+    // Cek apakah user memiliki role admin
+    checkIsAdmin: async () => {
+        try {
+            const response = await api.get('/user');
+            const user = response.data.data;
+            return {
+                success: true,
+                isAdmin: user && user.role === 'admin'
+            };
+        } catch (error) {
+            console.error("Check admin role error:", error);
+            return {
+                success: false,
+                isAdmin: false
+            };
+        }
+    }
+};
+
+// Admin service functions
+export const adminService = {
+    // Get dashboard statistics
+    getDashboardStats: async () => {
+        try {
+            const response = await api.get('/admin/dashboard/stats');
+            return { success: true, data: response.data.data };
+        } catch (error) {
+            console.error("Get admin stats error:", error);
+            return {
+                success: false,
+                message: error.response?.data?.message || 'Gagal mendapatkan statistik dashboard'
+            };
+        }
+    },
+
+    // Get all users
+    getUsers: async (page = 1, filters = {}) => {
+        try {
+            const response = await api.get('/admin/users', {
+                params: { page, ...filters }
+            });
+            return { success: true, data: response.data.data };
+        } catch (error) {
+            return {
+                success: false,
+                message: error.response?.data?.message || 'Gagal mendapatkan daftar pengguna'
+            };
+        }
+    },
+
+    // Get user detail
+    getUserDetail: async (userId) => {
+        try {
+            const response = await api.get(`/admin/users/${userId}`);
+            return { success: true, data: response.data.data };
+        } catch (error) {
+            return {
+                success: false,
+                message: error.response?.data?.message || 'Gagal mendapatkan detail pengguna'
+            };
+        }
+    },
+
+    // Update user
+    updateUser: async (userId, userData) => {
+        try {
+            const response = await api.put(`/admin/users/${userId}`, userData);
+            return { success: true, data: response.data.data };
+        } catch (error) {
+            return {
+                success: false,
+                message: error.response?.data?.message || 'Gagal memperbarui pengguna'
+            };
+        }
+    },
+
+    // Delete user
+    deleteUser: async (userId) => {
+        try {
+            await api.delete(`/admin/users/${userId}`);
+            return { success: true };
+        } catch (error) {
+            return {
+                success: false,
+                message: error.response?.data?.message || 'Gagal menghapus pengguna'
+            };
+        }
+    },
+
+    // Get all exams
+    getExams: async (page = 1, filters = {}) => {
+        try {
+            const response = await api.get('/admin/exams', {
+                params: { page, ...filters }
+            });
+            return { success: true, data: response.data.data };
+        } catch (error) {
+            return {
+                success: false,
+                message: error.response?.data?.message || 'Gagal mendapatkan daftar ujian'
+            };
+        }
+    },
+
+    // Get pending verifications
+    getPendingVerifications: async (page = 1) => {
+        try {
+            const response = await api.get('/admin/verifications/pending', {
+                params: { page }
+            });
+            return { success: true, data: response.data.data };
+        } catch (error) {
+            return {
+                success: false,
+                message: error.response?.data?.message || 'Gagal mendapatkan daftar verifikasi tertunda'
+            };
+        }
+    },
+
+    // Approve or reject verification
+    processVerification: async (verificationId, status, notes = '') => {
+        try {
+            const response = await api.post(`/admin/verifications/${verificationId}/process`, {
+                status, // 'approved' or 'rejected'
+                notes
+            });
+            return { success: true, data: response.data.data };
+        } catch (error) {
+            return {
+                success: false,
+                message: error.response?.data?.message || 'Gagal memproses verifikasi'
             };
         }
     }

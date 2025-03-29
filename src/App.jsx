@@ -1,13 +1,14 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { ProfileProvider } from "./context/ProfileContext";
 import { ProtectedRoute, GuestRoute } from "./middleware/AuthMiddleware";
+import AdminRoute from "./middleware/AdminMiddleware";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 // Pages
 import Landing from "./pages/Landing";
-import Auth from "./pages/Auth/Auth";
+// import Auth from "./pages/Auth/Auth";
 import Dashboard from "./pages/Dashboard";
 import Verification from "./pages/Auth/Verification";
 import ExamPreparation from "./pages/exam/ExamPreparation";
@@ -17,19 +18,18 @@ import Profile from "./pages/profile/Profile";
 import ResetPassword from "./pages/Auth/ResetPassword";
 // import ForgotPassword from "./pages/Auth/ForgetPassword";
 
-const AuthWrapper = () => {
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const mode = queryParams.get("mode");
-  return <Auth isLogin={mode !== "register"} />;
-};
+// Admin Pages
+import AdminDashboard from "./pages/admin/AdminDashboard";
+
+// Utilities
+import AuthWrapper from "./components/AuthWrapper";
+import RoleBasedRedirect from "./components/RoleBasedRedirect";
 
 const App = () => {
+
   return (
     <AuthProvider>
       <ProfileProvider>
-
-
         <ToastContainer
           position="top-right"
           autoClose={3000}
@@ -48,13 +48,15 @@ const App = () => {
             {/* Public routes */}
             <Route path="/" element={<Landing />} />
 
+            {/* Role-based redirect - otomatis pilih dashboard berdasarkan role */}
+            <Route path="/auto-redirect" element={<RoleBasedRedirect />} />
+
             {/* Guest routes (only for non-authenticated users) */}
             <Route element={<GuestRoute />}>
               <Route path="/auth" element={<AuthWrapper />} />
               {/* <Route path="/forgot-password" element={<ForgotPassword />} /> */}
               <Route path="/reset-password" element={<ResetPassword />} />
             </Route>
-
 
             {/* Protected routes (only for authenticated users) */}
             <Route element={<ProtectedRoute />}>
@@ -64,6 +66,12 @@ const App = () => {
               <Route path="/exam-result" element={<ExamResult />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/verification" element={<Verification />} />
+            </Route>
+
+            {/* Admin routes (only for authenticated users with admin role) */}
+            <Route element={<AdminRoute />}>
+              <Route path="/admin/dashboard" element={<AdminDashboard />} />
+              {/* Tambahkan route admin lainnya di sini */}
             </Route>
 
             {/* Fallback for undefined routes */}
