@@ -59,7 +59,6 @@ const AdminSidebar = ({ closeSidebar }) => {
                     autoClose: 2000,
                 });
 
-                // Redirect to login page after a short delay
                 setTimeout(() => {
                     navigate("/auth");
                 }, 1000);
@@ -76,7 +75,6 @@ const AdminSidebar = ({ closeSidebar }) => {
                 autoClose: 3000,
             });
 
-            // Even if server logout fails, still clear local session and redirect
             setTimeout(() => {
                 navigate("/auth");
             }, 1000);
@@ -85,12 +83,11 @@ const AdminSidebar = ({ closeSidebar }) => {
         }
     };
 
-    // Add window resize event listener to check if mobile
     useEffect(() => {
         const checkIfMobile = () => {
             setIsMobile(window.innerWidth < 768);
             if (window.innerWidth < 768) {
-                setIsCollapsed(false); // Always expanded on mobile
+                setIsCollapsed(false);
             }
         };
 
@@ -108,7 +105,6 @@ const AdminSidebar = ({ closeSidebar }) => {
 
     return (
         <div className={`h-full sticky top-0 transition-all duration-300 overflow-auto bg-gradient-to-b from-[#1B054E] to-[#7449B6] flex flex-col justify-start ${isCollapsed && !isMobile ? 'w-16 md:w-20' : 'w-64 md:w-72'}`}>
-            {/* Toggle collapse button - only visible on desktop */}
             {!isMobile && (
                 <button
                     onClick={toggleCollapse}
@@ -119,15 +115,12 @@ const AdminSidebar = ({ closeSidebar }) => {
                 </button>
             )}
 
-            {/* Logo container - only visible when not collapsed */}
             {(!isCollapsed || isMobile) && (
                 <div className="flex justify-center items-center py-6 px-6">
                     <img src="/assets/sidebar/or14white.svg" alt="Logo" />
-                    <span className="text-white text-xl font-bold ml-2">Admin Panel</span>
                 </div>
             )}
 
-            {/* Add spacing when collapsed to maintain layout */}
             {isCollapsed && !isMobile && <div className="py-6"></div>}
 
             <div className="w-full flex flex-col gap-2 mt-6">
@@ -149,37 +142,17 @@ const AdminSidebar = ({ closeSidebar }) => {
                     <div className={`flex justify-center ${isCollapsed && !isMobile ? 'w-full' : 'w-8 ml-6 md:ml-10'}`}>
                         <MdPeople className="text-xl md:text-2xl" />
                     </div>
-                    {(!isCollapsed || isMobile) && <h2 className="ml-2">Kelola Pengguna</h2>}
+                    {(!isCollapsed || isMobile) && <h2 className="ml-2">Data User</h2>}
                 </Link>
                 <Link
-                    to="/admin/exams"
+                    to="/admin/timeline"
                     onClick={handleLinkClick}
                     className={`${baseButtonClass} ${isActive('/admin/exams') ? activeClass : inactiveClass}`}
                 >
                     <div className={`flex justify-center ${isCollapsed && !isMobile ? 'w-full' : 'w-8 ml-6 md:ml-10'}`}>
                         <MdInsertDriveFile className="text-xl md:text-2xl" />
                     </div>
-                    {(!isCollapsed || isMobile) && <h2 className="ml-2">Kelola Ujian</h2>}
-                </Link>
-                <Link
-                    to="/admin/verifications"
-                    onClick={handleLinkClick}
-                    className={`${baseButtonClass} ${isActive('/admin/verifications') ? activeClass : inactiveClass}`}
-                >
-                    <div className={`flex justify-center ${isCollapsed && !isMobile ? 'w-full' : 'w-8 ml-6 md:ml-10'}`}>
-                        <MdVerifiedUser className="text-xl md:text-2xl" />
-                    </div>
-                    {(!isCollapsed || isMobile) && <h2 className="ml-2">Verifikasi</h2>}
-                </Link>
-                <Link
-                    to="/admin/settings"
-                    onClick={handleLinkClick}
-                    className={`${baseButtonClass} ${isActive('/admin/settings') ? activeClass : inactiveClass}`}
-                >
-                    <div className={`flex justify-center ${isCollapsed && !isMobile ? 'w-full' : 'w-8 ml-6 md:ml-10'}`}>
-                        <MdSettings className="text-xl md:text-2xl" />
-                    </div>
-                    {(!isCollapsed || isMobile) && <h2 className="ml-2">Pengaturan</h2>}
+                    {(!isCollapsed || isMobile) && <h2 className="ml-2">Timeline</h2>}
                 </Link>
             </div>
 

@@ -24,6 +24,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 // Utilities
 import AuthWrapper from "./components/AuthWrapper";
 import RoleBasedRedirect from "./components/RoleBasedRedirect";
+import AdminUser from "./pages/admin/AdminUser";
 
 const App = () => {
 
@@ -71,6 +72,7 @@ const App = () => {
             {/* Admin routes (only for authenticated users with admin role) */}
             <Route element={<AdminRoute />}>
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
+              <Route path="/admin/users" element={<AdminUser />} /> {/* Add this line */}
               {/* Tambahkan route admin lainnya di sini */}
             </Route>
 

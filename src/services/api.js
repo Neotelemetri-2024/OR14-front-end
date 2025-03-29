@@ -218,13 +218,27 @@ export const adminService = {
     },
 
     // Get all users
+    // Get all users
     getUsers: async (page = 1, filters = {}) => {
         try {
+            console.log("Fetching users with filters:", filters);
             const response = await api.get('/admin/users', {
                 params: { page, ...filters }
             });
-            return { success: true, data: response.data.data };
+
+            // Log response to debug
+            console.log("User API response:", response.data);
+
+            if (!response.data.data) {
+                console.warn("API response missing data property:", response.data);
+            }
+
+            return {
+                success: true,
+                data: response.data
+            };
         } catch (error) {
+            console.error("Error fetching users:", error.response || error);
             return {
                 success: false,
                 message: error.response?.data?.message || 'Gagal mendapatkan daftar pengguna'
@@ -302,20 +316,28 @@ export const adminService = {
     },
 
     // Approve or reject verification
+    // Approve or reject verification
     processVerification: async (verificationId, status, notes = '') => {
         try {
-            const response = await api.post(`/admin/verifications/${verificationId}/process`, {
+            console.log("Processing verification:", { verificationId, status, notes });
+            const response = await api.post(`/admin/verification/${verificationId}`, {
                 status, // 'approved' or 'rejected'
                 notes
             });
-            return { success: true, data: response.data.data };
+
+            console.log("Verification process response:", response.data);
+            return {
+                success: true,
+                data: response.data
+            };
         } catch (error) {
+            console.error("Error processing verification:", error.response || error);
             return {
                 success: false,
                 message: error.response?.data?.message || 'Gagal memproses verifikasi'
             };
         }
-    }
+    },
 };
 
 export default api;

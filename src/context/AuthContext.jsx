@@ -3,15 +3,25 @@ import { authService } from '../services/api';
 
 const AuthContext = createContext();
 
+// Helper function untuk load user dari localStorage
+const loadUserFromStorage = () => {
+    const userData = localStorage.getItem('user');
+    if (userData) {
+        return JSON.parse(userData);
+    }
+    return null;
+};
+
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
+    // Inisialisasi state dengan data dari localStorage
+    const [user, setUser] = useState(loadUserFromStorage);
     const [loading, setLoading] = useState(true);
-    const [authenticated, setAuthenticated] = useState(false);
+    const [authenticated, setAuthenticated] = useState(!!loadUserFromStorage());
     const [error, setError] = useState(null);
 
     // Check authentication status when component mounts
     useEffect(() => {
-        const checkAuthStatus = async () => {
+        const fetchUserData = async () => {
             const token = localStorage.getItem('token');
             if (!token) {
                 setLoading(false);
@@ -20,11 +30,15 @@ export const AuthProvider = ({ children }) => {
             }
 
             try {
+                setLoading(true);
                 const response = await authService.getCurrentUser();
+
                 if (response.success && response.data) {
                     console.log("Auth status: User authenticated", response.data);
                     setUser(response.data);
                     setAuthenticated(true);
+                    // Simpan data user ke localStorage
+                    localStorage.setItem('user', JSON.stringify(response.data));
 
                     // Log jika user adalah admin
                     if (response.data.role === 'admin') {
@@ -33,12 +47,14 @@ export const AuthProvider = ({ children }) => {
                 } else {
                     console.log("Auth check failed: Token invalid or expired");
                     localStorage.removeItem('token');
+                    localStorage.removeItem('user');
                     setAuthenticated(false);
                     setUser(null);
                 }
             } catch (error) {
                 console.error('Authentication check failed:', error);
                 localStorage.removeItem('token');
+                localStorage.removeItem('user');
                 setAuthenticated(false);
                 setUser(null);
             } finally {
@@ -46,7 +62,7 @@ export const AuthProvider = ({ children }) => {
             }
         };
 
-        checkAuthStatus();
+        fetchUserData();
     }, []);
 
     const login = async (email, password) => {
@@ -61,6 +77,8 @@ export const AuthProvider = ({ children }) => {
                 // Set user dan authenticated state
                 setUser(response.data.user);
                 setAuthenticated(true);
+                // Simpan user data termasuk role ke localStorage
+                localStorage.setItem('user', JSON.stringify(response.data.user));
 
                 console.log('Login successful, user:', response.data.user);
 
@@ -113,6 +131,7 @@ export const AuthProvider = ({ children }) => {
 
             // Always clear local state regardless of API response
             localStorage.removeItem('token');
+            localStorage.removeItem('user');
             setUser(null);
             setAuthenticated(false);
 
@@ -123,6 +142,7 @@ export const AuthProvider = ({ children }) => {
 
             // Still clear token and user data on client side even if server-side logout fails
             localStorage.removeItem('token');
+            localStorage.removeItem('user');
             setUser(null);
             setAuthenticated(false);
 
@@ -144,6 +164,8 @@ export const AuthProvider = ({ children }) => {
             const response = await authService.getCurrentUser();
             if (response.success && response.data) {
                 setUser(response.data);
+                // Update user di localStorage
+                localStorage.setItem('user', JSON.stringify(response.data));
                 return true;
             }
             return false;
