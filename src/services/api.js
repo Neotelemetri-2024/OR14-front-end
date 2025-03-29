@@ -39,6 +39,35 @@ export const authService = {
                 message: error.response?.data?.message || 'Terjadi kesalahan saat registrasi'
             };
         }
+
+
+    },
+
+    async resendVerification(email) {
+        try {
+            const response = await fetch(`${api.defaults.baseURL}/resend-verification`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email }),
+            });
+
+            const data = await response.json();
+
+            return {
+                success: data.status === 'success',
+                message: data.message,
+                data: data.data || null
+            };
+        } catch (error) {
+            console.error('Error resending verification email:', error);
+            return {
+                success: false,
+                message: 'Terjadi kesalahan. Silakan coba lagi.',
+                data: null
+            };
+        }
     },
 
     // Login user
