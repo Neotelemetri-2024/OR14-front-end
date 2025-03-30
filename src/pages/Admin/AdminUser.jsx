@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { adminService } from "../../services/api";
 import AdminSidebar from "./AdminSidebar";
@@ -13,9 +13,11 @@ import {
     MdRefresh,
     MdMenu
 } from "react-icons/md";
+import { useAuth } from "../../context/AuthContext";
 
 const AdminUser = () => {
     const navigate = useNavigate();
+    const { user } = useAuth();
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
@@ -29,9 +31,17 @@ const AdminUser = () => {
     const [showUserDetailsModal, setShowUserDetailsModal] = useState(false);
     const [filterStatus, setFilterStatus] = useState("all");
 
-    // Sidebar state
+    // Mobile responsiveness
     const [showSidebar, setShowSidebar] = useState(true);
     const [isMobile, setIsMobile] = useState(false);
+
+    // Validasi lagi jika user bukan admin, redirect ke dashboard
+    useEffect(() => {
+        if (user && user.role !== 'admin') {
+            console.log("User is not admin, redirecting to dashboard");
+            navigate('/dashboard');
+        }
+    }, [user, navigate]);
 
     // Cek ukuran layar untuk menentukan apakah mobile atau tidak
     useEffect(() => {
@@ -73,13 +83,16 @@ const AdminUser = () => {
             const filters = {};
             if (query) filters.search = query;
             if (status !== "all") filters.status = status;
+
             console.log("Fetching users with params:", { page, filters });
             const response = await adminService.getUsers(page, filters);
             console.log("AdminUser received response:", response);
+
             if (response.success) {
                 // Check different possible data structures
                 let userData = [];
                 let pagination = { current_page: 1, last_page: 1 };
+
                 if (response.data.data?.data) {
                     // Handle nested data.data.data structure
                     userData = response.data.data.data;
@@ -94,6 +107,7 @@ const AdminUser = () => {
                     // Handle direct data array
                     userData = response.data;
                 }
+
                 setUsers(userData);
                 setCurrentPage(pagination.current_page);
                 setTotalPages(pagination.last_page);
@@ -151,17 +165,21 @@ const AdminUser = () => {
         try {
             const verificationId = selectedUser.verification.id;
             const notes = verificationStatus === "rejected" ? rejectionReason : "";
+
             console.log("Processing verification:", {
                 verificationId,
                 status: verificationStatus,
                 notes
             });
+
             const response = await adminService.processVerification(
                 verificationId,
                 verificationStatus,
                 notes
             );
+
             console.log("Verification process response:", response);
+
             if (response.success) {
                 toast.success(
                     `Verifikasi ${verificationStatus === "approved" ? "diterima" : "ditolak"}`
@@ -180,17 +198,27 @@ const AdminUser = () => {
         }
     };
 
+    const getFileUrl = (path) => {
+        if (!path) return null;
+
+        // Jika path sudah berupa URL lengkap, kembalikan apa adanya
+        if (path.startsWith('http://') || path.startsWith('https://')) {
+            return path;
+        }
+
+        // Jika path adalah path relatif, tambahkan URL backend
+        const baseUrl = 'http://localhost:8000';
+        return `${baseUrl}/storage/${path.replace('public/', '')}`;
+    };
+
     // Get status badge color
     const getStatusBadgeClass = (status) => {
         switch (status) {
             case "pending":
-            case "diproses":
                 return "bg-yellow-100 text-yellow-800";
             case "approved":
-            case "disetujui":
                 return "bg-green-100 text-green-800";
             case "rejected":
-            case "ditolak":
                 return "bg-red-100 text-red-800";
             default:
                 return "bg-gray-100 text-gray-800";
@@ -236,7 +264,7 @@ const AdminUser = () => {
             </div>
 
             {/* Main content */}
-            <div className={`flex-1 flex flex-col overflow-hidden ${isMobile ? 'w-full' : ''}`}>
+            <div className="flex-1 flex flex-col overflow-hidden">
                 {/* Top navbar */}
                 <header className="bg-white shadow-sm flex items-center justify-between p-4">
                     {/* Tombol toggle sidebar */}
@@ -247,18 +275,22 @@ const AdminUser = () => {
                         <MdMenu className="text-xl" />
                     </button>
 
-                    <div className="text-lg font-semibold">Data Pengguna</div>
+                    <div className="text-lg font-semibold">Manajemen Pengguna</div>
 
                     <div className="flex items-center space-x-2">
-                        <div className="text-sm font-medium">Admin User</div>
-                        <div className="w-8 h-8 rounded-full bg-gray-300"></div>
+                        <div className="text-sm font-medium">{user?.name || 'Admin'}</div>
+                        <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
+                            {user?.name?.charAt(0) || 'A'}
+                        </div>
                     </div>
                 </header>
 
-                {/* Main content */}
+                {/* Main content with scrollable area */}
                 <main className="flex-1 overflow-y-auto p-4">
-                    <div className="container mx-auto">
-                        <div className="bg-white rounded-lg shadow-md p-6">
+                    <div className="max-w-7xl mx-auto">
+                        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+                            <h1 className="text-2xl font-bold mb-6">Data Pengguna</h1>
+
                             {/* Search and filters */}
                             <div className="flex flex-col md:flex-row md:justify-between mb-6 gap-4">
                                 <form onSubmit={handleSearch} className="flex gap-2">
@@ -274,9 +306,9 @@ const AdminUser = () => {
                                     </div>
                                     <button
                                         type="submit"
-                                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
+                                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center"
                                     >
-                                        Cari
+                                        <MdSearch className="mr-1" /> Cari
                                     </button>
                                     <button
                                         type="button"
@@ -290,8 +322,9 @@ const AdminUser = () => {
                                         <MdRefresh className="mr-1" /> Reset
                                     </button>
                                 </form>
+
                                 <div className="flex items-center">
-                                    <label htmlFor="statusFilter" className="mr-2">
+                                    <label htmlFor="statusFilter" className="mr-2 whitespace-nowrap">
                                         Status Verifikasi:
                                     </label>
                                     <select
@@ -310,7 +343,7 @@ const AdminUser = () => {
                             </div>
 
                             {/* Users table */}
-                            <div className="overflow-x-auto">
+                            <div className="overflow-x-auto bg-white rounded-lg border border-gray-200">
                                 <table className="min-w-full divide-y divide-gray-200">
                                     <thead className="bg-gray-50">
                                         <tr>
@@ -337,16 +370,16 @@ const AdminUser = () => {
                                     <tbody className="bg-white divide-y divide-gray-200">
                                         {loading ? (
                                             <tr>
-                                                <td colSpan="6" className="px-6 py-4 text-center">
+                                                <td colSpan="6" className="px-6 py-10 text-center">
                                                     <div className="flex justify-center">
-                                                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                                                        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
                                                     </div>
-                                                    <p className="mt-2">Memuat data...</p>
+                                                    <p className="mt-2 text-gray-500">Memuat data...</p>
                                                 </td>
                                             </tr>
                                         ) : users.length === 0 ? (
                                             <tr>
-                                                <td colSpan="6" className="px-6 py-4 text-center text-gray-500">
+                                                <td colSpan="6" className="px-6 py-10 text-center text-gray-500">
                                                     Tidak ada data pengguna
                                                 </td>
                                             </tr>
@@ -376,9 +409,9 @@ const AdminUser = () => {
                                                                     user.verification.verification_status
                                                                 )}`}
                                                             >
-                                                                {user.verification.verification_status === "pending" || user.verification.verification_status === "diproses"
+                                                                {user.verification.verification_status === "pending"
                                                                     ? "Menunggu Verifikasi"
-                                                                    : user.verification.verification_status === "approved" || user.verification.verification_status === "disetujui"
+                                                                    : user.verification.verification_status === "approved"
                                                                         ? "Terverifikasi"
                                                                         : "Ditolak"}
                                                             </span>
@@ -419,17 +452,16 @@ const AdminUser = () => {
                                                         <div className="flex space-x-2">
                                                             <button
                                                                 onClick={() => openUserDetailsModal(user)}
-                                                                className="text-blue-600 hover:text-blue-900 flex items-center"
+                                                                className="text-blue-600 hover:text-blue-900 flex items-center p-1 rounded-full hover:bg-blue-50"
                                                                 title="Lihat Detail"
                                                             >
                                                                 <MdInfoOutline className="text-xl" />
                                                             </button>
                                                             {user.verification &&
-                                                                (user.verification.verification_status === "pending" ||
-                                                                    user.verification.verification_status === "diproses") && (
+                                                                user.verification.verification_status === "pending" && (
                                                                     <button
                                                                         onClick={() => openVerificationModal(user)}
-                                                                        className="text-indigo-600 hover:text-indigo-900 flex items-center"
+                                                                        className="text-indigo-600 hover:text-indigo-900 flex items-center p-1 rounded-full hover:bg-indigo-50"
                                                                         title="Verifikasi"
                                                                     >
                                                                         <MdVerifiedUser className="text-xl" />
@@ -451,7 +483,7 @@ const AdminUser = () => {
                                         <button
                                             onClick={() => fetchUsers(currentPage - 1)}
                                             disabled={currentPage === 1}
-                                            className={`relative inline-flex items-center px-2 py-2 rounded-l-md border ${currentPage === 1
+                                            className={`relative inline-flex items-center px-3 py-2 rounded-l-md border ${currentPage === 1
                                                 ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                                                 : "bg-white text-gray-500 hover:bg-gray-50"
                                                 } text-sm font-medium`}
@@ -473,7 +505,7 @@ const AdminUser = () => {
                                         <button
                                             onClick={() => fetchUsers(currentPage + 1)}
                                             disabled={currentPage === totalPages}
-                                            className={`relative inline-flex items-center px-2 py-2 rounded-r-md border ${currentPage === totalPages
+                                            className={`relative inline-flex items-center px-3 py-2 rounded-r-md border ${currentPage === totalPages
                                                 ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                                                 : "bg-white text-gray-500 hover:bg-gray-50"
                                                 } text-sm font-medium`}
@@ -491,16 +523,17 @@ const AdminUser = () => {
             {/* Verification Modal */}
             {showVerificationModal && selectedUser && (
                 <div className="fixed inset-0 z-50 overflow-y-auto">
-                    <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                    <div className="flex items-center justify-center min-h-screen p-4">
                         <div className="fixed inset-0 transition-opacity">
                             <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
                         </div>
-                        <span className="hidden sm:inline-block sm:align-middle sm:h-screen"></span>
-                        &#8203;
-                        <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                        <div className="bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
                             <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                                 <div className="sm:flex sm:items-start">
-                                    <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                                    <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-indigo-100 sm:mx-0 sm:h-10 sm:w-10">
+                                        <MdVerifiedUser className="h-6 w-6 text-indigo-600" />
+                                    </div>
+                                    <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left flex-1">
                                         <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
                                             Verifikasi Dokumen User
                                         </h3>
@@ -509,60 +542,54 @@ const AdminUser = () => {
                                                 {selectedUser.profile?.nama_lengkap || selectedUser.name} (
                                                 {selectedUser.email})
                                             </p>
+
                                             {/* Document links */}
-                                            <div className="mb-4 space-y-2">
+                                            <div className="mb-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
                                                 {selectedUser.verification?.krs_path && (
-                                                    <div>
-                                                        <a
-                                                            href={selectedUser.verification.krs_path}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            className="text-blue-600 hover:underline flex items-center"
-                                                        >
-                                                            <span className="mr-1">📄</span> Lihat KRS
-                                                        </a>
-                                                    </div>
+                                                    <a
+                                                        href={getFileUrl(selectedUser.verification.krs_path)}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="text-blue-600 hover:bg-blue-50 p-2 rounded flex items-center"
+                                                    >
+                                                        <span className="mr-1">📄</span> Lihat KRS
+                                                    </a>
                                                 )}
                                                 {selectedUser.verification?.payment_proof_path && (
-                                                    <div>
-                                                        <a
-                                                            href={selectedUser.verification.payment_proof_path}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            className="text-blue-600 hover:underline flex items-center"
-                                                        >
-                                                            <span className="mr-1">💰</span> Lihat Bukti Pembayaran
-                                                        </a>
-                                                    </div>
+                                                    <a
+                                                        href={getFileUrl(selectedUser.verification.payment_proof_path)}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="text-blue-600 hover:bg-blue-50 p-2 rounded flex items-center"
+                                                    >
+                                                        <span className="mr-1">💰</span> Lihat Bukti Pembayaran
+                                                    </a>
                                                 )}
                                                 {selectedUser.verification?.neo_path && (
-                                                    <div>
-                                                        <a
-                                                            href={selectedUser.verification.neo_path}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            className="text-blue-600 hover:underline flex items-center"
-                                                        >
-                                                            <span className="mr-1">📄</span> Dokumen NEO
-                                                        </a>
-                                                    </div>
+                                                    <a
+                                                        href={getFileUrl(selectedUser.verification.neo_path)}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="text-blue-600 hover:bg-blue-50 p-2 rounded flex items-center"
+                                                    >
+                                                        <span className="mr-1">📄</span> Dokumen NEO
+                                                    </a>
                                                 )}
                                                 {selectedUser.verification?.marketing_path && (
-                                                    <div>
-                                                        <a
-                                                            href={selectedUser.verification.marketing_path}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            className="text-blue-600 hover:underline flex items-center"
-                                                        >
-                                                            <span className="mr-1">📊</span> Dokumen Marketing
-                                                        </a>
-                                                    </div>
+                                                    <a
+                                                        href={getFileUrl(selectedUser.verification.marketing_path)}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="text-blue-600 hover:bg-blue-50 p-2 rounded flex items-center"
+                                                    >
+                                                        <span className="mr-1">📊</span> Dokumen Marketing
+                                                    </a>
                                                 )}
                                             </div>
+
                                             {/* Verification decision */}
                                             <div className="mb-4">
-                                                <p className="text-sm font-medium text-gray-700 mb-1">
+                                                <p className="text-sm font-medium text-gray-700 mb-2">
                                                     Status Verifikasi:
                                                 </p>
                                                 <div className="flex gap-4">
@@ -570,7 +597,7 @@ const AdminUser = () => {
                                                         <input
                                                             type="radio"
                                                             name="verification_status"
-                                                            className="form-radio h-4 w-4 text-blue-600"
+                                                            className="form-radio h-5 w-5 text-blue-600"
                                                             checked={verificationStatus === "approved"}
                                                             onChange={() => setVerificationStatus("approved")}
                                                         />
@@ -580,7 +607,7 @@ const AdminUser = () => {
                                                         <input
                                                             type="radio"
                                                             name="verification_status"
-                                                            className="form-radio h-4 w-4 text-red-600"
+                                                            className="form-radio h-5 w-5 text-red-600"
                                                             checked={verificationStatus === "rejected"}
                                                             onChange={() => setVerificationStatus("rejected")}
                                                         />
@@ -588,6 +615,7 @@ const AdminUser = () => {
                                                     </label>
                                                 </div>
                                             </div>
+
                                             {/* Rejection reason (only if rejected) */}
                                             {verificationStatus === "rejected" && (
                                                 <div className="mb-4">
@@ -656,13 +684,11 @@ const AdminUser = () => {
             {/* User Details Modal */}
             {showUserDetailsModal && selectedUser && (
                 <div className="fixed inset-0 z-50 overflow-y-auto">
-                    <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                    <div className="flex items-center justify-center min-h-screen p-4">
                         <div className="fixed inset-0 transition-opacity">
                             <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
                         </div>
-                        <span className="hidden sm:inline-block sm:align-middle sm:h-screen"></span>
-                        &#8203;
-                        <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
+                        <div className="bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:max-w-2xl sm:w-full">
                             <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                                 <div className="flex justify-between items-start">
                                     <h3 className="text-lg leading-6 font-medium text-gray-900">
@@ -708,240 +734,211 @@ const AdminUser = () => {
 
                                     {/* Profile Information */}
                                     <div className="bg-gray-50 p-4 rounded-lg">
-                                        <h4 className="font-medium text-gray-700 mb-2">Data Profil</h4>
-                                        {selectedUser.profile ? (
-                                            <div className="space-y-2">
-                                                <p>
-                                                    <span className="text-gray-500">Nama Panggilan:</span>{" "}
-                                                    {selectedUser.profile.panggilan || "-"}
-                                                </p>
-                                                <p>
-                                                    <span className="text-gray-500">NIM:</span>{" "}
-                                                    {selectedUser.profile.nim || "-"}
-                                                </p>
-                                                <p>
-                                                    <span className="text-gray-500">WhatsApp:</span>{" "}
-                                                    {selectedUser.profile.whatsapp || "-"}
-                                                </p>
-                                                <p>
-                                                    <span className="text-gray-500">Program Studi:</span>{" "}
-                                                    {selectedUser.profile.program_studi || "-"}
-                                                </p>
-                                            </div>
-                                        ) : (
-                                            <p className="text-gray-500">Profil belum dilengkapi</p>
-                                        )}
-
-                                        {selectedUser.profile?.photo && (
-                                            <div className="mt-3">
-                                                <h5 className="text-sm font-medium text-gray-700 mb-1">Foto:</h5>
-                                                <a
-                                                    href={selectedUser.profile.photo_url}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="block mt-1"
-                                                >
-                                                    <img
-                                                        src={selectedUser.profile.photo_url}
-                                                        alt="Foto profil"
-                                                        className="h-20 w-20 object-cover rounded-lg border border-gray-200"
-                                                    />
-                                                </a>
-                                            </div>
-                                        )}
+                                        <h4 className="font-medium text-gray-700 mb-2">
+                                            Informasi Profil
+                                        </h4>
+                                        <div className="space-y-2">
+                                            {selectedUser.profile ? (
+                                                <>
+                                                    <p>
+                                                        <span className="text-gray-500">NIM:</span>{" "}
+                                                        {selectedUser.profile.nim || "Belum diisi"}
+                                                    </p>
+                                                    <p>
+                                                        <span className="text-gray-500">Nama Panggilan:</span>{" "}
+                                                        {selectedUser.profile.panggilan || "Belum diisi"}
+                                                    </p>
+                                                    <p>
+                                                        <span className="text-gray-500">WhatsApp:</span>{" "}
+                                                        {selectedUser.profile.whatsapp || "Belum diisi"}
+                                                    </p>
+                                                    <p>
+                                                        <span className="text-gray-500">Program Studi:</span>{" "}
+                                                        {selectedUser.profile.program_studi || "Belum diisi"}
+                                                    </p>
+                                                </>
+                                            ) : (
+                                                <p className="text-gray-500">Profil belum dilengkapi</p>
+                                            )}
+                                        </div>
                                     </div>
 
                                     {/* Divisi Information */}
-                                    {selectedUser.profile && (
-                                        <div className="bg-gray-50 p-4 rounded-lg">
-                                            <h4 className="font-medium text-gray-700 mb-2">
-                                                Informasi Divisi
-                                            </h4>
-                                            <div className="space-y-2">
-                                                <p>
-                                                    <span className="text-gray-500">Divisi:</span>{" "}
-                                                    {selectedUser.profile.divisi || "-"}
-                                                </p>
-                                                <p>
-                                                    <span className="text-gray-500">Sub Divisi:</span>{" "}
-                                                    {selectedUser.profile.sub_divisi || "-"}
-                                                </p>
-                                                <p>
-                                                    <span className="text-gray-500">Departemen:</span>{" "}
-                                                    {selectedUser.profile.departemen || "-"}
-                                                </p>
-                                            </div>
+                                    <div className="bg-gray-50 p-4 rounded-lg">
+                                        <h4 className="font-medium text-gray-700 mb-2">
+                                            Informasi Divisi
+                                        </h4>
+                                        <div className="space-y-2">
+                                            {selectedUser.profile ? (
+                                                <>
+                                                    <p>
+                                                        <span className="text-gray-500">Divisi:</span>{" "}
+                                                        {selectedUser.profile.divisi || "Belum diisi"}
+                                                    </p>
+                                                    <p>
+                                                        <span className="text-gray-500">Sub Divisi:</span>{" "}
+                                                        {selectedUser.profile.sub_divisi || "Belum diisi"}
+                                                    </p>
+                                                </>
+                                            ) : (
+                                                <p className="text-gray-500">Divisi belum dipilih</p>
+                                            )}
                                         </div>
-                                    )}
+                                    </div>
 
-                                    {/* Verification Status */}
+                                    {/* Verification Information */}
                                     <div className="bg-gray-50 p-4 rounded-lg">
                                         <h4 className="font-medium text-gray-700 mb-2">
                                             Status Verifikasi
                                         </h4>
-                                        {selectedUser.verification ? (
-                                            <div className="space-y-2">
-                                                <p>
-                                                    <span className="text-gray-500">Status:</span>{" "}
-                                                    <span
-                                                        className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeClass(
-                                                            selectedUser.verification.verification_status
-                                                        )}`}
-                                                    >
-                                                        {selectedUser.verification.verification_status === "pending" || selectedUser.verification.verification_status === "diproses"
-                                                            ? "Menunggu Verifikasi"
-                                                            : selectedUser.verification.verification_status === "approved" || selectedUser.verification.verification_status === "disetujui"
-                                                                ? "Terverifikasi"
-                                                                : "Ditolak"}
-                                                    </span>
-                                                </p>
-                                                {selectedUser.verification.verified_at && (
+                                        <div className="space-y-2">
+                                            {selectedUser.verification ? (
+                                                <>
                                                     <p>
-                                                        <span className="text-gray-500">
-                                                            Terverifikasi pada:
-                                                        </span>{" "}
-                                                        {new Date(
-                                                            selectedUser.verification.verified_at
-                                                        ).toLocaleDateString("id-ID")}
+                                                        <span className="text-gray-500">Status:</span>{" "}
+                                                        <span
+                                                            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeClass(
+                                                                selectedUser.verification.verification_status
+                                                            )}`}
+                                                        >
+                                                            {selectedUser.verification.verification_status === "pending"
+                                                                ? "Menunggu Verifikasi"
+                                                                : selectedUser.verification.verification_status === "approved"
+                                                                    ? "Terverifikasi"
+                                                                    : "Ditolak"}
+                                                        </span>
                                                     </p>
-                                                )}
-                                                {selectedUser.verification.rejection_reason && (
                                                     <p>
-                                                        <span className="text-gray-500">
-                                                            Alasan Penolakan:
-                                                        </span>{" "}
-                                                        {selectedUser.verification.rejection_reason}
+                                                        <span className="text-gray-500">Tanggal Pengajuan:</span>{" "}
+                                                        {new Date(selectedUser.verification.created_at).toLocaleDateString("id-ID")}
                                                     </p>
-                                                )}
-
-                                                <div className="mt-3">
-                                                    <h5 className="text-sm font-medium text-gray-700 mb-1">
-                                                        Dokumen Verifikasi:
-                                                    </h5>
-                                                    <div className="space-y-1">
-                                                        {selectedUser.verification.krs_path && (
-                                                            <a
-                                                                href={selectedUser.verification.krs_path}
-                                                                target="_blank"
-                                                                rel="noopener noreferrer"
-                                                                className="text-blue-600 hover:underline block text-sm"
-                                                            >
-                                                                📄 Lihat KRS
-                                                            </a>
-                                                        )}
-                                                        {selectedUser.verification.payment_proof_path && (
-                                                            <a
-                                                                href={selectedUser.verification.payment_proof_path}
-                                                                target="_blank"
-                                                                rel="noopener noreferrer"
-                                                                className="text-blue-600 hover:underline block text-sm"
-                                                            >
-                                                                💰 Bukti Pembayaran
-                                                            </a>
-                                                        )}
-                                                        {selectedUser.verification.neo_path && (
-                                                            <a
-                                                                href={selectedUser.verification.neo_path}
-                                                                target="_blank"
-                                                                rel="noopener noreferrer"
-                                                                className="text-blue-600 hover:underline block text-sm"
-                                                            >
-                                                                📄 Dokumen NEO
-                                                            </a>
-                                                        )}
-                                                        {selectedUser.verification.marketing_path && (
-                                                            <a
-                                                                href={selectedUser.verification.marketing_path}
-                                                                target="_blank"
-                                                                rel="noopener noreferrer"
-                                                                className="text-blue-600 hover:underline block text-sm"
-                                                            >
-                                                                📊 Dokumen Marketing
-                                                            </a>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        ) : (
-                                            <p className="text-gray-500">Verifikasi belum diajukan</p>
-                                        )}
+                                                    {selectedUser.verification.verification_status === "rejected" && (
+                                                        <p>
+                                                            <span className="text-gray-500">Alasan Penolakan:</span>{" "}
+                                                            {selectedUser.verification.notes || "Tidak ada catatan"}
+                                                        </p>
+                                                    )}
+                                                    {selectedUser.verification.verification_status === "approved" && (
+                                                        <p>
+                                                            <span className="text-gray-500">Diverifikasi pada:</span>{" "}
+                                                            {new Date(selectedUser.verification.updated_at).toLocaleDateString("id-ID")}
+                                                        </p>
+                                                    )}
+                                                </>
+                                            ) : (
+                                                <p className="text-gray-500">Belum mengajukan verifikasi</p>
+                                            )}
+                                        </div>
                                     </div>
 
-                                    {/* Exam Results */}
-                                    <div className="bg-gray-50 p-4 rounded-lg md:col-span-2">
+                                    {/* Exam Information */}
+                                    <div className="bg-gray-50 p-4 rounded-lg">
                                         <h4 className="font-medium text-gray-700 mb-2">
-                                            Hasil Ujian
+                                            Informasi Ujian
                                         </h4>
-                                        {selectedUser.exams && selectedUser.exams.length > 0 ? (
-                                            <div className="overflow-x-auto">
-                                                <table className="min-w-full divide-y divide-gray-200">
-                                                    <thead className="bg-gray-100">
-                                                        <tr>
-                                                            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                                Tanggal
-                                                            </th>
-                                                            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                                Divisi
-                                                            </th>
-                                                            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                                Skor
-                                                            </th>
-                                                            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                                Durasi
-                                                            </th>
-                                                            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                                Jawaban Benar
-                                                            </th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody className="bg-white divide-y divide-gray-200">
-                                                        {selectedUser.exams.map((exam) => (
-                                                            <tr key={exam.id}>
-                                                                <td className="px-3 py-2 whitespace-nowrap text-sm">
-                                                                    {new Date(exam.start_time).toLocaleDateString("id-ID")}
-                                                                </td>
-                                                                <td className="px-3 py-2 whitespace-nowrap text-sm">
-                                                                    {exam.division?.name || "N/A"}
-                                                                </td>
-                                                                <td className="px-3 py-2 whitespace-nowrap text-sm font-medium">
-                                                                    {exam.score || 0}/100
-                                                                </td>
-                                                                <td className="px-3 py-2 whitespace-nowrap text-sm">
-                                                                    {exam.duration ? `${Math.floor(exam.duration / 60)} menit` : "N/A"}
-                                                                </td>
-                                                                <td className="px-3 py-2 whitespace-nowrap text-sm">
-                                                                    {exam.correct_answers || 0} / {(exam.correct_answers || 0) + (exam.incorrect_answers || 0)}
-                                                                </td>
-                                                            </tr>
-                                                        ))}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        ) : (
-                                            <p className="text-gray-500">Belum mengikuti ujian</p>
-                                        )}
+                                        <div className="space-y-2">
+                                            {selectedUser.exams && selectedUser.exams.length > 0 ? (
+                                                <>
+                                                    <p>
+                                                        <span className="text-gray-500">Nilai:</span>{" "}
+                                                        <span className="font-semibold">{selectedUser.exams[0].score || 0}/100</span>
+                                                    </p>
+                                                    <p>
+                                                        <span className="text-gray-500">Divisi Ujian:</span>{" "}
+                                                        {selectedUser.exams[0].division?.name || "N/A"}
+                                                    </p>
+                                                    <p>
+                                                        <span className="text-gray-500">Tanggal Ujian:</span>{" "}
+                                                        {new Date(selectedUser.exams[0].created_at).toLocaleDateString("id-ID")}
+                                                    </p>
+                                                    <p>
+                                                        <span className="text-gray-500">Status:</span>{" "}
+                                                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${selectedUser.exams[0].score >= 70
+                                                                ? "bg-green-100 text-green-800"
+                                                                : "bg-red-100 text-red-800"
+                                                            }`}>
+                                                            {selectedUser.exams[0].score >= 70 ? "Lulus" : "Tidak Lulus"}
+                                                        </span>
+                                                    </p>
+                                                </>
+                                            ) : (
+                                                <p className="text-gray-500">Belum mengikuti ujian</p>
+                                            )}
+                                        </div>
                                     </div>
+
+                                    {/* Document links (if available) */}
+                                    {selectedUser.verification && (
+                                        <div className="bg-gray-50 p-4 rounded-lg col-span-1 md:col-span-2">
+                                            <h4 className="font-medium text-gray-700 mb-2">
+                                                Dokumen Verifikasi
+                                            </h4>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                {selectedUser.verification.krs_path && (
+                                                    <a
+                                                        href={getFileUrl(selectedUser.verification.krs_path)}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="text-blue-600 hover:bg-blue-50 p-2 rounded flex items-center"
+                                                    >
+                                                        <span className="mr-2">📄</span> Lihat KRS
+                                                    </a>
+                                                )}
+                                                {selectedUser.verification.payment_proof_path && (
+                                                    <a
+                                                        href={getFileUrl(selectedUser.verification.payment_proof_path)}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="text-blue-600 hover:bg-blue-50 p-2 rounded flex items-center"
+                                                    >
+                                                        <span className="mr-2">💰</span> Lihat Bukti Pembayaran
+                                                    </a>
+                                                )}
+                                                {selectedUser.verification.neo_path && (
+                                                    <a
+                                                        href={getFileUrl(selectedUser.verification.neo_path)}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="text-blue-600 hover:bg-blue-50 p-2 rounded flex items-center"
+                                                    >
+                                                        <span className="mr-2">📄</span> Dokumen NEO
+                                                    </a>
+                                                )}
+                                                {selectedUser.verification.marketing_path && (
+                                                    <a
+                                                        href={getFileUrl(selectedUser.verification.marketing_path)}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="text-blue-600 hover:bg-blue-50 p-2 rounded flex items-center"
+                                                    >
+                                                        <span className="mr-2">📊</span> Dokumen Marketing
+                                                    </a>
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Actions (if applicable) */}
+                                    {selectedUser.verification && selectedUser.verification.verification_status === "pending" && (
+                                        <div className="col-span-1 md:col-span-2 mt-4">
+                                            <button
+                                                onClick={() => {
+                                                    setShowUserDetailsModal(false);
+                                                    openVerificationModal(selectedUser);
+                                                }}
+                                                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                            >
+                                                <MdVerifiedUser className="mr-2" /> Proses Verifikasi
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                             <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                                {selectedUser.verification &&
-                                    (selectedUser.verification.verification_status === "pending" ||
-                                        selectedUser.verification.verification_status === "diproses") && (
-                                        <button
-                                            type="button"
-                                            onClick={() => {
-                                                setShowUserDetailsModal(false);
-                                                openVerificationModal(selectedUser);
-                                            }}
-                                            className="ml-3 inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:text-sm"
-                                        >
-                                            Proses Verifikasi
-                                        </button>
-                                    )}
                                 <button
                                     type="button"
                                     onClick={() => setShowUserDetailsModal(false)}
-                                    className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                                    className="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
                                 >
                                     Tutup
                                 </button>

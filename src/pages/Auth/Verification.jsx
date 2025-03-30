@@ -18,6 +18,13 @@ const Verification = () => {
     const [isCheckingStatus, setIsCheckingStatus] = useState(true); // Loading state untuk pengecekan status
     const [verificationStatus, setVerificationStatus] = useState(null);
     const [errorMessage, setErrorMessage] = useState("");
+    const [uploadedFiles, setUploadedFiles] = useState({
+        krs: null,
+        payment: null,
+        neoIg: null,
+        marketingIg: null
+    });
+
 
     // Check if screen is mobile on initial load and when window is resized
     useEffect(() => {
@@ -40,20 +47,43 @@ const Verification = () => {
 
     const checkVerificationStatus = async () => {
         try {
-            setIsCheckingStatus(true); // Mulai loading state untuk pengecekan status
+            setIsCheckingStatus(true);
             const result = await verificationService.checkVerificationStatus();
 
-            if (result.success) {
+            console.log("Verification status API response:", result);
+
+            if (result.success && result.data) {
+                // Important: Set the status from data.status, not from result.status
                 setVerificationStatus(result.data.status);
+                console.log("Setting verification status to:", result.data.status);
+
+                // Store uploaded file URLs if available
+                if (result.data.files) {
+                    setUploadedFiles({
+                        krs: result.data.files.krs,
+                        payment: result.data.files.payment,
+                        neoIg: result.data.files.neo_ig,
+                        marketingIg: result.data.files.marketing_ig
+                    });
+                    console.log("Uploaded files set:", result.data.files);
+                }
             } else {
-                // If no verification found, status will be null, which is fine
+                console.log("No verification found or error in response");
                 setVerificationStatus(null);
+                // Reset uploaded files
+                setUploadedFiles({
+                    krs: null,
+                    payment: null,
+                    neoIg: null,
+                    marketingIg: null
+                });
             }
         } catch (error) {
             console.error("Error checking verification status:", error);
             toast.error("Gagal memeriksa status verifikasi");
+            setVerificationStatus(null);
         } finally {
-            setIsCheckingStatus(false); // Selesai loading
+            setIsCheckingStatus(false);
         }
     };
 
@@ -150,6 +180,59 @@ const Verification = () => {
     };
 
     const renderFilePreview = (file, fileType, format) => {
+        // Map display file types to our uploadedFiles object keys
+        let fileKey;
+        if (fileType === "KRS") {
+            fileKey = "krs";
+        } else if (fileType === "Payment") {
+            fileKey = "payment";
+        } else if (fileType === "Neo IG") {
+            fileKey = "neoIg";
+        } else if (fileType === "Neo Marketing IG") {
+            fileKey = "marketingIg";
+        }
+
+        // Check for uploaded files from server
+        const uploadedFileUrl = uploadedFiles[fileKey];
+
+        // If we have an uploaded file from the server and verification status exists
+        if (uploadedFileUrl && verificationStatus) {
+            console.log(`Found uploaded file for ${fileType}:`, uploadedFileUrl);
+
+            // Check if it's an image by extension
+            const isImage =
+                fileType.includes("IG") ||
+                uploadedFileUrl.match(/\.(jpg|jpeg|png|gif)$/i);
+
+            return (
+                <div className="flex flex-col items-center justify-center">
+                    {isImage ? (
+                        <img
+                            src={uploadedFileUrl}
+                            alt={`${fileType} Upload`}
+                            className="max-h-24 md:max-h-40 max-w-full object-contain"
+                        />
+                    ) : (
+                        <>
+                            <FaFilePdf className="text-3xl md:text-4xl text-red-500" />
+                            <p className="text-center text-gray-700 mt-2 text-xs md:text-sm">
+                                Dokumen Terunggah
+                            </p>
+                            <a
+                                href={uploadedFileUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-500 underline text-xs mt-1"
+                            >
+                                Lihat Dokumen
+                            </a>
+                        </>
+                    )}
+                </div>
+            );
+        }
+
+        // If no uploaded file or we're selecting a new one, show format or preview
         if (!file) {
             return (
                 <div className="text-center">
@@ -184,9 +267,20 @@ const Verification = () => {
     };
 
     const renderVerificationStatus = () => {
-        if (!verificationStatus) return null;
+        // Debug logs to help identify issues
+        console.log("Current verification status in render function:", verificationStatus);
 
-        if (verificationStatus === 'diproses') {
+        // Return early if status is null or undefined
+        if (!verificationStatus) {
+            console.log("No verification status to render");
+            return null;
+        }
+
+        // Make sure we're comparing strings with correct case
+        const status = verificationStatus.toLowerCase().trim();
+        console.log("Normalized status for comparison:", status);
+
+        if (status === 'diproses') {
             return (
                 <div className="flex flex-row text-white place-items-center w-full bg-gradient-to-b from-[#ff9900] to-[#ffcc80] py-2 md:py-3 px-3 md:px-5 text-sm md:text-base gap-2 md:gap-4 mt-4 md:mt-6 rounded-lg">
                     <MdVerifiedUser className="text-xl md:text-2xl" />
@@ -195,7 +289,7 @@ const Verification = () => {
                     </h2>
                 </div>
             );
-        } else if (verificationStatus === 'disetujui') {
+        } else if (status === 'disetujui') {
             return (
                 <div className="flex flex-row text-white place-items-center w-full bg-gradient-to-b from-[#1B054E] to-[#7449B6] py-2 md:py-3 px-3 md:px-5 text-sm md:text-base gap-2 md:gap-4 mt-4 md:mt-6 rounded-lg">
                     <MdVerifiedUser className="text-xl md:text-2xl" />
@@ -204,7 +298,7 @@ const Verification = () => {
                     </h2>
                 </div>
             );
-        } else if (verificationStatus === 'ditolak') {
+        } else if (status === 'ditolak') {
             return (
                 <div className="flex flex-row text-white place-items-center w-full bg-gradient-to-b from-[#d32f2f] to-[#ef5350] py-2 md:py-3 px-3 md:px-5 text-sm md:text-base gap-2 md:gap-4 mt-4 md:mt-6 rounded-lg">
                     <MdError className="text-xl md:text-2xl" />
@@ -215,6 +309,7 @@ const Verification = () => {
             );
         }
 
+        console.log("Status did not match any expected values:", status);
         return null;
     };
 
