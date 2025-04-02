@@ -5,9 +5,7 @@ import AdminSidebar from "./AdminSidebar";
 import { toast } from "react-toastify";
 import {
     MdVerifiedUser,
-    MdCancel,
     MdInfoOutline,
-    MdCheck,
     MdClose,
     MdSearch,
     MdRefresh,
@@ -108,6 +106,23 @@ const AdminUser = () => {
                     userData = response.data;
                 }
 
+                // Normalize verification status values for consistency
+                userData = userData.map(user => {
+                    if (user.verification) {
+                        const status = (user.verification.verification_status || '').toLowerCase().trim();
+
+                        // Map Indonesian status to English if needed
+                        if (status === 'diproses') {
+                            user.verification.verification_status = 'pending';
+                        } else if (status === 'disetujui') {
+                            user.verification.verification_status = 'approved';
+                        } else if (status === 'ditolak') {
+                            user.verification.verification_status = 'rejected';
+                        }
+                    }
+                    return user;
+                });
+
                 setUsers(userData);
                 setCurrentPage(pagination.current_page);
                 setTotalPages(pagination.last_page);
@@ -206,19 +221,24 @@ const AdminUser = () => {
             return path;
         }
 
-        // Jika path adalah path relatif, tambahkan URL backend
         const baseUrl = 'http://localhost:8000';
         return `${baseUrl}/storage/${path.replace('public/', '')}`;
     };
 
     // Get status badge color
     const getStatusBadgeClass = (status) => {
-        switch (status) {
+        // First normalize the status value to handle case inconsistencies
+        const normalizedStatus = (status || '').toLowerCase().trim();
+
+        switch (normalizedStatus) {
             case "pending":
+            case "diproses":
                 return "bg-yellow-100 text-yellow-800";
             case "approved":
+            case "disetujui":
                 return "bg-green-100 text-green-800";
             case "rejected":
+            case "ditolak":
                 return "bg-red-100 text-red-800";
             default:
                 return "bg-gray-100 text-gray-800";
@@ -409,9 +429,11 @@ const AdminUser = () => {
                                                                     user.verification.verification_status
                                                                 )}`}
                                                             >
-                                                                {user.verification.verification_status === "pending"
+                                                                {user.verification.verification_status === "pending" ||
+                                                                    user.verification.verification_status === "diproses"
                                                                     ? "Menunggu Verifikasi"
-                                                                    : user.verification.verification_status === "approved"
+                                                                    : user.verification.verification_status === "approved" ||
+                                                                        user.verification.verification_status === "disetujui"
                                                                         ? "Terverifikasi"
                                                                         : "Ditolak"}
                                                             </span>
@@ -854,8 +876,8 @@ const AdminUser = () => {
                                                     <p>
                                                         <span className="text-gray-500">Status:</span>{" "}
                                                         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${selectedUser.exams[0].score >= 70
-                                                                ? "bg-green-100 text-green-800"
-                                                                : "bg-red-100 text-red-800"
+                                                            ? "bg-green-100 text-green-800"
+                                                            : "bg-red-100 text-red-800"
                                                             }`}>
                                                             {selectedUser.exams[0].score >= 70 ? "Lulus" : "Tidak Lulus"}
                                                         </span>

@@ -3,56 +3,50 @@ import { motion } from "framer-motion";
 
 const achievements = [
     {
-        title: "Finalis Juara Pimnas",
+        title: "Juara 2 Impact National Hackathon",
         awardee: [
             {
-                name: "Berka Aldizar",
-                division: "Programming"
+                name: "Muhammad Nouval H., Khalied N.M, Berka A.",
             }
         ]
     },
     {
-        title: "Finalis Juara Pimnas",
+        title: "Juara 3 Hackathon Cybertech 2024",
         awardee: [
             {
-                name: "Berka Aldizar",
-                division: "Programming"
+                name: "Muhammad Nouval H., Khalied N.M, Berka A., Talitha Zulfa A.",
             }
         ]
     },
     {
-        title: "Finalis Juara Pimnas",
+        title: "Juara 1 Hackathon Cybertech 2024",
         awardee: [
             {
-                name: "Berka Aldizar",
-                division: "Programming"
+                name: "Ilham, Rafki Harzikra",
             }
         ]
     },
     {
-        title: "Finalis Juara Pimnas",
+        title: "Juara 2 Adiwiyata Hackfest 2024",
         awardee: [
             {
-                name: "Berka Aldizar",
-                division: "Programming"
+                name: "Fajar Alif R., Iqbal Defri P.",
             }
         ]
     },
     {
-        title: "Finalis Juara Pimnas",
+        title: "Juara 2 Hackathon Cybertech 2024",
         awardee: [
             {
-                name: "Berka Aldizar",
-                division: "Programming"
+                name: "Fajar Alif R., Iqbal Defri P., Hamzah A.A., Rizki Dafa N.",
             }
         ]
     },
     {
-        title: "Finalis Juara Pimnas",
+        title: "Finalis Pimnas 2024",
         awardee: [
             {
-                name: "Berka Aldizar",
-                division: "Programming"
+                name: "Aina Malyona",
             }
         ]
     },
@@ -274,9 +268,9 @@ const AchievementComponent = () => {
                                     </motion.div>
                                 </div>
                                 <div className="flex flex-col justify-center pl-6 pr-16 sm:pr-24 md:pr-32 lg:pr-40 py-4">
-                                    <h3 className="text-white font-bold text-xl md:text-2xl">{achievement.title}</h3>
+                                    <h3 className="text-white font-bold text-lg">{achievement.title}</h3>
                                     {achievement.awardee.map((data, i) => (
-                                        <h4 className="text-white font-regular text-sm md:text-base" key={i}>{data.name}, {data.division}</h4>
+                                        <h4 className="text-white font-regular text-sm" key={i}>{data.name}</h4>
                                     ))}
                                 </div>
                             </motion.div>

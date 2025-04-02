@@ -3,10 +3,8 @@ import {
     MdHome,
     MdInsertDriveFile,
     MdPeople,
-    MdSettings,
     MdClose,
     MdMenu,
-    MdVerifiedUser
 } from "react-icons/md";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";

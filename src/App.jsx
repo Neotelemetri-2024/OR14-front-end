@@ -6,7 +6,6 @@ import AdminRoute from "./middleware/AdminMiddleware";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-// Pages
 import Landing from "./pages/Landing";
 // import Auth from "./pages/Auth/Auth";
 import Dashboard from "./pages/Dashboard";
@@ -46,20 +45,15 @@ const App = () => {
 
         <Router>
           <Routes>
-            {/* Public routes */}
             <Route path="/" element={<Landing />} />
 
-            {/* Role-based redirect - otomatis pilih dashboard berdasarkan role */}
             <Route path="/auto-redirect" element={<RoleBasedRedirect />} />
 
-            {/* Guest routes (only for non-authenticated users) */}
             <Route element={<GuestRoute />}>
               <Route path="/auth" element={<AuthWrapper />} />
-              {/* <Route path="/forgot-password" element={<ForgotPassword />} /> */}
               <Route path="/reset-password" element={<ResetPassword />} />
             </Route>
 
-            {/* Protected routes (only for authenticated users) */}
             <Route element={<ProtectedRoute />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/preparation" element={<ExamPreparation />} />
@@ -69,14 +63,12 @@ const App = () => {
               <Route path="/verification" element={<Verification />} />
             </Route>
 
-            {/* Admin routes (only for authenticated users with admin role) */}
             <Route element={<AdminRoute />}>
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
-              <Route path="/admin/users" element={<AdminUser />} /> {/* Add this line */}
+              <Route path="/admin/users" element={<AdminUser />} /> 
               {/* Tambahkan route admin lainnya di sini */}
             </Route>
 
-            {/* Fallback for undefined routes */}
             <Route path="*" element={
               <div className="flex flex-col items-center justify-center h-screen">
                 <h1 className="text-4xl font-bold">404</h1>

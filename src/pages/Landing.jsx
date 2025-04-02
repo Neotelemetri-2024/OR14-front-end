@@ -408,7 +408,7 @@ const Landing = () => {
             </section>
 
             {/* Division Section */}
-            <section className="w-full bg-gradient-to-b from-[#1B054E] to-[#7449B6] pb-20 md:pb-40" id="division" ref={divisionRef}>
+            <section className="w-full bg-gradient-to-b from-[#1B054E] to-[#7449B6] pb-20 md:pb-32" id="division" ref={divisionRef}>
                 <motion.div
                     className="flex flex-col items-center w-full bg-white py-4 md:py-6 rounded-sm"
                     ref={operationalRef}
@@ -429,7 +429,7 @@ const Landing = () => {
                 </motion.div>
             </section>
 
-            <section className="w-full bg-gradient-to-b from-[#1B054E] to-[#7449B6]">
+            <section className="w-full bg-gradient-to-b from-[#1B054E] to-[#7449B6] pb-12 md:pb-24">
                 <motion.div
                     className="flex flex-col items-center w-full bg-white py-4 md:py-6 rounded-sm"
                     ref={organisasiRef}
@@ -451,9 +451,9 @@ const Landing = () => {
             </section>
 
             {/* Projects Section */}
-            <section className="w-full bg-white" id="projects" ref={projectsRef}>
+            <section className="w-full bg-white py-6 md:py-10" id="projects" ref={projectsRef}>
                 <motion.div
-                    className="flex flex-col items-center w-full py-4 md:py-6 md:mt-0 mt-10"
+                    className="flex flex-col items-center w-full py-3 md:py-4"
                     variants={popIn}
                     initial="hidden"
                     animate={projectsControls}
@@ -463,7 +463,7 @@ const Landing = () => {
                     </h1>
                 </motion.div>
                 <motion.div
-                    className="px-4 md:px-0"
+                    className="px-4 md:px-0 mt-2 md:mt-4"
                     variants={fadeIn}
                     initial="hidden"
                     animate={projectsControls}
@@ -473,19 +473,19 @@ const Landing = () => {
             </section>
 
             {/* Achievements Section */}
-            <section id="achievements" className="w-full mb-16 md:mb-32 md:mt-0 mt-10" ref={achievementsRef}>
+            <section id="achievements" className="w-full py-6 md:py-10 bg-gray-50" ref={achievementsRef}>
                 <motion.div
-                    className="flex flex-col items-center w-full py-4 md:py-6 md:my-12"
+                    className="flex flex-col items-center w-full py-3 md:py-4"
                     variants={popIn}
                     initial="hidden"
                     animate={achievementsControls}
                 >
-                    <h1 className="text-[#301D54] text-3xl sm:text-4xl font-bold mb-6">
+                    <h1 className="text-[#301D54] text-3xl sm:text-4xl font-bold mb-2">
                         Our Achievements
                     </h1>
                 </motion.div>
                 <motion.div
-                    className="px-4 md:px-0"
+                    className="px-4 md:px-0 mt-2 md:mt-4"
                     variants={slideInFromBottom}
                     initial="hidden"
                     animate={achievementsControls}
@@ -495,7 +495,7 @@ const Landing = () => {
             </section>
 
             {/* Jumbotron with enhanced animations */}
-            <section id="jumbotron" className="bg-gradient-to-b from-[#1B054E] to-[#7449B6] py-20 md:py-40 flex flex-col items-center justify-center gap-8 md:gap-16 px-4 md:px-0 relative" ref={jumbotronRef}>
+            <section id="jumbotron" className="bg-gradient-to-b from-[#1B054E] to-[#7449B6] py-16 md:py-24 flex flex-col items-center justify-center gap-8 md:gap-16 px-4 md:px-0 relative mt-6 md:mt-8" ref={jumbotronRef}>
                 <motion.img
                     src="/assets/landing/Group172.png"
                     className="absolute left-0 md:block hidden"
@@ -533,7 +533,7 @@ const Landing = () => {
             </section>
 
             {/* Footer */}
-            <section id="about" className="bg-[#8471AB] flex flex-col-reverse lg:grid lg:grid-cols-2 py-24 md:py-48 px-6 md:px-12 lg:px-48 gap-8" ref={aboutRef}>
+            <section id="about" className="bg-[#8471AB] flex flex-col-reverse lg:grid lg:grid-cols-2 py-24 md:py-32 px-6 md:px-12 lg:px-48 gap-8" ref={aboutRef}>
                 {/* Kiri - Logo & Alamat */}
                 <motion.div
                     className="flex flex-col gap-8 text-center lg:text-left w-full max-w-lg mx-auto"
@@ -608,6 +608,14 @@ const Landing = () => {
                         animate={aboutControls}
                     >
                         <h4 className="font-bold">Relate</h4>
+                        <motion.a
+                            href="#"
+                            className="font-light hover:underline cursor-pointer transition-all duration-300"
+                            variants={slideInFromRight}
+                            whileHover={{ x: 10, transition: { duration: 0.2 } }}
+                        >
+                            Profile Neo Telemetri
+                        </motion.a>
                         <motion.a
                             href="#"
                             className="font-light hover:underline cursor-pointer transition-all duration-300"
