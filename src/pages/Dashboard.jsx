@@ -8,26 +8,33 @@ import ProfileComponent from "../components/ProfileComponent";
 import { useProfile } from "../context/ProfileContext";
 import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
-// import { toast } from "react-toastify";
+import { getPublicTimelines } from "../services/TimelineService";
 
+// Updated TimelineItem component for Dashboard.jsx
+// TimelineItem Component yang Diperbaiki
 const TimelineItem = ({ title, date, isActive, isLast }) => {
+    // Active items should be vibrant, inactive ones should be faded
+    const circleColor = isActive ? 'bg-[#1E0771]' : 'bg-[#D3C6EA]';
+    const lineColor = isActive ? 'bg-[#7872B6]' : 'bg-[#D3C6EA]';
+    const textColor = isActive ? 'text-[#1E0771]' : 'text-[#A9A0CE]';
+
     return (
         <div className="flex items-start">
             {/* Circle and Line */}
             <div className="flex flex-col items-center mr-4 md:mr-6">
-                <div className={`w-5 h-5 rounded-full ${isActive ? 'bg-[#1E0771]' : 'bg-[#7872B6]'} flex items-center justify-center z-10`}>
+                <div className={`w-5 h-5 rounded-full ${circleColor} flex items-center justify-center z-10`}>
                 </div>
                 {!isLast && (
-                    <div className="w-1 h-16 md:h-24 bg-[#7872B6]"></div>
+                    <div className={`w-1 h-16 md:h-24 ${lineColor}`}></div>
                 )}
             </div>
             {/* Content */}
             <div className="flex-1">
                 <div className="flex justify-between items-start flex-col md:flex-row">
-                    <h3 className={`text-lg md:text-xl font-medium ${isActive ? 'text-[#1E0771]' : 'text-[#7872B6]'}`}>
+                    <h3 className={`text-lg md:text-xl font-medium ${textColor}`}>
                         {title}
                     </h3>
-                    <span className={`${isActive ? 'text-[#1E0771]' : 'text-[#7872B6]'} md:ml-4 font-bold text-base md:text-xl`}>{date}</span>
+                    <span className={`${textColor} md:ml-4 font-bold text-base md:text-xl`}>{date}</span>
                 </div>
             </div>
         </div>
@@ -39,16 +46,48 @@ const Dashboard = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
     const [imageError, setImageError] = useState(false);
-
-    // Get user and profile data from context
+    const [timelineItems, setTimelineItems] = useState([]);
+    const [timelineLoading, setTimelineLoading] = useState(false);
     const { user } = useAuth();
     const { profile, isProfileComplete, verificationStatus, loading, refreshProfileData } = useProfile();
 
     // Fetch data on load
     useEffect(() => {
         refreshProfileData();
+        fetchTimelines();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    const fetchTimelines = async () => {
+        setTimelineLoading(true);
+        try {
+            const response = await getPublicTimelines();
+            if (response.success) {
+                console.log('Timeline data:', response.data);
+                setTimelineItems(response.data);
+            } else {
+                console.error("Failed to fetch timelines:", response.message);
+                // Fallback data dengan isActive properly set
+                setTimelineItems([
+                    { title: 'Pendaftaran', date: '1 - 7 April 2025', isActive: true },
+                    { title: 'Verifikasi', date: 'Tgl-Bulan-Tahun', isActive: verificationStatus === 'verified' },
+                    { title: 'Peserta memasuki WA grup', date: 'Tgl-Bulan-Tahun', isActive: false },
+                    { title: 'Pembukaan OR14', date: 'Tgl-Bulan-Tahun', isActive: false }
+                ]);
+            }
+        } catch (error) {
+            console.error("Error fetching timelines:", error);
+            // Same fallback as above
+            setTimelineItems([
+                { title: 'Pendaftaran', date: '1 - 7 April 2025', isActive: true },
+                { title: 'Verifikasi', date: 'Tgl-Bulan-Tahun', isActive: verificationStatus === 'verified' },
+                { title: 'Peserta memasuki WA grup', date: 'Tgl-Bulan-Tahun', isActive: false },
+                { title: 'Pembukaan OR14', date: 'Tgl-Bulan-Tahun', isActive: false }
+            ]);
+        } finally {
+            setTimelineLoading(false);
+        }
+    };
 
     // Reset image error when profile changes
     useEffect(() => {
@@ -80,14 +119,6 @@ const Dashboard = () => {
         console.error('Failed to load profile image:', profile?.photo_url);
         setImageError(true);
     };
-
-    // Timeline data
-    const timelineItems = [
-        { title: 'Pendaftaran', date: '1 - 7 April 2025', isActive: true },
-        { title: 'Verifikasi', date: 'Tgl-Bulan-Tahun', isActive: verificationStatus === 'verified' },
-        { title: 'Peserta memasuki WA grup', date: 'Tgl-Bulan-Tahun', isActive: false },
-        { title: 'Pembukaan OR14', date: 'Tgl-Bulan-Tahun', isActive: false }
-    ];
 
     // Get the greeting message based on the time of day
     const getGreeting = () => {
@@ -310,17 +341,25 @@ const Dashboard = () => {
                                     <h2 className="text-xl md:text-2xl font-bold text-secondary">
                                         Alur Kegiatan
                                     </h2>
-                                    <div className="space-y-0 py-4 md:py-6">
-                                        {timelineItems.map((item, index) => (
-                                            <TimelineItem
-                                                key={index}
-                                                title={item.title}
-                                                date={item.date}
-                                                isActive={item.isActive}
-                                                isLast={index === timelineItems.length - 1}
-                                            />
-                                        ))}
-                                    </div>
+
+                                    {/* Timeline Loading State */}
+                                    {timelineLoading ? (
+                                        <div className="flex justify-center items-center py-8">
+                                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1E0771]"></div>
+                                        </div>
+                                    ) : (
+                                        <div className="space-y-0 py-4 md:py-6">
+                                            {timelineItems.map((item, index) => (
+                                                <TimelineItem
+                                                    key={index}
+                                                    title={item.title}
+                                                    date={item.date}
+                                                    isActive={item.isActive}
+                                                    isLast={index === timelineItems.length - 1}
+                                                />
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </>

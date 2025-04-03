@@ -1,35 +1,36 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { ProfileProvider } from "./context/ProfileContext";
 import { ProtectedRoute, GuestRoute } from "./middleware/AuthMiddleware";
+import AdminRoute from "./middleware/AdminMiddleware";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-// Pages
 import Landing from "./pages/Landing";
-import Auth from "./pages/auth/Auth";
+// import Auth from "./pages/Auth/Auth";
 import Dashboard from "./pages/Dashboard";
-import Verification from "./pages/auth/Verification";
+import Verification from "./pages/Auth/Verification";
 import ExamPreparation from "./pages/exam/ExamPreparation";
 import Exam from "./pages/exam/Exam";
 import ExamResult from "./pages/exam/ExamResult";
 import Profile from "./pages/profile/Profile";
-import ResetPassword from "./pages/auth/ResetPassword";
-import ForgotPassword from "./pages/auth/ForgetPassword";
+import ResetPassword from "./pages/Auth/ResetPassword";
+// import ForgotPassword from "./pages/Auth/ForgetPassword";
 
-const AuthWrapper = () => {
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const mode = queryParams.get("mode");
-  return <Auth isLogin={mode !== "register"} />;
-};
+// Admin Pages
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminUser from "./pages/admin/AdminUser";
+import AdminTimelineManagement from "./pages/admin/AdminTimelineManagement";
+
+// Utilities
+import AuthWrapper from "./components/AuthWrapper";
+import RoleBasedRedirect from "./components/RoleBasedRedirect";
 
 const App = () => {
+
   return (
     <AuthProvider>
       <ProfileProvider>
-
-
         <ToastContainer
           position="top-right"
           autoClose={3000}
@@ -45,18 +46,15 @@ const App = () => {
 
         <Router>
           <Routes>
-            {/* Public routes */}
             <Route path="/" element={<Landing />} />
 
-            {/* Guest routes (only for non-authenticated users) */}
+            <Route path="/auto-redirect" element={<RoleBasedRedirect />} />
+
             <Route element={<GuestRoute />}>
               <Route path="/auth" element={<AuthWrapper />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
             </Route>
 
-
-            {/* Protected routes (only for authenticated users) */}
             <Route element={<ProtectedRoute />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/preparation" element={<ExamPreparation />} />
@@ -66,7 +64,13 @@ const App = () => {
               <Route path="/verification" element={<Verification />} />
             </Route>
 
-            {/* Fallback for undefined routes */}
+            <Route element={<AdminRoute />}>
+              <Route path="/admin/dashboard" element={<AdminDashboard />} />
+              <Route path="/admin/users" element={<AdminUser />} />
+              <Route path="/admin/timeline" element={<AdminTimelineManagement />} /> {/* Add the new timeline management route */}
+              {/* Tambahkan route admin lainnya di sini */}
+            </Route>
+
             <Route path="*" element={
               <div className="flex flex-col items-center justify-center h-screen">
                 <h1 className="text-4xl font-bold">404</h1>
