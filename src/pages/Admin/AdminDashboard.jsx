@@ -3,20 +3,93 @@ import AdminSidebar from "./AdminSidebar";
 import { MdMenu } from "react-icons/md";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { adminService } from "../../services/api"; // Import the adminService
 
 const AdminDashboard = () => {
     const [showSidebar, setShowSidebar] = useState(true);
     const [isMobile, setIsMobile] = useState(false);
     const { user } = useAuth();
     const navigate = useNavigate();
+    const [dashboardStats, setDashboardStats] = useState({
+        totalUsers: 0,
+        verifiedUsers: 0,
+        unverifiedUsers: 0,
+        completedExams: 0,
+        totalSKJ: 0,
+        totalProgramming: 0,
+        totalMMD: 0,
+        isLoading: true
+    });
 
     // Validasi lagi jika user bukan admin, redirect ke dashboard
     useEffect(() => {
         if (user && user.role !== 'admin') {
             console.log("User is not admin, redirecting from AdminDashboard to dashboard");
             navigate('/dashboard');
+        } else {
+            // Fetch dashboard statistics
+            fetchDashboardStats();
         }
     }, [user, navigate]);
+
+    // Fetch dashboard statistics
+    const fetchDashboardStats = async () => {
+        try {
+            // Fetch user data
+            const usersResponse = await adminService.getUsers(1, { per_page: 1000 });
+
+            if (usersResponse.success) {
+                const users = usersResponse.data.data.data || [];
+
+                // Calculate stats
+                const totalUsers = users.length;
+                const verifiedUsers = users.filter(user =>
+                    user.verification && user.verification.verification_status.toLowerCase() === 'disetujui'
+                ).length;
+                const unverifiedUsers = totalUsers - verifiedUsers;
+
+                // Count completed exams
+                const completedExams = users.reduce((count, user) => {
+                    return count + (user.exams ? user.exams.filter(exam => exam.status === 'completed').length : 0);
+                }, 0);
+
+                // Count divisions based on user profile divisi field
+                const divisions = {
+                    skj: 0,
+                    programming: 0,
+                    mmd: 0
+                };
+
+                users.forEach(user => {
+                    if (user.profile && user.profile.divisi) {
+                        const divisiLower = user.profile.divisi.toLowerCase();
+
+                        if (divisiLower.includes('skj') || divisiLower.includes('sistem') || divisiLower.includes('komputer') || divisiLower.includes('jaringan')) {
+                            divisions.skj++;
+                        } else if (divisiLower.includes('program') || divisiLower.includes('coding') || divisiLower.includes('developer')) {
+                            divisions.programming++;
+                        } else if (divisiLower.includes('mmd') || divisiLower.includes('multimedia') || divisiLower.includes('media')) {
+                            divisions.mmd++;
+                        }
+                    }
+                });
+
+                setDashboardStats({
+                    totalUsers,
+                    verifiedUsers,
+                    unverifiedUsers,
+                    completedExams,
+                    totalSKJ: divisions.skj,
+                    totalProgramming: divisions.programming,
+                    totalMMD: divisions.mmd,
+                    isLoading: false
+                });
+            }
+        } catch (error) {
+            console.error("Error fetching dashboard statistics:", error);
+            setDashboardStats(prev => ({ ...prev, isLoading: false }));
+        }
+    };
 
     // Cek ukuran layar untuk menentukan apakah mobile atau tidak
     useEffect(() => {
@@ -83,7 +156,7 @@ const AdminDashboard = () => {
                     <div className="text-lg font-semibold">Admin Dashboard</div>
 
                     <div className="flex items-center space-x-2">
-                        <div className="text-sm font-medium">Admin User</div>
+                        <div className="text-sm font-medium">{user?.name || 'Admin User'}</div>
                         <div className="w-8 h-8 rounded-full bg-gray-300"></div>
                     </div>
                 </header>
@@ -93,33 +166,65 @@ const AdminDashboard = () => {
                     <div className="max-w-7xl mx-auto">
                         <h1 className="text-2xl font-semibold mb-6">Dashboard Admin</h1>
 
-                        <div className="bg-white p-6 rounded-lg shadow-sm">
-                            <h2 className="text-lg font-medium mb-4">Selamat Datang di Panel Admin</h2>
-                            <p className="text-gray-600">
-                                Ini adalah halaman dashboard admin. Anda dapat mengelola pengguna, ujian, dan pengaturan sistem dari panel ini.
-                            </p>
-                        </div>
-
-                        {/* Di sini bisa ditambahkan konten dashboard seperti statistik, grafik, dll */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+                        {/* Statistics Cards */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                            {/* Total Pendaftar */}
                             <div className="bg-white p-6 rounded-lg shadow-sm">
-                                <h3 className="font-medium text-gray-500">Total Pengguna</h3>
-                                <p className="text-3xl font-bold mt-2">0</p>
+                                <h3 className="font-medium text-gray-500">Total Pendaftar</h3>
+                                <p className="text-3xl font-bold mt-2">
+                                    {dashboardStats.isLoading ? "..." : dashboardStats.totalUsers}
+                                </p>
                             </div>
 
+                            {/* Pendaftar Terverifikasi */}
                             <div className="bg-white p-6 rounded-lg shadow-sm">
-                                <h3 className="font-medium text-gray-500">Ujian Aktif</h3>
-                                <p className="text-3xl font-bold mt-2">0</p>
+                                <h3 className="font-medium text-gray-500">Terverifikasi</h3>
+                                <p className="text-3xl font-bold mt-2">
+                                    {dashboardStats.isLoading ? "..." : dashboardStats.verifiedUsers}
+                                </p>
                             </div>
 
+                            {/* Pendaftar Belum Terverifikasi */}
                             <div className="bg-white p-6 rounded-lg shadow-sm">
-                                <h3 className="font-medium text-gray-500">Menunggu Verifikasi</h3>
-                                <p className="text-3xl font-bold mt-2">0</p>
+                                <h3 className="font-medium text-gray-500">Belum Terverifikasi</h3>
+                                <p className="text-3xl font-bold mt-2">
+                                    {dashboardStats.isLoading ? "..." : dashboardStats.unverifiedUsers}
+                                </p>
                             </div>
 
+                            {/* Ujian Selesai */}
                             <div className="bg-white p-6 rounded-lg shadow-sm">
                                 <h3 className="font-medium text-gray-500">Ujian Selesai</h3>
-                                <p className="text-3xl font-bold mt-2">0</p>
+                                <p className="text-3xl font-bold mt-2">
+                                    {dashboardStats.isLoading ? "..." : dashboardStats.completedExams}
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Division Statistics */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            {/* Total SKJ */}
+                            <div className="bg-white p-6 rounded-lg shadow-sm">
+                                <h3 className="font-medium text-gray-500">Total SKJ</h3>
+                                <p className="text-3xl font-bold mt-2">
+                                    {dashboardStats.isLoading ? "..." : dashboardStats.totalSKJ}
+                                </p>
+                            </div>
+
+                            {/* Total Programming */}
+                            <div className="bg-white p-6 rounded-lg shadow-sm">
+                                <h3 className="font-medium text-gray-500">Total Programming</h3>
+                                <p className="text-3xl font-bold mt-2">
+                                    {dashboardStats.isLoading ? "..." : dashboardStats.totalProgramming}
+                                </p>
+                            </div>
+
+                            {/* Total MMD */}
+                            <div className="bg-white p-6 rounded-lg shadow-sm">
+                                <h3 className="font-medium text-gray-500">Total MMD</h3>
+                                <p className="text-3xl font-bold mt-2">
+                                    {dashboardStats.isLoading ? "..." : dashboardStats.totalMMD}
+                                </p>
                             </div>
                         </div>
                     </div>

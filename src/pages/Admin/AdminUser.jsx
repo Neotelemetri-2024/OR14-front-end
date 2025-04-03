@@ -106,23 +106,6 @@ const AdminUser = () => {
                     userData = response.data;
                 }
 
-                // Normalize verification status values for consistency
-                userData = userData.map(user => {
-                    if (user.verification) {
-                        const status = (user.verification.verification_status || '').toLowerCase().trim();
-
-                        // Map Indonesian status to English if needed
-                        if (status === 'diproses') {
-                            user.verification.verification_status = 'pending';
-                        } else if (status === 'disetujui') {
-                            user.verification.verification_status = 'approved';
-                        } else if (status === 'ditolak') {
-                            user.verification.verification_status = 'rejected';
-                        }
-                    }
-                    return user;
-                });
-
                 setUsers(userData);
                 setCurrentPage(pagination.current_page);
                 setTotalPages(pagination.last_page);
@@ -227,10 +210,10 @@ const AdminUser = () => {
 
     // Get status badge color
     const getStatusBadgeClass = (status) => {
-        // First normalize the status value to handle case inconsistencies
-        const normalizedStatus = (status || '').toLowerCase().trim();
+        // Make case-insensitive comparison
+        const statusLower = status.toLowerCase();
 
-        switch (normalizedStatus) {
+        switch (statusLower) {
             case "pending":
             case "diproses":
                 return "bg-yellow-100 text-yellow-800";
@@ -242,6 +225,26 @@ const AdminUser = () => {
                 return "bg-red-100 text-red-800";
             default:
                 return "bg-gray-100 text-gray-800";
+        }
+    };
+
+    // Get verification status display text
+    const getVerificationStatusText = (status) => {
+        // Make case-insensitive comparison
+        const statusLower = status.toLowerCase();
+
+        switch (statusLower) {
+            case "pending":
+            case "diproses":
+                return "Menunggu Verifikasi";
+            case "approved":
+            case "disetujui":
+                return "Terverifikasi";
+            case "rejected":
+            case "ditolak":
+                return "Ditolak";
+            default:
+                return status;
         }
     };
 
@@ -429,13 +432,7 @@ const AdminUser = () => {
                                                                     user.verification.verification_status
                                                                 )}`}
                                                             >
-                                                                {user.verification.verification_status === "pending" ||
-                                                                    user.verification.verification_status === "diproses"
-                                                                    ? "Menunggu Verifikasi"
-                                                                    : user.verification.verification_status === "approved" ||
-                                                                        user.verification.verification_status === "disetujui"
-                                                                        ? "Terverifikasi"
-                                                                        : "Ditolak"}
+                                                                {getVerificationStatusText(user.verification.verification_status)}
                                                             </span>
                                                         ) : (
                                                             <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
@@ -480,7 +477,8 @@ const AdminUser = () => {
                                                                 <MdInfoOutline className="text-xl" />
                                                             </button>
                                                             {user.verification &&
-                                                                user.verification.verification_status === "pending" && (
+                                                                (user.verification.verification_status.toLowerCase() === "pending" ||
+                                                                    user.verification.verification_status.toLowerCase() === "diproses") && (
                                                                     <button
                                                                         onClick={() => openVerificationModal(user)}
                                                                         className="text-indigo-600 hover:text-indigo-900 flex items-center p-1 rounded-full hover:bg-indigo-50"
@@ -697,8 +695,7 @@ const AdminUser = () => {
                                 >
                                     Batal
                                 </button>
-                            </div>
-                        </div>
+                            </div></div>
                     </div>
                 </div>
             )}
@@ -823,24 +820,20 @@ const AdminUser = () => {
                                                                 selectedUser.verification.verification_status
                                                             )}`}
                                                         >
-                                                            {selectedUser.verification.verification_status === "pending"
-                                                                ? "Menunggu Verifikasi"
-                                                                : selectedUser.verification.verification_status === "approved"
-                                                                    ? "Terverifikasi"
-                                                                    : "Ditolak"}
+                                                            {getVerificationStatusText(selectedUser.verification.verification_status)}
                                                         </span>
                                                     </p>
                                                     <p>
                                                         <span className="text-gray-500">Tanggal Pengajuan:</span>{" "}
                                                         {new Date(selectedUser.verification.created_at).toLocaleDateString("id-ID")}
                                                     </p>
-                                                    {selectedUser.verification.verification_status === "rejected" && (
+                                                    {selectedUser.verification.verification_status.toLowerCase() === "ditolak" && (
                                                         <p>
                                                             <span className="text-gray-500">Alasan Penolakan:</span>{" "}
-                                                            {selectedUser.verification.notes || "Tidak ada catatan"}
+                                                            {selectedUser.verification.rejection_reason || "Tidak ada catatan"}
                                                         </p>
                                                     )}
-                                                    {selectedUser.verification.verification_status === "approved" && (
+                                                    {selectedUser.verification.verification_status.toLowerCase() === "disetujui" && (
                                                         <p>
                                                             <span className="text-gray-500">Diverifikasi pada:</span>{" "}
                                                             {new Date(selectedUser.verification.updated_at).toLocaleDateString("id-ID")}
@@ -941,19 +934,21 @@ const AdminUser = () => {
                                     )}
 
                                     {/* Actions (if applicable) */}
-                                    {selectedUser.verification && selectedUser.verification.verification_status === "pending" && (
-                                        <div className="col-span-1 md:col-span-2 mt-4">
-                                            <button
-                                                onClick={() => {
-                                                    setShowUserDetailsModal(false);
-                                                    openVerificationModal(selectedUser);
-                                                }}
-                                                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                                            >
-                                                <MdVerifiedUser className="mr-2" /> Proses Verifikasi
-                                            </button>
-                                        </div>
-                                    )}
+                                    {selectedUser.verification &&
+                                        (selectedUser.verification.verification_status.toLowerCase() === "pending" ||
+                                            selectedUser.verification.verification_status.toLowerCase() === "diproses") && (
+                                            <div className="col-span-1 md:col-span-2 mt-4">
+                                                <button
+                                                    onClick={() => {
+                                                        setShowUserDetailsModal(false);
+                                                        openVerificationModal(selectedUser);
+                                                    }}
+                                                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                                >
+                                                    <MdVerifiedUser className="mr-2" /> Proses Verifikasi
+                                                </button>
+                                            </div>
+                                        )}
                                 </div>
                             </div>
                             <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">

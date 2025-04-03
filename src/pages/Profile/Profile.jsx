@@ -496,7 +496,7 @@ const Profile = () => {
                                                     className={`rounded-full p-1 cursor-pointer ${selectedDepartment === 'organisasi' ? 'text-[#2d2460] bg-white' : 'text-white bg-[#2d2460]'}`}
                                                     onClick={(e) => {
                                                         e.stopPropagation();
-                                                        handleInfoClick('Organisasi', 'Departemen Organisasi adalah departemen yang bertanggung jawab untuk mengatur struktur, koordinasi, dan manajemen organisasi.');
+                                                        handleInfoClick('Organisasi', 'Departemen Organisasi Neo Telemetri berfokus pada pengelolaan sumber daya manusia, komunikasi, dan operasional internal organisasi. Departemen ini bertanggung jawab dalam membangun lingkungan yang solid, profesional, dan kolaboratif, serta memastikan setiap anggota dapat berkembang secara optimal.');
                                                     }}
                                                 >
                                                     <IoInformationCircle className="w-5 h-5" />
@@ -512,7 +512,7 @@ const Profile = () => {
                                                     className={`rounded-full p-1 cursor-pointer ${selectedDepartment === 'operasional' ? 'text-[#2d2460] bg-white' : 'text-white bg-[#2d2460]'}`}
                                                     onClick={(e) => {
                                                         e.stopPropagation();
-                                                        handleInfoClick('Operasional', 'Departemen Operasional adalah departemen yang bertanggung jawab untuk menjalankan kegiatan operasional sehari-hari.');
+                                                        handleInfoClick('Operasional', 'Departemen Operasional Neo Telemetri berfokus pada pengembangan hard skill anggota di bidang teknologi dan rekayasa sistem. Departemen ini menaungi divisi-divisi teknis yang mendukung inovasi dan implementasi proyek berbasis teknologi, sehingga anggota dapat mengasah keterampilan praktis serta siap terjun ke dunia industri.');
                                                     }}
                                                 >
                                                     <IoInformationCircle className="w-5 h-5" />
@@ -670,15 +670,9 @@ const Profile = () => {
                         <div className="border-2 border-[#2d2460] rounded-lg p-4">
                             <h3 className="text-lg font-semibold mb-2">{modalContent.title}</h3>
                             <p className="text-base text-gray-700">
-                                Departemen {modalContent.title} adalah departemen yang bertanggung jawab untuk
                                 {modalContent.title === 'Organisasi'
-                                    ? ' mengatur struktur, koordinasi, dan manajemen organisasi.'
-                                    : ' menjalankan kegiatan operasional sehari-hari dan berbagai proses teknis.'}
-                            </p>
-                            <p className="mt-2 text-gray-500">
-                                ...........................................................................
-                                ...........................................................................
-                                ...........................................................................
+                                    ? ' Departemen Organisasi Neo Telemetri berfokus pada pengelolaan sumber daya manusia, komunikasi, dan operasional internal organisasi. Departemen ini bertanggung jawab dalam membangun lingkungan yang solid, profesional, dan kolaboratif, serta memastikan setiap anggota dapat berkembang secara optimal.'
+                                    : 'Departemen Operasional Neo Telemetri berfokus pada pengembangan hard skill anggota di bidang teknologi dan rekayasa sistem. Departemen ini menaungi divisi-divisi teknis yang mendukung inovasi dan implementasi proyek berbasis teknologi, sehingga anggota dapat mengasah keterampilan praktis serta siap terjun ke dunia industri.'}
                             </p>
                         </div>
                     </div>
