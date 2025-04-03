@@ -19,11 +19,12 @@ import ResetPassword from "./pages/Auth/ResetPassword";
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminUser from "./pages/admin/AdminUser";
+import AdminTimelineManagement from "./pages/admin/AdminTimelineManagement";
 
 // Utilities
 import AuthWrapper from "./components/AuthWrapper";
 import RoleBasedRedirect from "./components/RoleBasedRedirect";
-import AdminUser from "./pages/admin/AdminUser";
 
 const App = () => {
 
@@ -65,7 +66,8 @@ const App = () => {
 
             <Route element={<AdminRoute />}>
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
-              <Route path="/admin/users" element={<AdminUser />} /> 
+              <Route path="/admin/users" element={<AdminUser />} />
+              <Route path="/admin/timeline" element={<AdminTimelineManagement />} /> {/* Add the new timeline management route */}
               {/* Tambahkan route admin lainnya di sini */}
             </Route>
 
