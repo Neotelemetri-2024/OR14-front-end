@@ -449,12 +449,13 @@ const ExamPreparation = () => {
                         Peraturan Ujian
                     </h2>
                     <ol className="text-base md:text-lg mx-2 md:mx-4 list-decimal pl-4 space-y-1 md:space-y-2">
-                        <li>Setiap peserta diberikan waktu maksimal 60 menit untuk menyelesaikan seluruh soal.</li>
-                        <li>Gunakan koneksi jaringan yang stabil.</li>
-                        <li>Kerjakan soal secara jujur dan mandiri.</li>
-                        <li>Tidak diperbolehkan keluar dari halaman ujian.</li>
-                        <li>Hanya ada satu kesempatan mengikuti ujian.</li>
-                        <li>Pelanggaran akan berakibat diskualifikasi.</li>
+                        <li>Setiap peserta diberikan waktu maksimal 60 menit untuk menyelesaikan seluruh soal. Pastikan memanfaatkan waktu dengan baik.</li>
+                        <li>Ujian harus dikerjakan menggunakan koneksi jaringan yang stabil untuk menghindari kendala teknis selama pengerjaan.</li>
+                        <li>Peserta wajib menjawab semua soal secara jujur dan mandiri tanpa bantuan pihak lain atau sumber eksternal.</li>
+                        <li>Selama ujian berlangsung, peserta tidak diperbolehkan keluar atau berpindah dari halaman ujian, kecuali jika telah selesai mengerjakan.</li>
+                        <li>Setiap peserta hanya memiliki satu kali kesempatan untuk mengikuti ujian, jadi pastikan mempersiapkan diri dengan baik.</li>
+                        <li>Peserta yang terbukti melakukan kecurangan, keluar dari halaman ujian tanpa alasan jelas, atau melanggar aturan akan didiskualifikasi dari proses seleksi.</li>
+                        <li>Jika ada pertanyaan atau kendala, hubungi Azizah (083183879726) , Fadhilla (081363681138)</li>
                     </ol>
                 </div>
                 {/* Start Exam Button */}
