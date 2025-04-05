@@ -3,6 +3,24 @@ import api from './api';
 // Exam service functions
 const examService = {
     // Get all divisions
+
+    checkUserExamStatus: async () => {
+        try {
+            const response = await api.get('/exam/status');
+            return {
+                success: true,
+                data: response.data.data // Pastikan sesuai struktur response backend
+            };
+        } catch (error) {
+            console.error('Error checking exam status:', error);
+            return {
+                success: false,
+                message: error.response?.data?.message || 'Gagal memeriksa status ujian',
+                error: error
+            };
+        }
+    },
+
     getDivisions: async () => {
         try {
             const response = await api.get('/exam/divisions');

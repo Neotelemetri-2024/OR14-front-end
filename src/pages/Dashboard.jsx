@@ -70,7 +70,7 @@ const Dashboard = () => {
                 // Fallback data dengan isActive properly set
                 setTimelineItems([
                     { title: 'Pendaftaran', date: '1 - 7 April 2025', isActive: true },
-                    { title: 'Verifikasi', date: 'Tgl-Bulan-Tahun', isActive: verificationStatus === 'verified' },
+                    { title: 'Verifikasi', date: 'Tgl-Bulan-Tahun', isActive: verificationStatus === 'verified' || verificationStatus === 'disetujui' },
                     { title: 'Peserta memasuki WA grup', date: 'Tgl-Bulan-Tahun', isActive: false },
                     { title: 'Pembukaan OR14', date: 'Tgl-Bulan-Tahun', isActive: false }
                 ]);
@@ -80,7 +80,7 @@ const Dashboard = () => {
             // Same fallback as above
             setTimelineItems([
                 { title: 'Pendaftaran', date: '1 - 7 April 2025', isActive: true },
-                { title: 'Verifikasi', date: 'Tgl-Bulan-Tahun', isActive: verificationStatus === 'verified' },
+                { title: 'Verifikasi', date: 'Tgl-Bulan-Tahun', isActive: verificationStatus === 'verified' || verificationStatus === 'disetujui' },
                 { title: 'Peserta memasuki WA grup', date: 'Tgl-Bulan-Tahun', isActive: false },
                 { title: 'Pembukaan OR14', date: 'Tgl-Bulan-Tahun', isActive: false }
             ]);
@@ -138,6 +138,7 @@ const Dashboard = () => {
 
         switch (verificationStatus) {
             case 'verified':
+            case 'disetujui':
                 return "Profil kamu sudah lengkap!";
             case 'pending':
                 return "Verifikasi kamu sedang diproses!";
@@ -156,6 +157,7 @@ const Dashboard = () => {
 
         switch (verificationStatus) {
             case 'verified':
+            case 'disetujui':
                 return "Profil Lengkap";
             case 'pending':
                 return "Sedang Diproses";
@@ -166,7 +168,7 @@ const Dashboard = () => {
         }
     };
 
-    // Get button properties
+    // Get button properties - Modified to handle both 'verified' and 'disetujui' statuses
     const getVerificationButtonProps = () => {
         if (!isProfileComplete) {
             return {
@@ -179,6 +181,7 @@ const Dashboard = () => {
 
         switch (verificationStatus) {
             case 'verified':
+            case 'disetujui':
                 return {
                     disabled: true,
                     destination: "#",
@@ -214,6 +217,7 @@ const Dashboard = () => {
     const getVerificationCardBgColor = () => {
         switch (verificationStatus) {
             case 'verified':
+            case 'disetujui':
                 return "bg-green-500";
             case 'pending':
                 return "bg-yellow-500";
@@ -293,7 +297,7 @@ const Dashboard = () => {
                                 <h2 className="text-base md:text-lg">{getVerificationMessage()}</h2>
                             </div>
 
-                            {/* Verification Button - Hanya tampilkan jika buttonProps.show adalah true */}
+                            {/* Verification Button - Only show if buttonProps.show is true */}
                             {buttonProps.show && (
                                 <Link to={buttonProps.destination} className={buttonProps.disabled ? "pointer-events-none" : ""}>
                                     <button

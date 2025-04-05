@@ -72,10 +72,10 @@ export const ProfileProvider = ({ children }) => {
     // Check verification status
     const checkVerificationStatus = async () => {
         try {
-            const response = await api.get('/profile/status');
-            if (response.data.status === 'success') {
-                const status = response.data.is_complete ? 'verified' : null;
-                setVerificationStatus(status);
+            const response = await api.get('/verification');
+            if (response.data.success) {
+                // Gunakan status langsung dari response
+                setVerificationStatus(response.data.data?.status || null);
             }
         } catch (error) {
             console.error('Error checking verification status:', error);

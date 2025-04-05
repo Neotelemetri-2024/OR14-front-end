@@ -232,6 +232,7 @@ const Profile = () => {
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
+    // Perubahan di dalam Profile.jsx pada handleSubmit
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -251,7 +252,6 @@ const Profile = () => {
                 Object.keys(formData).forEach(key => {
                     if (formData[key] !== profile[key] && key !== 'email') {
                         changedData[key] = formData[key];
-                        console.log(`Field changed: ${key} from '${profile[key]}' to '${formData[key]}'`);
                     }
                 });
             } else {
@@ -262,10 +262,7 @@ const Profile = () => {
             // Tambahkan photo hanya jika ada perubahan
             if (profileImage) {
                 changedData.photo = profileImage;
-                console.log('Adding photo to changes');
             }
-
-            console.log('Data yang akan dikirim:', changedData);
 
             // Periksa jika ada data yang berubah
             if (Object.keys(changedData).length === 0 && !profileImage) {
@@ -274,10 +271,8 @@ const Profile = () => {
                 return;
             }
 
-            // Tambahkan log data lengkap sebelum mengirim
-            console.log('POST data to send:', changedData);
+            // Panggil fungsi saveProfile untuk menyimpan data
             const response = await saveProfile(changedData);
-            console.log('Response setelah save:', response);
 
             if (response.success) {
                 toast.success('Profil berhasil disimpan');
@@ -286,8 +281,15 @@ const Profile = () => {
                 if (response.data && response.data.photo_url) {
                     const cacheBuster = Date.now();
                     const photoUrl = `${response.data.photo_url}?v=${cacheBuster}`;
-                    console.log('Setting image preview with cache busting:', photoUrl);
                     setImagePreview(photoUrl);
+                }
+
+                // Redirect ke dashboard jika ini adalah pembuatan profil pertama kali
+                if (!profile) {
+                    // Tunggu sebentar untuk memastikan state terupdate
+                    setTimeout(() => {
+                        window.location.href = '/dashboard';
+                    }, 1000);
                 }
             } else {
                 if (response.errors) {
