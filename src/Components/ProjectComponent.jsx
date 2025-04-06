@@ -3,34 +3,34 @@ import { motion } from "framer-motion";
 
 const projects = [
     {
-        image: 'Rectangle32.png',
-        name: 'Project 1',
-        subdivisions: "UIUX, Web Programming"
+        image: 'projects/agrowista.png',
+        name: 'AgroWista',
+        subdivisions: "Web Programming, Mobile Programming"
     },
     {
-        image: 'Rectangle32.png',
-        name: 'Project 2',
-        subdivisions: "UIUX, Web Programming"
+        image: 'projects/perceivo.png',
+        name: 'Perceivo',
+        subdivisions: "Mobile Programming"
     },
     {
-        image: 'Rectangle32.png',
-        name: 'Project 3',
-        subdivisions: "UIUX, Web Programming"
+        image: 'projects/simsapras.png',
+        name: 'Simsapras',
+        subdivisions: "Web Programming"
     },
     {
-        image: 'Rectangle32.png',
-        name: 'Project 4',
-        subdivisions: "UIUX, Web Programming"
+        image: 'projects/pixel.png',
+        name: 'Pixel Bros 3D',
+        subdivisions: "3D"
     },
     {
-        image: 'Rectangle32.png',
-        name: 'Project 5',
-        subdivisions: "UIUX, Web Programming"
+        image: 'projects/coffeeapp.png',
+        name: 'CoffeeApp',
+        subdivisions: "UIUX"
     },
     {
-        image: 'Rectangle32.png',
-        name: 'Project 6',
-        subdivisions: "UIUX, Web Programming"
+        image: 'projects/sprite.png',
+        name: 'Sprite',
+        subdivisions: "UIUX"
     },
 ];
 
@@ -108,7 +108,7 @@ const ProjectComponent = () => {
                         }}
                     >
                         {/* Image Container with Overlay on Hover */}
-                        <div className="relative overflow-hidden aspect-video">
+                        <div className="relative overflow-hidden aspect-auto">
                             {/* Decorative elements */}
                             <motion.div
                                 className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
