@@ -12,12 +12,10 @@ const Exam = () => {
     const [submitting, setSubmitting] = useState(false);
     const [examData, setExamData] = useState(null);
 
-    // Use a ref to track the interval
     const timerIntervalRef = useRef(null);
 
     const navigate = useNavigate();
 
-    // Fetch exam questions on component mount
     useEffect(() => {
         const fetchExamQuestions = async () => {
             try {
@@ -28,11 +26,9 @@ const Exam = () => {
                     const data = response.data.data;
                     setExamData(data);
 
-                    // Set questions data
                     if (data.questions && data.questions.length > 0) {
                         setQuestions(data.questions);
 
-                        // Initialize answers from any existing user answers
                         const initialAnswers = {};
                         data.questions.forEach(question => {
                             if (question.user_answer) {
@@ -44,7 +40,6 @@ const Exam = () => {
                         toast.error('Tidak ada soal ditemukan untuk ujian ini');
                     }
 
-                    // Set timer explicitly
                     if (data.remaining_seconds && data.remaining_seconds > 0) {
                         setRemainingTime(data.remaining_seconds);
                     }
@@ -63,7 +58,6 @@ const Exam = () => {
 
         fetchExamQuestions();
 
-        // Clean up on unmount
         return () => {
             if (timerIntervalRef.current) {
                 clearInterval(timerIntervalRef.current);
@@ -71,15 +65,12 @@ const Exam = () => {
         };
     }, [navigate]);
 
-    // Setup timer when remainingTime changes
     useEffect(() => {
-        // Clear any existing intervals
         if (timerIntervalRef.current) {
             clearInterval(timerIntervalRef.current);
             timerIntervalRef.current = null;
         }
 
-        // Only set up interval if we have a positive time remaining
         if (remainingTime > 0) {
             timerIntervalRef.current = setInterval(() => {
                 setRemainingTime(prevTime => {
@@ -89,7 +80,6 @@ const Exam = () => {
                         clearInterval(timerIntervalRef.current);
                         timerIntervalRef.current = null;
 
-                        // Handle time up in the next tick to avoid state update during render
                         setTimeout(() => handleTimeUp(), 0);
                         return 0;
                     }
@@ -98,7 +88,6 @@ const Exam = () => {
             }, 1000);
         }
 
-        // Cleanup function
         return () => {
             if (timerIntervalRef.current) {
                 clearInterval(timerIntervalRef.current);
@@ -107,9 +96,8 @@ const Exam = () => {
         };
     }, [remainingTime]);
 
-    // Handle when time is up
     const handleTimeUp = async () => {
-        if (submitting) return; // Prevent duplicate submissions
+        if (submitting) return;
 
         toast.warn("Waktu ujian telah habis!");
         setSubmitting(true);
@@ -139,7 +127,6 @@ const Exam = () => {
         return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
     };
 
-    // Navigation functions
     const goToNextQuestion = () => {
         if (currentQuestionIndex < questions.length - 1) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
@@ -156,21 +143,17 @@ const Exam = () => {
         setCurrentQuestionIndex(index);
     };
 
-    // Handle answer selection
     const handleAnswerChange = async (questionId, optionId) => {
-        // Update local state first for immediate UI feedback
         setAnswers(prev => ({
             ...prev,
             [questionId]: optionId
         }));
 
-        // Submit answer to backend
         setSubmitting(true);
         try {
             const response = await examService.submitAnswer(questionId, optionId);
             if (!response.success) {
                 toast.error(response.message || 'Gagal menyimpan jawaban');
-                // Revert local state if submission failed
                 setAnswers(prev => {
                     const newAnswers = { ...prev };
                     delete newAnswers[questionId];
@@ -180,7 +163,6 @@ const Exam = () => {
         } catch (error) {
             console.error("Error submitting answer:", error);
             toast.error('Terjadi kesalahan saat menyimpan jawaban');
-            // Revert local state
             setAnswers(prev => {
                 const newAnswers = { ...prev };
                 delete newAnswers[questionId];
@@ -191,9 +173,7 @@ const Exam = () => {
         }
     };
 
-    // Handle finish exam
     const handleFinishExam = async () => {
-        // Check if all questions have been answered
         const answeredCount = Object.keys(answers).length;
 
         if (answeredCount < questions.length) {

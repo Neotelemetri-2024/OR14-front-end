@@ -496,20 +496,6 @@ const Landing = () => {
 
             {/* Jumbotron with enhanced animations */}
             <section id="jumbotron" className="bg-gradient-to-b from-[#1B054E] to-[#7449B6] py-16 md:py-24 flex flex-col items-center justify-center gap-8 md:gap-16 px-4 md:px-0 relative mt-6 md:mt-8" ref={jumbotronRef}>
-                <motion.img
-                    src="/assets/landing/Group172.png"
-                    className="absolute left-0 md:block hidden"
-                    variants={slideInFromLeft}
-                    initial="hidden"
-                    animate={jumbotronControls}
-                />
-                <motion.img
-                    src="/assets/landing/Group173.png"
-                    className="absolute right-0 top-28 md:block hidden"
-                    variants={slideInFromRight}
-                    initial="hidden"
-                    animate={jumbotronControls}
-                />
 
                 <motion.h1
                     className="text-white text-2xl sm:text-3xl font-bold text-center px-4 z-10"
@@ -596,8 +582,8 @@ const Landing = () => {
                 >
                     {/* Kontak */}
                     <div>
-                        <h4 className="font-bold mb-2">Kontak</h4>
-                        <p className="font-light">+62 9203-2920 -02</p>
+                        <h4 className="font-bold mb-2">Kontak (Ainul)</h4>
+                        <a href="https://wa.me/6281328161732" className="font-light">Klik disini</a>
                     </div>
 
                     {/* Relate with staggered animations */}
@@ -609,7 +595,8 @@ const Landing = () => {
                     >
                         <h4 className="font-bold">Relate</h4>
                         <motion.a
-                            href="#"
+                            href="https://www.neotelemetri.id"
+                            target="_blank"
                             className="font-light hover:underline cursor-pointer transition-all duration-300"
                             variants={slideInFromRight}
                             whileHover={{ x: 10, transition: { duration: 0.2 } }}
@@ -617,15 +604,7 @@ const Landing = () => {
                             Profile Neo Telemetri
                         </motion.a>
                         <motion.a
-                            href="#"
-                            className="font-light hover:underline cursor-pointer transition-all duration-300"
-                            variants={slideInFromRight}
-                            whileHover={{ x: 10, transition: { duration: 0.2 } }}
-                        >
-                            Profile Neo Telemetri
-                        </motion.a>
-                        <motion.a
-                            href="#"
+                            href="https://www.neotelemetri.id"
                             className="font-light hover:underline cursor-pointer transition-all duration-300"
                             variants={slideInFromRight}
                             whileHover={{ x: 10, transition: { duration: 0.2 } }}
@@ -633,7 +612,7 @@ const Landing = () => {
                             Marketing Neo Telemetri
                         </motion.a>
                         <motion.a
-                            href="#"
+                            href="https://drive.google.com/file/d/1VXZTxNkrh3XIqg983OZNwaOFjGahWyaP/view?fbclid=PAZXh0bgNhZW0CMTEAAacvDSqtO2mEI1lhR8mWgI6GMhw4N4YAJZW_Uia2P70DBs0YgkMyka5hxTsOVA_aem_ABVMgpVpyUJCrQ1SN0Zmsw"
                             className="font-light hover:underline cursor-pointer transition-all duration-300"
                             variants={slideInFromRight}
                             whileHover={{ x: 10, transition: { duration: 0.2 } }}

@@ -8,7 +8,6 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import Landing from "./pages/Landing";
-// import Auth from "./pages/Auth/Auth";
 import Dashboard from "./pages/Dashboard";
 import Verification from "./pages/Auth/Verification";
 import ExamPreparation from "./pages/exam/ExamPreparation";
@@ -16,7 +15,7 @@ import Exam from "./pages/exam/Exam";
 import ExamResult from "./pages/exam/ExamResult";
 import Profile from "./pages/profile/Profile";
 import ResetPassword from "./pages/Auth/ResetPassword";
-// import ForgotPassword from "./pages/Auth/ForgetPassword";
+import ForgotPassword from "./pages/Auth/ForgotPassword";
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -51,6 +50,7 @@ const App = () => {
             <Route path="/auto-redirect" element={<RoleBasedRedirect />} />
             <Route element={<GuestRoute />}>
               <Route path="/auth" element={<AuthWrapper />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
             </Route>
             <Route element={<ProtectedRoute />}>

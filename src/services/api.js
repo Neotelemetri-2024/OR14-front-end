@@ -68,6 +68,7 @@ export const authService = {
         }
     },
 
+
     // Login user
     login: async (credentials) => {
         try {
@@ -108,6 +109,8 @@ export const authService = {
             };
         }
     },
+
+
 
     // Get current user profile
     getCurrentUser: async () => {

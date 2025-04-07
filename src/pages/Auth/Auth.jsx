@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useAuth } from "../../context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
+import Swal from "sweetalert2"; // Import SweetAlert2
 
 const Auth = ({ isLogin }) => {
     const navigate = useNavigate();
@@ -159,10 +160,19 @@ const Auth = ({ isLogin }) => {
                 });
 
                 if (result.success) {
-                    // Show toast for successful registration
-                    toast.success("Registrasi berhasil! Silakan cek email untuk verifikasi.", {
-                        position: "top-right",
-                        autoClose: 4000,
+                    // Use SweetAlert instead of toast for registration success
+                    Swal.fire({
+                        title: 'Registrasi Berhasil!',
+                        text: 'Silakan cek email Anda untuk melakukan verifikasi akun.',
+                        icon: 'success',
+                        confirmButtonText: 'Oke',
+                        confirmButtonColor: '#7449B6',
+                        allowOutsideClick: false,
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Switch to login page after user clicks confirm
+                            setIsLoginPage(true);
+                        }
                     });
 
                     // Reset form
@@ -173,15 +183,12 @@ const Auth = ({ isLogin }) => {
                         password_confirmation: ""
                     });
 
-                    // Show success notification
+                    // We don't need to show the notification anymore since SweetAlert is more prominent
                     setNotification({
-                        show: true,
-                        message: "Registrasi berhasil! Silakan cek email untuk verifikasi.",
-                        type: "success"
+                        show: false,
+                        message: "",
+                        type: ""
                     });
-
-                    // Switch to login page after successful registration
-                    setIsLoginPage(true);
                 } else {
                     // Show toast for error
                     toast.error(result.message || "Registrasi gagal. Silakan coba lagi.", {

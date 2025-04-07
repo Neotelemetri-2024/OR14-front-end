@@ -232,11 +232,11 @@ const Verification = () => {
             );
         }
 
-        // If no uploaded file or we're selecting a new one, show format or preview
         if (!file) {
             return (
                 <div className="text-center">
                     <p className="text-gray-400 text-xs">Format: {format}</p>
+                    <p className="text-gray-400 text-xs">Ukuran Maks: 1 MB</p>
                 </div>
             );
         }

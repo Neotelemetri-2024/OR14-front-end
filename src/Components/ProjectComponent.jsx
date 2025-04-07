@@ -37,7 +37,6 @@ const projects = [
 const ProjectComponent = () => {
     const [hoveredIndex, setHoveredIndex] = useState(null);
 
-    // Animation variants
     const containerVariants = {
         hidden: { opacity: 0 },
         visible: {
@@ -49,9 +48,7 @@ const ProjectComponent = () => {
         }
     };
 
-    // Unique animations for each project
     const getProjectAnimation = (index) => {
-        // Different animations for odd/even projects
         return index % 2 === 0
             ? {
                 hidden: { y: 40, opacity: 0 },
@@ -83,7 +80,6 @@ const ProjectComponent = () => {
 
     return (
         <div className="w-full pt-8 pb-16 max-w-7xl mx-auto">
-            {/* Project Filter Tags (decorative only) */}
 
             <motion.div
                 variants={containerVariants}
